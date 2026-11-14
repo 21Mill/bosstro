@@ -490,4 +490,15 @@ Applied in place above; listed here so a reviewer coming from `app` sees what di
     their inset. `app` keeps each screen clear of the bar by hand (`app` #267); Bosstro writes the
     rule down: a screen over the shell without a bottom bar puts its body in
     `SafeArea(top: false)`, and its test scrolls to the end under a 48 dp navigation bar.
-
+11. **The Disputes tab and the Orders tab** (2026-11-13, issue #51): the bottom bar is
+    Disputes · Orders · Settings. Disputes has one segmented control under its header, Pending ·
+    In progress · Closed, and never a second one under it. The header and the control stay
+    fixed above the list while the screen has the room; on a short screen or above a 1.3× text
+    scale, where the three segments wrap onto several lines, they scroll away with the list
+    instead of leaving it a strip of the screen (DS-SPC-5, DS-TYP-7). On Orders the solver only
+    looks: an order's status is in the neutral ink, never lime (the solver's turn) nor red
+    (danger), and red marks only a lookup that went wrong (amendment 3, DS-COL-10).
+12. **Glossary additions** (§9): an anti-abuse bond is a *deposit* on Orders too; slashing one
+    reads as in the resolution (`penalizar` in Spanish, `app`'s forfeit word elsewhere). The
+    node's Lightning state of the seller's sats is worded by what happened to them (locked,
+    collected by the node, back with the seller), never as "hold invoice" (DS-L10N-4).

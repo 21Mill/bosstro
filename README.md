@@ -31,6 +31,8 @@ protocol, persistence) with a Flutter UI, bridged by
   images and PDFs. When a party shares their chat key, read the conversation between the
   buyer and the seller too.
 - **Resolve:** pay the buyer or refund the seller (Read-Write solvers).
+- **Look up any order** of the node by its ID, in dispute or not: its real status, where the
+  seller's sats are, the payment to the buyer and the deposits, as the node sees them now.
 - In English, Spanish, Italian, French, German, Dutch and Brazilian Portuguese.
 
 ## Install
