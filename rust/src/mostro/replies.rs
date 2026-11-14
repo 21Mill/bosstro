@@ -73,7 +73,11 @@ pub(crate) enum Purpose {
         bond: BondSlash,
     },
     /// `AdminOrderInfo` about `order_id`: read only, about no dispute.
-    OrderInfo { order_id: String },
+    /// `started` is when the lookup began, for the timings it logs.
+    OrderInfo {
+        order_id: String,
+        started: crate::rt::time::Instant,
+    },
 }
 
 impl Purpose {
@@ -409,8 +413,9 @@ impl Router {
                 )
                 .await,
             ),
-            Purpose::OrderInfo { order_id } => Reply::OrderInfo(
-                super::order_info::apply(&waiting.request, order_id, &opened.message).await,
+            Purpose::OrderInfo { order_id, started } => Reply::OrderInfo(
+                super::order_info::apply(&waiting.request, order_id, *started, &opened.message)
+                    .await,
             ),
         };
         if let Some(reply) = waiting.reply {

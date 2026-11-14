@@ -30,6 +30,13 @@
 //!
 //! **No answer** also reads a node that does not know the action: a mostrod
 //! older than the one that added it answers nothing.
+//!
+//! **Timings.** Each step logs how long after the lookup began it ended
+//! (`[order-info] +120 ms: …`): the subscription, the node's PoW, the request
+//! built, the relays' acknowledgements (which took it, which did not), the
+//! answer read off the relay, and the answer handed to the caller. They tell
+//! where a slow lookup spends its time. Only times, relay addresses and the
+//! head of the order id are logged, never the order.
 
 use mostro_core::error::CantDoReason;
 use mostro_core::message::{Action, Message, Payload};
@@ -40,6 +47,7 @@ use super::replies::{self, Purpose, Reply, Request};
 use super::take::{new_request_id, reason_marker, take_pow_on, wrap_mined, ANSWER_WAIT};
 use crate::api::order_info::OrderLookupError;
 use crate::api::take::{SolverStatus, TakeError};
+use crate::rt::time::Instant;
 
 /// What the node said about one lookup.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -103,7 +111,14 @@ pub(crate) fn read_answer(order_id: &str, message: &Message) -> Lookup {
 /// Apply the node's answer to `request`, a lookup of `order_id`: what it says
 /// about this key on the node, and the result the caller sees. Nothing of the
 /// order is stored, and its content is never logged.
-pub(crate) async fn apply(request: &Request, order_id: &str, message: &Message) -> Lookup {
+pub(crate) async fn apply(
+    request: &Request,
+    order_id: &str,
+    started: Instant,
+    message: &Message,
+) -> Lookup {
+    // Before anything is stored: when the answer came off the relay.
+    let arrived = started.elapsed().as_millis();
     let lookup = read_answer(order_id, message);
     match &lookup {
         // The node looked the order up: it took the key for a solver's.
@@ -116,7 +131,7 @@ pub(crate) async fn apply(request: &Request, order_id: &str, message: &Message) 
         Lookup::Refused(_) | Lookup::NoAnswer => {}
     }
     log::info!(
-        "[order-info] order {}…: {}",
+        "[order-info] +{arrived} ms: answer read off the relay, order {}…: {}",
         &order_id[..8.min(order_id.len())],
         match &lookup {
             Lookup::Found(_) => "found",
@@ -136,6 +151,7 @@ pub(crate) async fn lookup(
     order_id: &str,
 ) -> Result<(String, uuid::Uuid, Lookup), OrderLookupError> {
     let order_id = parse_order_id(order_id)?;
+    let started = Instant::now();
     let keys = crate::solver_slot::SOLVER_SLOT
         .keys()
         .await
@@ -148,7 +164,21 @@ pub(crate) async fn lookup(
     router
         .retarget(Some(node.clone()), Some(keys.clone()))
         .await;
-    let lookup = lookup_on(&router, &pool.client(), &keys, &node, order_id, ANSWER_WAIT).await?;
+    log::info!(
+        "[order-info] +{} ms: lookup of {}… begun, subscription ready",
+        started.elapsed().as_millis(),
+        &order_id.to_string()[..8]
+    );
+    let lookup = lookup_on(
+        &router,
+        &pool.client(),
+        &keys,
+        &node,
+        order_id,
+        ANSWER_WAIT,
+        started,
+    )
+    .await?;
     Ok((node, order_id, lookup))
 }
 
@@ -160,6 +190,7 @@ pub(crate) async fn lookup_on(
     node: &str,
     order_id: uuid::Uuid,
     wait: std::time::Duration,
+    started: Instant,
 ) -> Result<Lookup, OrderLookupError> {
     // A solver key is inside mostrod's spam gate only while it holds an
     // active dispute, so this pays what a take pays.
@@ -167,10 +198,15 @@ pub(crate) async fn lookup_on(
         TakeError::ProtocolUnsupported => OrderLookupError::ProtocolUnsupported,
         _ => OrderLookupError::NodeInfoUnavailable,
     })?;
-    send_lookup(router, client, keys, node, order_id, pow, wait).await
+    log::info!(
+        "[order-info] +{} ms: the node asks for a proof of work of {pow} bits",
+        started.elapsed().as_millis()
+    );
+    send_lookup(router, client, keys, node, order_id, pow, wait, started).await
 }
 
 /// The request itself, on explicit parts so tests drive it against a relay.
+#[allow(clippy::too_many_arguments)]
 pub(crate) async fn send_lookup(
     router: &replies::Router,
     client: &Client,
@@ -179,7 +215,9 @@ pub(crate) async fn send_lookup(
     order_id: uuid::Uuid,
     pow: u8,
     wait: std::time::Duration,
+    started: Instant,
 ) -> Result<Lookup, OrderLookupError> {
+    let ms = move || started.elapsed().as_millis();
     let node_key = PublicKey::from_hex(node).map_err(|_| OrderLookupError::NoNode)?;
     let request_id = new_request_id();
     let request = Request {
@@ -189,6 +227,7 @@ pub(crate) async fn send_lookup(
         dispute_id: String::new(),
         purpose: Purpose::OrderInfo {
             order_id: order_id.to_string(),
+            started,
         },
     };
     // A lookup is never busy (`Router::register`), so this cannot fail; if it
@@ -204,10 +243,29 @@ pub(crate) async fn send_lookup(
                 log::warn!("[order-info] request not built: {e}");
                 OrderLookupError::SendFailed
             })?;
+        log::info!("[order-info] +{} ms: request built and mined", ms());
         let output = client.send_event(&event).await.map_err(|e| {
             log::warn!("[order-info] request not sent: {e}");
             OrderLookupError::SendFailed
         })?;
+        // Every relay has acknowledged, refused or timed out by now: the
+        // send returns only then.
+        log::info!(
+            "[order-info] +{} ms: send returned; took it: [{}]; did not: [{}]",
+            ms(),
+            output
+                .success
+                .keys()
+                .map(|url| url.to_string())
+                .collect::<Vec<_>>()
+                .join(", "),
+            output
+                .failed
+                .iter()
+                .map(|(url, why)| format!("{url} ({why})"))
+                .collect::<Vec<_>>()
+                .join(", "),
+        );
         if output.success.is_empty() {
             log::warn!("[order-info] no relay took the request");
             return Err(OrderLookupError::SendFailed);
@@ -221,10 +279,14 @@ pub(crate) async fn send_lookup(
     }
 
     match crate::rt::time::timeout(wait, answer).await {
-        Ok(Ok(Reply::OrderInfo(lookup))) => Ok(lookup),
+        Ok(Ok(Reply::OrderInfo(lookup))) => {
+            log::info!("[order-info] +{} ms: answer handed to the screen", ms());
+            Ok(lookup)
+        }
         // Timed out, or the router dropped the request (the node or the key
         // changed). A late snapshot would be shown to nobody: forget it.
         _ => {
+            log::info!("[order-info] +{} ms: no answer, given up", ms());
             router.forget(request_id);
             Ok(Lookup::NoAnswer)
         }
@@ -309,6 +371,7 @@ pub(crate) mod tests {
             order(),
             0,
             wait,
+            Instant::now(),
         )
         .await
     }
@@ -521,6 +584,7 @@ pub(crate) mod tests {
             dispute_id: String::new(),
             purpose: Purpose::OrderInfo {
                 order_id: ORDER.into(),
+                started: Instant::now(),
             },
         }
     }
