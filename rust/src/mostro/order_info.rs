@@ -3,7 +3,9 @@
 //!
 //! **The request** travels in the `order` wrapper with the order id in `id`
 //! and no payload: mostrod drops, unanswered, one that carries a payload.
-//! Same transport, router and proof of work as a take.
+//! Same transport, router and proof of work as a take. The answer is shown as
+//! soon as it arrives, without waiting for the slowest relay to acknowledge
+//! the request (`replies::answer_or_send`).
 //!
 //! **Read only.** Nothing is stored and no dispute row changes: the answer is
 //! a snapshot of that moment, it carries the parties' trade pubkeys and the
@@ -33,8 +35,9 @@
 //!
 //! **Timings.** Each step logs how long after the lookup began it ended
 //! (`[order-info] +120 ms: …`): the subscription, the node's PoW, the request
-//! built, the relays' acknowledgements (which took it, which did not), the
-//! answer read off the relay, and the answer handed to the caller. They tell
+//! built, the answer read off the relay, and the answer handed to the caller;
+//! and, when no answer came before it, the send ending (which relays took the
+//! request, which did not). They tell
 //! where a slow lookup spends its time. Only times, relay addresses and the
 //! head of the order id are logged, never the order.
 
@@ -236,7 +239,7 @@ pub(crate) async fn send_lookup(
         .register(request_id, request)
         .map_err(|_| OrderLookupError::SendFailed)?;
     let message = request_message(order_id, request_id);
-    let sent = async {
+    let send = async {
         let event = wrap_mined(keys, &node_key, &message, pow)
             .await
             .map_err(|e| {
@@ -249,7 +252,7 @@ pub(crate) async fn send_lookup(
             OrderLookupError::SendFailed
         })?;
         // Every relay has acknowledged, refused or timed out by now: the
-        // send returns only then.
+        // send returns only then (not reached when the answer came first).
         log::info!(
             "[order-info] +{} ms: send returned; took it: [{}]; did not: [{}]",
             ms(),
@@ -271,24 +274,27 @@ pub(crate) async fn send_lookup(
             return Err(OrderLookupError::SendFailed);
         }
         Ok(())
-    }
-    .await;
-    if let Err(e) = sent {
-        router.forget(request_id);
-        return Err(e);
-    }
+    };
 
-    match crate::rt::time::timeout(wait, answer).await {
-        Ok(Ok(Reply::OrderInfo(lookup))) => {
+    // The node answers through the first relay that took the request, long
+    // before the slowest one acknowledges it: the answer is shown as soon as
+    // it is there, not when the send ends.
+    match replies::answer_or_send(send, answer, wait).await {
+        Ok(Some(Reply::OrderInfo(lookup))) => {
             log::info!("[order-info] +{} ms: answer handed to the screen", ms());
             Ok(lookup)
         }
-        // Timed out, or the router dropped the request (the node or the key
-        // changed). A late snapshot would be shown to nobody: forget it.
-        _ => {
+        // Nothing in time, or the router dropped the request (the node or
+        // the key changed). A late snapshot would be shown to nobody: forget
+        // it.
+        Ok(_) => {
             log::info!("[order-info] +{} ms: no answer, given up", ms());
             router.forget(request_id);
             Ok(Lookup::NoAnswer)
+        }
+        Err(e) => {
+            router.forget(request_id);
+            Err(e)
         }
     }
 }
@@ -573,6 +579,91 @@ pub(crate) mod tests {
 
         assert_eq!(ask(&rig, WAIT).await, Err(OrderLookupError::SendFailed));
         assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    // ── A slow relay ─────────────────────────────────────────────────────
+
+    use crate::mostro::replies::answer_or_send;
+    use tokio::sync::oneshot;
+
+    fn found_reply() -> Reply {
+        Reply::OrderInfo(Lookup::Found(Box::new(snapshot(ORDER))))
+    }
+
+    #[tokio::test]
+    async fn the_answer_is_not_kept_behind_a_send_that_has_not_ended() {
+        // A relay that never acknowledges: the send would end in ten seconds.
+        let send = std::future::pending::<Result<(), OrderLookupError>>();
+        let (tx, rx) = oneshot::channel();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(50)).await;
+            let _ = tx.send(found_reply());
+        });
+        let started = std::time::Instant::now();
+
+        let got = answer_or_send(send, rx, WAIT).await;
+
+        assert_eq!(got, Ok(Some(found_reply())));
+        assert!(
+            started.elapsed() < Duration::from_secs(2),
+            "shown when the answer arrived, not when the send ended"
+        );
+    }
+
+    #[tokio::test]
+    async fn an_answer_that_follows_the_send_is_waited_for() {
+        let send = async { Ok::<(), OrderLookupError>(()) };
+        let (tx, rx) = oneshot::channel();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(50)).await;
+            let _ = tx.send(found_reply());
+        });
+
+        assert_eq!(
+            answer_or_send(send, rx, WAIT).await,
+            Ok(Some(found_reply()))
+        );
+    }
+
+    #[tokio::test]
+    async fn a_send_that_failed_before_any_answer_is_an_error_at_once() {
+        let send = async { Err::<(), _>(OrderLookupError::SendFailed) };
+        // The caller of the answer is alive and silent.
+        let (_tx, rx) = oneshot::channel::<Reply>();
+        let started = std::time::Instant::now();
+
+        let got = answer_or_send(send, rx, WAIT).await;
+
+        assert_eq!(got, Err(OrderLookupError::SendFailed));
+        assert!(started.elapsed() < Duration::from_secs(2), "not waited for");
+    }
+
+    #[tokio::test]
+    async fn a_request_that_left_and_got_no_answer_is_none_after_the_wait() {
+        let send = async { Ok::<(), OrderLookupError>(()) };
+        let (_tx, rx) = oneshot::channel::<Reply>();
+
+        let got = answer_or_send(send, rx, Duration::from_millis(100)).await;
+
+        assert_eq!(got, Ok(None));
+    }
+
+    #[tokio::test]
+    async fn a_request_the_router_dropped_is_none_whenever_it_happens() {
+        // While the send is still waiting for a relay.
+        let send = std::future::pending::<Result<(), OrderLookupError>>();
+        let (tx, rx) = oneshot::channel::<Reply>();
+        drop(tx);
+        assert_eq!(answer_or_send(send, rx, WAIT).await, Ok(None));
+
+        // After the send ended.
+        let send = async { Ok::<(), OrderLookupError>(()) };
+        let (tx, rx) = oneshot::channel::<Reply>();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(50)).await;
+            drop(tx);
+        });
+        assert_eq!(answer_or_send(send, rx, WAIT).await, Ok(None));
     }
 
     // ── Never busy ───────────────────────────────────────────────────────
