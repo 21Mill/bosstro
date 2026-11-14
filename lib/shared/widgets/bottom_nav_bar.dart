@@ -8,7 +8,7 @@ const double _barHeight = 76;
 /// One destination of the bottom bar.
 typedef NavDestination = ({IconData icon, IconData activeIcon, String label});
 
-/// Bottom navigation bar: Pending · In progress · Settings.
+/// Bottom navigation bar: Disputes · Settings.
 ///
 /// As in MostroP2P/app: on the navigation surface under a hairline, each
 /// destination a 20-dp icon over a 10-dp label, lime when active, the content
@@ -18,7 +18,7 @@ class BottomNavBar extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onSelect,
-    this.badges = const [0, 0, 0],
+    this.badges = const [],
   });
 
   final int currentIndex;
@@ -31,12 +31,7 @@ class BottomNavBar extends StatelessWidget {
     (
       icon: Icons.gavel_outlined,
       activeIcon: Icons.gavel,
-      label: l10n.navPending,
-    ),
-    (
-      icon: Icons.forum_outlined,
-      activeIcon: Icons.forum,
-      label: l10n.navInProgress,
+      label: l10n.navDisputes,
     ),
     (
       icon: Icons.settings_outlined,

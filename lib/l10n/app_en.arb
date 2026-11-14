@@ -4,13 +4,9 @@
   "@appName": {
     "description": "The app's name. A brand: keep it unchanged in every locale"
   },
-  "navPending": "Pending",
-  "@navPending": {
-    "description": "Bottom bar destination: disputes waiting for a solver to take them"
-  },
-  "navInProgress": "My disputes",
-  "@navInProgress": {
-    "description": "Bottom bar destination: disputes this solver took and is resolving"
+  "navDisputes": "Disputes",
+  "@navDisputes": {
+    "description": "Bottom bar destination: the disputes of the active node, waiting, in progress and closed"
   },
   "navSettings": "Settings",
   "@navSettings": {
@@ -20,29 +16,25 @@
   "@noNodeSelected": {
     "description": "Tab app bar status line, before the solver chooses a Mostro node"
   },
-  "pendingTitle": "Pending disputes",
-  "@pendingTitle": {
-    "description": "Header of the Pending tab"
+  "disputesTitle": "Disputes",
+  "@disputesTitle": {
+    "description": "Header of the Disputes tab"
   },
   "pendingEmptyTitle": "No disputes waiting",
   "@pendingEmptyTitle": {
-    "description": "Empty state title of the Pending tab"
+    "description": "Empty state title of Disputes, Pending"
   },
   "pendingEmptyBody": "No dispute on this node is waiting for a solver. When a trade opens one, it shows up here for you to take.",
   "@pendingEmptyBody": {
-    "description": "Empty state explanation of the Pending tab"
-  },
-  "inProgressTitle": "My disputes",
-  "@inProgressTitle": {
-    "description": "Header of the In progress tab: disputes this solver took"
+    "description": "Empty state explanation of Disputes, Pending"
   },
   "inProgressEmptyTitle": "No disputes in progress",
   "@inProgressEmptyTitle": {
-    "description": "Empty state title of the In progress tab"
+    "description": "Empty state title of Disputes, In progress"
   },
   "inProgressEmptyBody": "Disputes you take show up here. If a take got no answer, recover it.",
   "@inProgressEmptyBody": {
-    "description": "Empty state explanation of the In progress tab"
+    "description": "Empty state explanation of Disputes, In progress"
   },
   "settingsTitle": "Settings",
   "@settingsTitle": {
@@ -895,15 +887,15 @@
   },
   "pendingNoNodeTitle": "Choose your node first",
   "@pendingNoNodeTitle": {
-    "description": "Pending tab empty state before a node is chosen"
+    "description": "Disputes, Pending empty state before a node is chosen"
   },
   "pendingNoNodeBody": "Disputes are read from one Mostro node at a time. Pick the node where you are a solver.",
   "@pendingNoNodeBody": {
-    "description": "Pending tab empty state body before a node is chosen"
+    "description": "Disputes, Pending empty state body before a node is chosen"
   },
   "pendingNoNodeAction": "Choose node",
   "@pendingNoNodeAction": {
-    "description": "Pending tab empty state action: opens the node selector"
+    "description": "Disputes, Pending empty state action: opens the node selector"
   },
   "loadingNodes": "Loading nodes",
   "@loadingNodes": {
@@ -923,7 +915,7 @@
   },
   "pendingLoadErrorTitle": "Disputes could not be read",
   "@pendingLoadErrorTitle": {
-    "description": "Pending tab state when the stored disputes cannot be read"
+    "description": "Disputes, Pending state when the stored disputes cannot be read"
   },
   "pendingLoadErrorBody": "Something went wrong reading this node's disputes on this phone. Close and reopen Bosstro to try again.",
   "@pendingLoadErrorBody": {
@@ -1021,7 +1013,7 @@
   "@takeDisputeTitle": {
     "description": "Title of the confirmation before taking a dispute"
   },
-  "takeDisputeBody": "You become its solver: the node tells the buyer and the seller, and the dispute moves to My disputes. Take only a dispute you can follow to the end.",
+  "takeDisputeBody": "You become its solver: the node tells the buyer and the seller, and the dispute moves to In progress. Take only a dispute you can follow to the end.",
   "@takeDisputeBody": {
     "description": "Body of the take confirmation"
   },
@@ -1029,19 +1021,19 @@
   "@takeDisputeAnswer": {
     "description": "Answer of the take confirmation; repeats the opener's verb (DS-CMP-26, glossary: take a dispute)"
   },
-  "takeTakenSnack": "Dispute taken. It is in My disputes.",
+  "takeTakenSnack": "Dispute taken. It is under In progress.",
   "@takeTakenSnack": {
     "description": "Snackbar once the node gave the solver the dispute"
   },
   "recoverAction": "Recover",
   "@recoverAction": {
-    "description": "Label of the action in the My disputes header that opens Recover a dispute"
+    "description": "Label of the action in the Disputes header that opens Recover a dispute"
   },
   "recoverTitle": "Recover a dispute",
   "@recoverTitle": {
     "description": "Title of the Recover a dispute screen, and the link to it"
   },
-  "recoverNote": "The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not in My disputes on this phone: yours whose answer was lost, and other solvers'. Recover them one at a time.",
+  "recoverNote": "The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not among yours on this phone: yours whose answer was lost, and other solvers'. Recover them one at a time.",
   "@recoverNote": {
     "description": "Note at the top of Recover a dispute"
   },
@@ -1049,7 +1041,7 @@
   "@recoverEmptyTitle": {
     "description": "Recover a dispute with no candidate"
   },
-  "recoverEmptyBody": "No dispute in progress on this node is missing from My disputes.",
+  "recoverEmptyBody": "No dispute in progress on this node is missing from yours.",
   "@recoverEmptyBody": {
     "description": "Explanation under recoverEmptyTitle"
   },
@@ -1069,7 +1061,7 @@
   "@recoverDisputeAnswer": {
     "description": "Answer of the recover confirmation; repeats the opener's verb (DS-CMP-26)"
   },
-  "recoverTakenSnack": "Dispute recovered. It is in My disputes.",
+  "recoverTakenSnack": "Dispute recovered. It is under In progress.",
   "@recoverTakenSnack": {
     "description": "Snackbar once the node gave the dispute back"
   },
@@ -1109,7 +1101,7 @@
   "@noAnswerTitle": {
     "description": "Take outcome when no answer arrived in time"
   },
-  "noAnswerBody": "Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look in My disputes, or ask again from Recover a dispute.",
+  "noAnswerBody": "Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look under In progress, or ask again from Recover a dispute.",
   "@noAnswerBody": {
     "description": "Body under noAnswerTitle"
   },
@@ -1338,7 +1330,7 @@
   "@detailNotYoursTitle": {
     "description": "Shown in the detail when the dispute is no longer held by this solver key"
   },
-  "detailNotYoursBody": "The node reopened it, or it belongs to another key. It is no longer in My disputes.",
+  "detailNotYoursBody": "The node reopened it, or it belongs to another key. It is no longer among your disputes.",
   "@detailNotYoursBody": {
     "description": "Explanation under detailNotYoursTitle"
   },
@@ -1443,7 +1435,7 @@
   },
   "openDisputeHint": "Open the dispute",
   "@openDisputeHint": {
-    "description": "Screen-reader hint of a row in My disputes"
+    "description": "Screen-reader hint of a row of the disputes in progress"
   },
   "chatAttach": "Attach a file",
   "@chatAttach": {
@@ -1883,7 +1875,7 @@
   "@takenOverTitle": {
     "description": "Result: the node said the dispute is not this key's (taken over)"
   },
-  "takenOverBody": "The node gave it to another solver, so nothing was paid or refunded. It has left My disputes.",
+  "takenOverBody": "The node gave it to another solver, so nothing was paid or refunded. It is no longer among your disputes.",
   "@takenOverBody": {
     "description": "Under takenOverTitle"
   },
@@ -1919,7 +1911,7 @@
   "@resolveBackToDispute": {
     "description": "Result: the one action, back to the dispute detail"
   },
-  "resolveGoToDisputes": "Go to My disputes",
+  "resolveGoToDisputes": "Go to Disputes",
   "@resolveGoToDisputes": {
     "description": "Result after a take-over: back to the In progress list"
   },
@@ -2019,25 +2011,29 @@
   "@orderStatusFiatSent": {
     "description": "Order status before the dispute: the buyer had marked the fiat as sent"
   },
+  "disputesPendingSegment": "Pending",
+  "@disputesPendingSegment": {
+    "description": "Disputes tab: the segment of the disputes waiting for a solver"
+  },
   "myDisputesOpenSegment": "In progress",
   "@myDisputesOpenSegment": {
-    "description": "My disputes: the segment of the disputes this key holds"
+    "description": "Disputes tab: the segment of the disputes this key holds"
   },
   "myDisputesClosedSegment": "Closed",
   "@myDisputesClosedSegment": {
-    "description": "My disputes: the segment of the disputes this key held that closed"
+    "description": "Disputes tab: the segment of the disputes this key held that closed"
   },
-  "myDisputesSegmentsLabel": "Open or closed disputes",
-  "@myDisputesSegmentsLabel": {
-    "description": "Screen-reader label of the In progress / Closed control of My disputes"
+  "disputesSegmentsLabel": "Pending, in progress or closed disputes",
+  "@disputesSegmentsLabel": {
+    "description": "Screen-reader label of the Pending / In progress / Closed control of the Disputes tab"
   },
   "closedEmptyTitle": "No closed disputes yet",
   "@closedEmptyTitle": {
-    "description": "My disputes, Closed: empty state title"
+    "description": "Disputes, Closed: empty state title"
   },
   "closedEmptyBody": "The disputes you take show up here once they close, whether you resolved them or the parties ended the trade themselves.",
   "@closedEmptyBody": {
-    "description": "My disputes, Closed: empty state explanation"
+    "description": "Disputes, Closed: empty state explanation"
   },
   "disputeClosedJustNow": "Closed just now",
   "@disputeClosedJustNow": {

@@ -114,17 +114,11 @@ abstract class AppLocalizations {
   /// **'Bosstro'**
   String get appName;
 
-  /// Bottom bar destination: disputes waiting for a solver to take them
+  /// Bottom bar destination: the disputes of the active node, waiting, in progress and closed
   ///
   /// In en, this message translates to:
-  /// **'Pending'**
-  String get navPending;
-
-  /// Bottom bar destination: disputes this solver took and is resolving
-  ///
-  /// In en, this message translates to:
-  /// **'My disputes'**
-  String get navInProgress;
+  /// **'Disputes'**
+  String get navDisputes;
 
   /// Bottom bar destination: settings
   ///
@@ -138,37 +132,31 @@ abstract class AppLocalizations {
   /// **'No node selected'**
   String get noNodeSelected;
 
-  /// Header of the Pending tab
+  /// Header of the Disputes tab
   ///
   /// In en, this message translates to:
-  /// **'Pending disputes'**
-  String get pendingTitle;
+  /// **'Disputes'**
+  String get disputesTitle;
 
-  /// Empty state title of the Pending tab
+  /// Empty state title of Disputes, Pending
   ///
   /// In en, this message translates to:
   /// **'No disputes waiting'**
   String get pendingEmptyTitle;
 
-  /// Empty state explanation of the Pending tab
+  /// Empty state explanation of Disputes, Pending
   ///
   /// In en, this message translates to:
   /// **'No dispute on this node is waiting for a solver. When a trade opens one, it shows up here for you to take.'**
   String get pendingEmptyBody;
 
-  /// Header of the In progress tab: disputes this solver took
-  ///
-  /// In en, this message translates to:
-  /// **'My disputes'**
-  String get inProgressTitle;
-
-  /// Empty state title of the In progress tab
+  /// Empty state title of Disputes, In progress
   ///
   /// In en, this message translates to:
   /// **'No disputes in progress'**
   String get inProgressEmptyTitle;
 
-  /// Empty state explanation of the In progress tab
+  /// Empty state explanation of Disputes, In progress
   ///
   /// In en, this message translates to:
   /// **'Disputes you take show up here. If a take got no answer, recover it.'**
@@ -1332,19 +1320,19 @@ abstract class AppLocalizations {
   /// **'{connected}/{total}'**
   String settingsRelaysValue(int connected, int total);
 
-  /// Pending tab empty state before a node is chosen
+  /// Disputes, Pending empty state before a node is chosen
   ///
   /// In en, this message translates to:
   /// **'Choose your node first'**
   String get pendingNoNodeTitle;
 
-  /// Pending tab empty state body before a node is chosen
+  /// Disputes, Pending empty state body before a node is chosen
   ///
   /// In en, this message translates to:
   /// **'Disputes are read from one Mostro node at a time. Pick the node where you are a solver.'**
   String get pendingNoNodeBody;
 
-  /// Pending tab empty state action: opens the node selector
+  /// Disputes, Pending empty state action: opens the node selector
   ///
   /// In en, this message translates to:
   /// **'Choose node'**
@@ -1374,7 +1362,7 @@ abstract class AppLocalizations {
   /// **'Loading disputes'**
   String get loadingDisputes;
 
-  /// Pending tab state when the stored disputes cannot be read
+  /// Disputes, Pending state when the stored disputes cannot be read
   ///
   /// In en, this message translates to:
   /// **'Disputes could not be read'**
@@ -1497,7 +1485,7 @@ abstract class AppLocalizations {
   /// Body of the take confirmation
   ///
   /// In en, this message translates to:
-  /// **'You become its solver: the node tells the buyer and the seller, and the dispute moves to My disputes. Take only a dispute you can follow to the end.'**
+  /// **'You become its solver: the node tells the buyer and the seller, and the dispute moves to In progress. Take only a dispute you can follow to the end.'**
   String get takeDisputeBody;
 
   /// Answer of the take confirmation; repeats the opener's verb (DS-CMP-26, glossary: take a dispute)
@@ -1509,10 +1497,10 @@ abstract class AppLocalizations {
   /// Snackbar once the node gave the solver the dispute
   ///
   /// In en, this message translates to:
-  /// **'Dispute taken. It is in My disputes.'**
+  /// **'Dispute taken. It is under In progress.'**
   String get takeTakenSnack;
 
-  /// Label of the action in the My disputes header that opens Recover a dispute
+  /// Label of the action in the Disputes header that opens Recover a dispute
   ///
   /// In en, this message translates to:
   /// **'Recover'**
@@ -1527,7 +1515,7 @@ abstract class AppLocalizations {
   /// Note at the top of Recover a dispute
   ///
   /// In en, this message translates to:
-  /// **'The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not in My disputes on this phone: yours whose answer was lost, and other solvers\'. Recover them one at a time.'**
+  /// **'The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not among yours on this phone: yours whose answer was lost, and other solvers\'. Recover them one at a time.'**
   String get recoverNote;
 
   /// Recover a dispute with no candidate
@@ -1539,7 +1527,7 @@ abstract class AppLocalizations {
   /// Explanation under recoverEmptyTitle
   ///
   /// In en, this message translates to:
-  /// **'No dispute in progress on this node is missing from My disputes.'**
+  /// **'No dispute in progress on this node is missing from yours.'**
   String get recoverEmptyBody;
 
   /// Screen-reader hint of a Recover row: tapping it opens the recover confirmation
@@ -1569,7 +1557,7 @@ abstract class AppLocalizations {
   /// Snackbar once the node gave the dispute back
   ///
   /// In en, this message translates to:
-  /// **'Dispute recovered. It is in My disputes.'**
+  /// **'Dispute recovered. It is under In progress.'**
   String get recoverTakenSnack;
 
   /// Banner on Pending and take outcome when the node refused a dispute waiting for a solver
@@ -1629,7 +1617,7 @@ abstract class AppLocalizations {
   /// Body under noAnswerTitle
   ///
   /// In en, this message translates to:
-  /// **'Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look in My disputes, or ask again from Recover a dispute.'**
+  /// **'Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look under In progress, or ask again from Recover a dispute.'**
   String get noAnswerBody;
 
   /// Take outcome when the request could not leave
@@ -1923,7 +1911,7 @@ abstract class AppLocalizations {
   /// Explanation under detailNotYoursTitle
   ///
   /// In en, this message translates to:
-  /// **'The node reopened it, or it belongs to another key. It is no longer in My disputes.'**
+  /// **'The node reopened it, or it belongs to another key. It is no longer among your disputes.'**
   String get detailNotYoursBody;
 
   /// Sender label of the solver's own chat message
@@ -2058,7 +2046,7 @@ abstract class AppLocalizations {
   /// **'{sender}, {time}: {text}'**
   String chatMessageLabel(String sender, String time, String text);
 
-  /// Screen-reader hint of a row in My disputes
+  /// Screen-reader hint of a row of the disputes in progress
   ///
   /// In en, this message translates to:
   /// **'Open the dispute'**
@@ -2619,7 +2607,7 @@ abstract class AppLocalizations {
   /// Under takenOverTitle
   ///
   /// In en, this message translates to:
-  /// **'The node gave it to another solver, so nothing was paid or refunded. It has left My disputes.'**
+  /// **'The node gave it to another solver, so nothing was paid or refunded. It is no longer among your disputes.'**
   String get takenOverBody;
 
   /// Result: refused by the order's status
@@ -2673,7 +2661,7 @@ abstract class AppLocalizations {
   /// Result after a take-over: back to the In progress list
   ///
   /// In en, this message translates to:
-  /// **'Go to My disputes'**
+  /// **'Go to Disputes'**
   String get resolveGoToDisputes;
 
   /// A closed dispute this key resolved by paying the buyer
@@ -2820,31 +2808,37 @@ abstract class AppLocalizations {
   /// **'Fiat sent'**
   String get orderStatusFiatSent;
 
-  /// My disputes: the segment of the disputes this key holds
+  /// Disputes tab: the segment of the disputes waiting for a solver
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get disputesPendingSegment;
+
+  /// Disputes tab: the segment of the disputes this key holds
   ///
   /// In en, this message translates to:
   /// **'In progress'**
   String get myDisputesOpenSegment;
 
-  /// My disputes: the segment of the disputes this key held that closed
+  /// Disputes tab: the segment of the disputes this key held that closed
   ///
   /// In en, this message translates to:
   /// **'Closed'**
   String get myDisputesClosedSegment;
 
-  /// Screen-reader label of the In progress / Closed control of My disputes
+  /// Screen-reader label of the Pending / In progress / Closed control of the Disputes tab
   ///
   /// In en, this message translates to:
-  /// **'Open or closed disputes'**
-  String get myDisputesSegmentsLabel;
+  /// **'Pending, in progress or closed disputes'**
+  String get disputesSegmentsLabel;
 
-  /// My disputes, Closed: empty state title
+  /// Disputes, Closed: empty state title
   ///
   /// In en, this message translates to:
   /// **'No closed disputes yet'**
   String get closedEmptyTitle;
 
-  /// My disputes, Closed: empty state explanation
+  /// Disputes, Closed: empty state explanation
   ///
   /// In en, this message translates to:
   /// **'The disputes you take show up here once they close, whether you resolved them or the parties ended the trade themselves.'**

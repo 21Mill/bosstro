@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/core/app_theme.dart';
+import 'package:bosstro/features/disputes/screens/disputes_screen.dart';
 import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/nodes/screens/node_info_screen.dart';
 import 'package:bosstro/features/nodes/services/nodes_core.dart';
@@ -245,7 +246,7 @@ void main() {
       await tester.tap(find.text('Mostro Cuba'));
       await tester.pumpAndSettle();
       expect(core.log, ['select:$cubaPubkey']);
-      expect(find.text('Pending disputes'), findsOneWidget);
+      expect(find.byType(DisputesScreen), findsOneWidget);
       // The app bar names the node, and the relays in words.
       expect(find.text('Mostro Cuba'), findsOneWidget);
       expect(find.text('Online · 1/1 relays'), findsOneWidget);
@@ -312,7 +313,7 @@ void main() {
       await tester.tap(find.text('Use this node'));
       await tester.pumpAndSettle();
       expect(core.log, ['select:$cubaPubkey']);
-      expect(find.text('Pending disputes'), findsOneWidget);
+      expect(find.byType(DisputesScreen), findsOneWidget);
     });
   });
 
@@ -580,7 +581,7 @@ void main() {
       await tester.tap(find.text('Mostro'));
       await tester.pumpAndSettle();
       expect(nodes.active, mostroNodePubkey);
-      expect(find.text('Pending disputes'), findsOneWidget);
+      expect(find.byType(DisputesScreen), findsOneWidget);
     });
 
     testWidgets('Pending offers to choose one', (tester) async {

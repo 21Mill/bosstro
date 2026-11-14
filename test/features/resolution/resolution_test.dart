@@ -272,7 +272,7 @@ void main() {
         }
         final next =
             outcome == ResolveOutcome.takenOver
-                ? 'Ir a Mis disputas'
+                ? 'Ir a Disputas'
                 : 'Volver a la disputa';
         // One way on, no second action.
         expect(find.text(next), findsOneWidget);
@@ -282,7 +282,7 @@ void main() {
         expect(core.resolutions, hasLength(1), reason: 'never retried');
         if (outcome == ResolveOutcome.takenOver) {
           // The tab and its title read the same.
-          expect(find.text('Mis disputas'), findsNWidgets(2));
+          expect(find.text('Disputas'), findsNWidgets(2));
         }
       });
     }
@@ -370,8 +370,11 @@ void main() {
       expect(find.text('En curso'), findsOneWidget);
       expect(find.text('No hay disputas en curso'), findsOneWidget);
       expect(find.byType(ClosedDisputeRow), findsNothing);
-      await tester.tap(find.text('Cerradas'));
-      await tester.pumpAndSettle();
+      // The part reads the clock when it appears.
+      await withClock(Clock.fixed(_now), () async {
+        await tester.tap(find.text('Cerradas'));
+        await tester.pumpAndSettle();
+      });
       expect(tester.takeException(), isNull);
       // Lighter: how it ended and when, no opener; Recover is not offered.
       expect(find.text('PAGADO AL COMPRADOR'), findsOneWidget);

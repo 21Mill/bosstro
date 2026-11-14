@@ -12,10 +12,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appName => 'Bosstro';
 
   @override
-  String get navPending => 'Pendentes';
-
-  @override
-  String get navInProgress => 'Minhas disputas';
+  String get navDisputes => 'Disputas';
 
   @override
   String get navSettings => 'Configurações';
@@ -24,7 +21,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get noNodeSelected => 'Nenhum nó selecionado';
 
   @override
-  String get pendingTitle => 'Disputas pendentes';
+  String get disputesTitle => 'Disputas';
 
   @override
   String get pendingEmptyTitle => 'Nenhuma disputa aguardando';
@@ -32,9 +29,6 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get pendingEmptyBody =>
       'Nenhuma disputa deste nó está aguardando um solver. Quando uma operação abrir uma, ela aparecerá aqui para você assumir.';
-
-  @override
-  String get inProgressTitle => 'Minhas disputas';
 
   @override
   String get inProgressEmptyTitle => 'Nenhuma disputa em andamento';
@@ -827,13 +821,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get takeDisputeBody =>
-      'Você passa a ser o solver dela: o nó avisa o comprador e o vendedor, e a disputa vai para Minhas disputas. Só assuma uma disputa que você possa acompanhar até o fim.';
+      'Você passa a ser o solver dela: o nó avisa o comprador e o vendedor, e a disputa vai para Em andamento. Só assuma uma disputa que você possa acompanhar até o fim.';
 
   @override
   String get takeDisputeAnswer => 'Assumir a disputa';
 
   @override
-  String get takeTakenSnack => 'Disputa assumida. Ela está em Minhas disputas.';
+  String get takeTakenSnack => 'Disputa assumida. Ela aparece em Em andamento.';
 
   @override
   String get recoverAction => 'Recuperar';
@@ -843,14 +837,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get recoverNote =>
-      'O nó não publica quem está com uma disputa. Por isso, esta lista mostra todas as disputas em andamento neste nó que não estão em Minhas disputas neste celular: as suas cuja resposta se perdeu e as de outros solvers. Recupere-as uma de cada vez.';
+      'O nó não publica quem está com uma disputa. Por isso, esta lista mostra todas as disputas em andamento neste nó que não estão entre as suas neste celular: as suas cuja resposta se perdeu e as de outros solvers. Recupere-as uma de cada vez.';
 
   @override
   String get recoverEmptyTitle => 'Nada para recuperar';
 
   @override
   String get recoverEmptyBody =>
-      'Nenhuma disputa em andamento deste nó está faltando em Minhas disputas.';
+      'Nenhuma disputa em andamento deste nó está faltando entre as suas.';
 
   @override
   String get recoverDisputeHint => 'Recuperar a disputa';
@@ -867,7 +861,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get recoverTakenSnack =>
-      'Disputa recuperada. Ela está em Minhas disputas.';
+      'Disputa recuperada. Ela aparece em Em andamento.';
 
   @override
   String get notSolverTitle => 'Você não é solver neste nó';
@@ -902,7 +896,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get noAnswerBody =>
-      'Sua solicitação pode ter chegado mesmo assim, então o Bosstro não a enviou de novo. Daqui a pouco, veja em Minhas disputas ou peça de novo em Recuperar uma disputa.';
+      'Sua solicitação pode ter chegado mesmo assim, então o Bosstro não a enviou de novo. Daqui a pouco, veja em Em andamento ou peça de novo em Recuperar uma disputa.';
 
   @override
   String get takeFailedTitle => 'A solicitação não foi enviada';
@@ -1086,7 +1080,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get detailNotYoursBody =>
-      'O nó a reabriu, ou ela pertence a outra chave. Ela não está mais em Minhas disputas.';
+      'O nó a reabriu, ou ela pertence a outra chave. Ela não está mais entre as suas disputas.';
 
   @override
   String get chatSenderYou => 'Você';
@@ -1496,7 +1490,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get takenOverBody =>
-      'O nó a passou para outro solver, então nada foi pago nem reembolsado. Ela saiu de Minhas disputas.';
+      'O nó a passou para outro solver, então nada foi pago nem reembolsado. Ela não está mais entre as suas disputas.';
 
   @override
   String get notInDisputeTitle => 'Esta ordem não está mais em disputa';
@@ -1528,7 +1522,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get resolveBackToDispute => 'Voltar à disputa';
 
   @override
-  String get resolveGoToDisputes => 'Ir para Minhas disputas';
+  String get resolveGoToDisputes => 'Ir para Disputas';
 
   @override
   String get closedPaidBuyer => 'Você pagou o comprador';
@@ -1607,13 +1601,17 @@ class AppLocalizationsPt extends AppLocalizations {
   String get orderStatusFiatSent => 'Fiat enviado';
 
   @override
+  String get disputesPendingSegment => 'Pendentes';
+
+  @override
   String get myDisputesOpenSegment => 'Em andamento';
 
   @override
   String get myDisputesClosedSegment => 'Encerradas';
 
   @override
-  String get myDisputesSegmentsLabel => 'Disputas abertas ou encerradas';
+  String get disputesSegmentsLabel =>
+      'Disputas pendentes, em andamento ou encerradas';
 
   @override
   String get closedEmptyTitle => 'Nenhuma disputa encerrada ainda';

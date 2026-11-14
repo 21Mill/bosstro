@@ -12,10 +12,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appName => 'Bosstro';
 
   @override
-  String get navPending => 'In attesa';
-
-  @override
-  String get navInProgress => 'Le mie dispute';
+  String get navDisputes => 'Dispute';
 
   @override
   String get navSettings => 'Impostazioni';
@@ -24,7 +21,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noNodeSelected => 'Nessun nodo selezionato';
 
   @override
-  String get pendingTitle => 'Dispute in attesa';
+  String get disputesTitle => 'Dispute';
 
   @override
   String get pendingEmptyTitle => 'Nessuna disputa in attesa';
@@ -32,9 +29,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get pendingEmptyBody =>
       'Nessuna disputa di questo nodo è in attesa di un solver. Quando un\'operazione ne apre una, compare qui perché tu la prenda in carico.';
-
-  @override
-  String get inProgressTitle => 'Le mie dispute';
 
   @override
   String get inProgressEmptyTitle => 'Nessuna disputa in corso';
@@ -824,14 +818,13 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get takeDisputeBody =>
-      'Diventi il suo solver: il nodo avvisa l\'acquirente e il venditore, e la disputa passa in «Le mie dispute». Prendi in carico solo una disputa che puoi seguire fino alla fine.';
+      'Diventi il suo solver: il nodo avvisa l\'acquirente e il venditore, e la disputa passa in «In corso». Prendi in carico solo una disputa che puoi seguire fino alla fine.';
 
   @override
   String get takeDisputeAnswer => 'Prendi in carico';
 
   @override
-  String get takeTakenSnack =>
-      'Disputa presa in carico. È in «Le mie dispute».';
+  String get takeTakenSnack => 'Disputa presa in carico. È in «In corso».';
 
   @override
   String get recoverAction => 'Recupera';
@@ -841,14 +834,14 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get recoverNote =>
-      'Il nodo non pubblica chi ha in carico una disputa. Per questo la lista mostra tutte le dispute in corso su questo nodo che non sono in «Le mie dispute» su questo telefono: le tue la cui risposta è andata persa e quelle di altri solver. Recuperale una alla volta.';
+      'Il nodo non pubblica chi ha in carico una disputa. Per questo la lista mostra tutte le dispute in corso su questo nodo che non sono tra le tue su questo telefono: le tue la cui risposta è andata persa e quelle di altri solver. Recuperale una alla volta.';
 
   @override
   String get recoverEmptyTitle => 'Niente da recuperare';
 
   @override
   String get recoverEmptyBody =>
-      'Nessuna disputa in corso su questo nodo manca da «Le mie dispute».';
+      'Nessuna disputa in corso su questo nodo manca tra le tue.';
 
   @override
   String get recoverDisputeHint => 'Recupera la disputa';
@@ -864,7 +857,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get recoverDisputeAnswer => 'Recupera la disputa';
 
   @override
-  String get recoverTakenSnack => 'Disputa recuperata. È in «Le mie dispute».';
+  String get recoverTakenSnack => 'Disputa recuperata. È in «In corso».';
 
   @override
   String get notSolverTitle => 'Non sei solver su questo nodo';
@@ -900,7 +893,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noAnswerBody =>
-      'La tua richiesta potrebbe essergli arrivata comunque, quindi Bosstro non l\'ha inviata di nuovo. Tra un momento guarda in «Le mie dispute», o richiedila da «Recupera una disputa».';
+      'La tua richiesta potrebbe essergli arrivata comunque, quindi Bosstro non l\'ha inviata di nuovo. Tra un momento guarda in «In corso», o richiedila da «Recupera una disputa».';
 
   @override
   String get takeFailedTitle => 'La richiesta non è stata inviata';
@@ -1084,7 +1077,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get detailNotYoursBody =>
-      'Il nodo l\'ha riaperta, oppure appartiene a un\'altra chiave. Non è più in «Le mie dispute».';
+      'Il nodo l\'ha riaperta, oppure appartiene a un\'altra chiave. Non è più tra le tue dispute.';
 
   @override
   String get chatSenderYou => 'Tu';
@@ -1496,7 +1489,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get takenOverBody =>
-      'Il nodo l\'ha data a un altro solver, quindi non è stato pagato né rimborsato nulla. È uscita da «Le mie dispute».';
+      'Il nodo l\'ha data a un altro solver, quindi non è stato pagato né rimborsato nulla. Non è più tra le tue dispute.';
 
   @override
   String get notInDisputeTitle => 'Questo ordine non è più in disputa';
@@ -1528,7 +1521,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get resolveBackToDispute => 'Torna alla disputa';
 
   @override
-  String get resolveGoToDisputes => 'Vai a «Le mie dispute»';
+  String get resolveGoToDisputes => 'Vai a «Dispute»';
 
   @override
   String get closedPaidBuyer => 'Hai pagato l\'acquirente';
@@ -1611,13 +1604,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get orderStatusFiatSent => 'Fiat inviato';
 
   @override
+  String get disputesPendingSegment => 'In attesa';
+
+  @override
   String get myDisputesOpenSegment => 'In corso';
 
   @override
   String get myDisputesClosedSegment => 'Chiuse';
 
   @override
-  String get myDisputesSegmentsLabel => 'Dispute aperte o chiuse';
+  String get disputesSegmentsLabel => 'Dispute in attesa, in corso o chiuse';
 
   @override
   String get closedEmptyTitle => 'Nessuna disputa chiusa per ora';

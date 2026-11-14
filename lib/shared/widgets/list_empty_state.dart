@@ -14,7 +14,20 @@ class ListEmptyState extends StatelessWidget {
     required this.body,
     this.action,
     this.header,
-  });
+  }) : _sliver = false;
+
+  /// The same state as a sliver, for a screen whose scroll view holds more
+  /// than the state (its header, when the screen is short).
+  const ListEmptyState.sliver({
+    super.key,
+    required this.sticker,
+    required this.title,
+    required this.body,
+    this.action,
+    this.header,
+  }) : _sliver = true;
+
+  final bool _sliver;
 
   /// The sticker's name, as in `assets/images/mascot/mostro-<name>.webp`.
   final String sticker;
@@ -33,44 +46,44 @@ class ListEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pal = ShellPalette.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: redesignSidePadding,
-        vertical: 32,
-      ),
-      child: Column(
-        children: [
-          if (header case final top?) ...[top, const SizedBox(height: 24)],
-          ExcludeSemantics(
-            child: Image.asset(
-              MostroMascot.stickerAsset(sticker),
-              height: _artHeight,
-              fit: BoxFit.contain,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: pal.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            body,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.5,
-              color: pal.textSecondary,
-            ),
-          ),
-          if (action case final fix?) ...[const SizedBox(height: 24), fix],
-        ],
-      ),
+    const padding = EdgeInsets.symmetric(
+      horizontal: redesignSidePadding,
+      vertical: 32,
     );
+    final content = Column(
+      children: [
+        if (header case final top?) ...[top, const SizedBox(height: 24)],
+        ExcludeSemantics(
+          child: Image.asset(
+            MostroMascot.stickerAsset(sticker),
+            height: _artHeight,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: pal.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          body,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 14, height: 1.5, color: pal.textSecondary),
+        ),
+        if (action case final fix?) ...[const SizedBox(height: 24), fix],
+      ],
+    );
+    return _sliver
+        ? SliverPadding(
+          padding: padding,
+          sliver: SliverToBoxAdapter(child: content),
+        )
+        : SingleChildScrollView(padding: padding, child: content);
   }
 }

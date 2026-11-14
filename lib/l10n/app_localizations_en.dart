@@ -12,10 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Bosstro';
 
   @override
-  String get navPending => 'Pending';
-
-  @override
-  String get navInProgress => 'My disputes';
+  String get navDisputes => 'Disputes';
 
   @override
   String get navSettings => 'Settings';
@@ -24,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNodeSelected => 'No node selected';
 
   @override
-  String get pendingTitle => 'Pending disputes';
+  String get disputesTitle => 'Disputes';
 
   @override
   String get pendingEmptyTitle => 'No disputes waiting';
@@ -32,9 +29,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pendingEmptyBody =>
       'No dispute on this node is waiting for a solver. When a trade opens one, it shows up here for you to take.';
-
-  @override
-  String get inProgressTitle => 'My disputes';
 
   @override
   String get inProgressEmptyTitle => 'No disputes in progress';
@@ -822,13 +816,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get takeDisputeBody =>
-      'You become its solver: the node tells the buyer and the seller, and the dispute moves to My disputes. Take only a dispute you can follow to the end.';
+      'You become its solver: the node tells the buyer and the seller, and the dispute moves to In progress. Take only a dispute you can follow to the end.';
 
   @override
   String get takeDisputeAnswer => 'Take dispute';
 
   @override
-  String get takeTakenSnack => 'Dispute taken. It is in My disputes.';
+  String get takeTakenSnack => 'Dispute taken. It is under In progress.';
 
   @override
   String get recoverAction => 'Recover';
@@ -838,14 +832,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoverNote =>
-      'The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not in My disputes on this phone: yours whose answer was lost, and other solvers\'. Recover them one at a time.';
+      'The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not among yours on this phone: yours whose answer was lost, and other solvers\'. Recover them one at a time.';
 
   @override
   String get recoverEmptyTitle => 'Nothing to recover';
 
   @override
   String get recoverEmptyBody =>
-      'No dispute in progress on this node is missing from My disputes.';
+      'No dispute in progress on this node is missing from yours.';
 
   @override
   String get recoverDisputeHint => 'Recover dispute';
@@ -861,7 +855,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recoverDisputeAnswer => 'Recover dispute';
 
   @override
-  String get recoverTakenSnack => 'Dispute recovered. It is in My disputes.';
+  String get recoverTakenSnack => 'Dispute recovered. It is under In progress.';
 
   @override
   String get notSolverTitle => 'You are not a solver on this node';
@@ -896,7 +890,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noAnswerBody =>
-      'Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look in My disputes, or ask again from Recover a dispute.';
+      'Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look under In progress, or ask again from Recover a dispute.';
 
   @override
   String get takeFailedTitle => 'The request was not sent';
@@ -1080,7 +1074,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailNotYoursBody =>
-      'The node reopened it, or it belongs to another key. It is no longer in My disputes.';
+      'The node reopened it, or it belongs to another key. It is no longer among your disputes.';
 
   @override
   String get chatSenderYou => 'You';
@@ -1486,7 +1480,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get takenOverBody =>
-      'The node gave it to another solver, so nothing was paid or refunded. It has left My disputes.';
+      'The node gave it to another solver, so nothing was paid or refunded. It is no longer among your disputes.';
 
   @override
   String get notInDisputeTitle => 'This order is no longer in dispute';
@@ -1518,7 +1512,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resolveBackToDispute => 'Back to the dispute';
 
   @override
-  String get resolveGoToDisputes => 'Go to My disputes';
+  String get resolveGoToDisputes => 'Go to Disputes';
 
   @override
   String get closedPaidBuyer => 'You paid the buyer';
@@ -1598,13 +1592,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderStatusFiatSent => 'Fiat sent';
 
   @override
+  String get disputesPendingSegment => 'Pending';
+
+  @override
   String get myDisputesOpenSegment => 'In progress';
 
   @override
   String get myDisputesClosedSegment => 'Closed';
 
   @override
-  String get myDisputesSegmentsLabel => 'Open or closed disputes';
+  String get disputesSegmentsLabel => 'Pending, in progress or closed disputes';
 
   @override
   String get closedEmptyTitle => 'No closed disputes yet';

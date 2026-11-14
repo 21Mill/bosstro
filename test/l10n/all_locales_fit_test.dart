@@ -221,6 +221,12 @@ void main() {
       testWidgets('In progress, Recover and its confirmation', (tester) async {
         await _pump(tester, locale, AppRoute.inProgress);
         await _fitsToTheEnd(tester, 'In progress');
+        // At this size the segments scrolled away with the list: back up.
+        await tester.scrollUntilVisible(
+          find.text(l10n.myDisputesClosedSegment),
+          -200,
+          scrollable: find.byType(Scrollable).first,
+        );
         await _tap(tester, find.text(l10n.myDisputesClosedSegment));
         expect(find.byType(ClosedDisputeRow), findsOneWidget);
         await _fitsToTheEnd(tester, 'Closed');
