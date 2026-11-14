@@ -12,6 +12,7 @@ import 'api/disputes.dart';
 import 'api/node_info.dart';
 import 'api/nodes.dart';
 import 'api/observer.dart';
+import 'api/order_info.dart';
 import 'api/relays.dart';
 import 'api/resolve.dart';
 import 'api/settings.dart';
@@ -150,7 +151,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AttachmentProgress dco_decode_attachment_progress(dynamic raw);
 
   @protected
+  BondKind dco_decode_bond_kind(dynamic raw);
+
+  @protected
+  BondRole dco_decode_bond_role(dynamic raw);
+
+  @protected
   BondSlash dco_decode_bond_slash(dynamic raw);
+
+  @protected
+  BondSlashReason dco_decode_bond_slash_reason(dynamic raw);
+
+  @protected
+  BondState dco_decode_bond_state(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
@@ -162,7 +175,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BondSlash dco_decode_box_autoadd_bond_slash(dynamic raw);
 
   @protected
+  BondSlashReason dco_decode_box_autoadd_bond_slash_reason(dynamic raw);
+
+  @protected
   bool dco_decode_box_autoadd_bool(dynamic raw);
+
+  @protected
+  CashuEscrow dco_decode_box_autoadd_cashu_escrow(dynamic raw);
 
   @protected
   ChatAttachment dco_decode_box_autoadd_chat_attachment(dynamic raw);
@@ -192,6 +211,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double dco_decode_box_autoadd_f_64(dynamic raw);
 
   @protected
+  HoldInvoice dco_decode_box_autoadd_hold_invoice(dynamic raw);
+
+  @protected
   PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
 
   @protected
@@ -205,6 +227,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ObservedChat dco_decode_box_autoadd_observed_chat(dynamic raw);
+
+  @protected
+  OrderSnapshot dco_decode_box_autoadd_order_snapshot(dynamic raw);
+
+  @protected
+  Payout dco_decode_box_autoadd_payout(dynamic raw);
+
+  @protected
+  PayoutFailureReason dco_decode_box_autoadd_payout_failure_reason(dynamic raw);
 
   @protected
   PendingDisputes dco_decode_box_autoadd_pending_disputes(dynamic raw);
@@ -226,6 +257,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
+
+  @protected
+  CashuEscrow dco_decode_cashu_escrow(dynamic raw);
 
   @protected
   ChatAttachment dco_decode_chat_attachment(dynamic raw);
@@ -279,6 +313,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double dco_decode_f_64(dynamic raw);
 
   @protected
+  HoldInvoice dco_decode_hold_invoice(dynamic raw);
+
+  @protected
+  HoldInvoiceState dco_decode_hold_invoice_state(dynamic raw);
+
+  @protected
   int dco_decode_i_32(dynamic raw);
 
   @protected
@@ -307,6 +347,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ObservedMessage> dco_decode_list_observed_message(dynamic raw);
+
+  @protected
+  List<OrderBond> dco_decode_list_order_bond(dynamic raw);
 
   @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
@@ -356,7 +399,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BondSlash? dco_decode_opt_box_autoadd_bond_slash(dynamic raw);
 
   @protected
+  BondSlashReason? dco_decode_opt_box_autoadd_bond_slash_reason(dynamic raw);
+
+  @protected
   bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
+
+  @protected
+  CashuEscrow? dco_decode_opt_box_autoadd_cashu_escrow(dynamic raw);
 
   @protected
   ChatAttachment? dco_decode_opt_box_autoadd_chat_attachment(dynamic raw);
@@ -386,6 +435,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double? dco_decode_opt_box_autoadd_f_64(dynamic raw);
 
   @protected
+  HoldInvoice? dco_decode_opt_box_autoadd_hold_invoice(dynamic raw);
+
+  @protected
   PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
@@ -403,6 +455,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ObservedChat? dco_decode_opt_box_autoadd_observed_chat(dynamic raw);
+
+  @protected
+  OrderSnapshot? dco_decode_opt_box_autoadd_order_snapshot(dynamic raw);
+
+  @protected
+  Payout? dco_decode_opt_box_autoadd_payout(dynamic raw);
+
+  @protected
+  PayoutFailureReason? dco_decode_opt_box_autoadd_payout_failure_reason(
+    dynamic raw,
+  );
 
   @protected
   PendingDisputes? dco_decode_opt_box_autoadd_pending_disputes(dynamic raw);
@@ -427,6 +490,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<DisputeSummary>? dco_decode_opt_list_dispute_summary(dynamic raw);
+
+  @protected
+  OrderBond dco_decode_order_bond(dynamic raw);
+
+  @protected
+  OrderKind dco_decode_order_kind(dynamic raw);
+
+  @protected
+  OrderLookupError dco_decode_order_lookup_error(dynamic raw);
+
+  @protected
+  OrderLookupOutcome dco_decode_order_lookup_outcome(dynamic raw);
+
+  @protected
+  OrderLookupResult dco_decode_order_lookup_result(dynamic raw);
+
+  @protected
+  OrderSnapshot dco_decode_order_snapshot(dynamic raw);
+
+  @protected
+  OrderStatus dco_decode_order_status(dynamic raw);
+
+  @protected
+  Payout dco_decode_payout(dynamic raw);
+
+  @protected
+  PayoutFailureReason dco_decode_payout_failure_reason(dynamic raw);
+
+  @protected
+  PayoutState dco_decode_payout_state(dynamic raw);
 
   @protected
   PendingDisputes dco_decode_pending_disputes(dynamic raw);
@@ -599,7 +692,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  BondKind sse_decode_bond_kind(SseDeserializer deserializer);
+
+  @protected
+  BondRole sse_decode_bond_role(SseDeserializer deserializer);
+
+  @protected
   BondSlash sse_decode_bond_slash(SseDeserializer deserializer);
+
+  @protected
+  BondSlashReason sse_decode_bond_slash_reason(SseDeserializer deserializer);
+
+  @protected
+  BondState sse_decode_bond_state(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
@@ -613,7 +718,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BondSlash sse_decode_box_autoadd_bond_slash(SseDeserializer deserializer);
 
   @protected
+  BondSlashReason sse_decode_box_autoadd_bond_slash_reason(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
+  CashuEscrow sse_decode_box_autoadd_cashu_escrow(SseDeserializer deserializer);
 
   @protected
   ChatAttachment sse_decode_box_autoadd_chat_attachment(
@@ -653,6 +766,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double sse_decode_box_autoadd_f_64(SseDeserializer deserializer);
 
   @protected
+  HoldInvoice sse_decode_box_autoadd_hold_invoice(SseDeserializer deserializer);
+
+  @protected
   PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
@@ -670,6 +786,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ObservedChat sse_decode_box_autoadd_observed_chat(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  OrderSnapshot sse_decode_box_autoadd_order_snapshot(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  Payout sse_decode_box_autoadd_payout(SseDeserializer deserializer);
+
+  @protected
+  PayoutFailureReason sse_decode_box_autoadd_payout_failure_reason(
     SseDeserializer deserializer,
   );
 
@@ -699,6 +828,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  CashuEscrow sse_decode_cashu_escrow(SseDeserializer deserializer);
 
   @protected
   ChatAttachment sse_decode_chat_attachment(SseDeserializer deserializer);
@@ -754,6 +886,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double sse_decode_f_64(SseDeserializer deserializer);
 
   @protected
+  HoldInvoice sse_decode_hold_invoice(SseDeserializer deserializer);
+
+  @protected
+  HoldInvoiceState sse_decode_hold_invoice_state(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
@@ -794,6 +932,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ObservedMessage> sse_decode_list_observed_message(
     SseDeserializer deserializer,
   );
+
+  @protected
+  List<OrderBond> sse_decode_list_order_bond(SseDeserializer deserializer);
 
   @protected
   List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
@@ -849,7 +990,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  BondSlashReason? sse_decode_opt_box_autoadd_bond_slash_reason(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
+  CashuEscrow? sse_decode_opt_box_autoadd_cashu_escrow(
+    SseDeserializer deserializer,
+  );
 
   @protected
   ChatAttachment? sse_decode_opt_box_autoadd_chat_attachment(
@@ -895,6 +1046,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double? sse_decode_opt_box_autoadd_f_64(SseDeserializer deserializer);
 
   @protected
+  HoldInvoice? sse_decode_opt_box_autoadd_hold_invoice(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
@@ -912,6 +1068,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ObservedChat? sse_decode_opt_box_autoadd_observed_chat(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  OrderSnapshot? sse_decode_opt_box_autoadd_order_snapshot(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  Payout? sse_decode_opt_box_autoadd_payout(SseDeserializer deserializer);
+
+  @protected
+  PayoutFailureReason? sse_decode_opt_box_autoadd_payout_failure_reason(
     SseDeserializer deserializer,
   );
 
@@ -952,6 +1121,42 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<DisputeSummary>? sse_decode_opt_list_dispute_summary(
     SseDeserializer deserializer,
   );
+
+  @protected
+  OrderBond sse_decode_order_bond(SseDeserializer deserializer);
+
+  @protected
+  OrderKind sse_decode_order_kind(SseDeserializer deserializer);
+
+  @protected
+  OrderLookupError sse_decode_order_lookup_error(SseDeserializer deserializer);
+
+  @protected
+  OrderLookupOutcome sse_decode_order_lookup_outcome(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  OrderLookupResult sse_decode_order_lookup_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  OrderSnapshot sse_decode_order_snapshot(SseDeserializer deserializer);
+
+  @protected
+  OrderStatus sse_decode_order_status(SseDeserializer deserializer);
+
+  @protected
+  Payout sse_decode_payout(SseDeserializer deserializer);
+
+  @protected
+  PayoutFailureReason sse_decode_payout_failure_reason(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PayoutState sse_decode_payout_state(SseDeserializer deserializer);
 
   @protected
   PendingDisputes sse_decode_pending_disputes(SseDeserializer deserializer);
@@ -1145,7 +1350,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_bond_kind(BondKind self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_bond_role(BondRole self, SseSerializer serializer);
+
+  @protected
   void sse_encode_bond_slash(BondSlash self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_bond_slash_reason(
+    BondSlashReason self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_bond_state(BondState self, SseSerializer serializer);
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
@@ -1163,7 +1383,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_bond_slash_reason(
+    BondSlashReason self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_cashu_escrow(
+    CashuEscrow self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_chat_attachment(
@@ -1217,6 +1449,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_f_64(double self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_hold_invoice(
+    HoldInvoice self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_i_64(
     PlatformInt64 self,
     SseSerializer serializer,
@@ -1243,6 +1481,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_observed_chat(
     ObservedChat self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_order_snapshot(
+    OrderSnapshot self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_payout(Payout self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_payout_failure_reason(
+    PayoutFailureReason self,
     SseSerializer serializer,
   );
 
@@ -1284,6 +1537,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_cashu_escrow(CashuEscrow self, SseSerializer serializer);
 
   @protected
   void sse_encode_chat_attachment(
@@ -1358,6 +1614,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_f_64(double self, SseSerializer serializer);
 
   @protected
+  void sse_encode_hold_invoice(HoldInvoice self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_hold_invoice_state(
+    HoldInvoiceState self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
@@ -1402,6 +1667,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_observed_message(
     List<ObservedMessage> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_order_bond(
+    List<OrderBond> self,
     SseSerializer serializer,
   );
 
@@ -1481,7 +1752,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_bond_slash_reason(
+    BondSlashReason? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_cashu_escrow(
+    CashuEscrow? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_chat_attachment(
@@ -1535,6 +1818,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_box_autoadd_f_64(double? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_hold_invoice(
+    HoldInvoice? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_i_64(
     PlatformInt64? self,
     SseSerializer serializer,
@@ -1561,6 +1850,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_observed_chat(
     ObservedChat? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_order_snapshot(
+    OrderSnapshot? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_payout(
+    Payout? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_payout_failure_reason(
+    PayoutFailureReason? self,
     SseSerializer serializer,
   );
 
@@ -1608,6 +1915,48 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     List<DisputeSummary>? self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_order_bond(OrderBond self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_order_kind(OrderKind self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_order_lookup_error(
+    OrderLookupError self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_order_lookup_outcome(
+    OrderLookupOutcome self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_order_lookup_result(
+    OrderLookupResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_order_snapshot(OrderSnapshot self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_order_status(OrderStatus self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_payout(Payout self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_payout_failure_reason(
+    PayoutFailureReason self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_payout_state(PayoutState self, SseSerializer serializer);
 
   @protected
   void sse_encode_pending_disputes(

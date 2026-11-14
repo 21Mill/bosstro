@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1842601503;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1110505310;
 
 // Section: executor
 
@@ -994,6 +994,36 @@ fn wire__crate__api__relays__initialize_relays_impl(
         },
     )
 }
+fn wire__crate__api__order_info__is_order_id_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "is_order_id",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_text = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok(crate::api::order_info::is_order_id(api_text))?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__nodes__list_mostro_nodes_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -1057,6 +1087,42 @@ fn wire__crate__api__solver__load_solver_key_impl(
                 transform_result_sse::<_, crate::api::solver::SolverKeyError>(
                     (move || async move {
                         let output_ok = crate::api::solver::load_solver_key(api_secret).await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__order_info__lookup_order_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "lookup_order",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_order_id = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, crate::api::order_info::OrderLookupError>(
+                    (move || async move {
+                        let output_ok = crate::api::order_info::lookup_order(api_order_id).await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -2340,6 +2406,33 @@ impl SseDecode for crate::api::chat::AttachmentProgress {
     }
 }
 
+impl SseDecode for crate::api::order_info::BondKind {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::BondKind::Bond,
+            1 => crate::api::order_info::BondKind::SliceSlash,
+            2 => crate::api::order_info::BondKind::MakerRefund,
+            3 => crate::api::order_info::BondKind::Unknown,
+            _ => unreachable!("Invalid variant for BondKind: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::BondRole {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::BondRole::Maker,
+            1 => crate::api::order_info::BondRole::Taker,
+            2 => crate::api::order_info::BondRole::Unknown,
+            _ => unreachable!("Invalid variant for BondRole: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::api::resolve::BondSlash {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2354,10 +2447,53 @@ impl SseDecode for crate::api::resolve::BondSlash {
     }
 }
 
+impl SseDecode for crate::api::order_info::BondSlashReason {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::BondSlashReason::LostDispute,
+            1 => crate::api::order_info::BondSlashReason::Timeout,
+            2 => crate::api::order_info::BondSlashReason::Unknown,
+            _ => unreachable!("Invalid variant for BondSlashReason: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::BondState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::BondState::Requested,
+            1 => crate::api::order_info::BondState::Locked,
+            2 => crate::api::order_info::BondState::Released,
+            3 => crate::api::order_info::BondState::PendingPayout,
+            4 => crate::api::order_info::BondState::Slashed,
+            5 => crate::api::order_info::BondState::Forfeited,
+            6 => crate::api::order_info::BondState::Failed,
+            7 => crate::api::order_info::BondState::Unknown,
+            _ => unreachable!("Invalid variant for BondState: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_u8().unwrap() != 0
+    }
+}
+
+impl SseDecode for crate::api::order_info::CashuEscrow {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_mintUrl = <String>::sse_decode(deserializer);
+        let mut var_lockedAt = <Option<i64>>::sse_decode(deserializer);
+        return crate::api::order_info::CashuEscrow {
+            mint_url: var_mintUrl,
+            locked_at: var_lockedAt,
+        };
     }
 }
 
@@ -2664,6 +2800,35 @@ impl SseDecode for f64 {
     }
 }
 
+impl SseDecode for crate::api::order_info::HoldInvoice {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_state = <crate::api::order_info::HoldInvoiceState>::sse_decode(deserializer);
+        let mut var_heldAt = <Option<i64>>::sse_decode(deserializer);
+        return crate::api::order_info::HoldInvoice {
+            state: var_state,
+            held_at: var_heldAt,
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::HoldInvoiceState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::HoldInvoiceState::Open,
+            1 => crate::api::order_info::HoldInvoiceState::Accepted,
+            2 => crate::api::order_info::HoldInvoiceState::Settled,
+            3 => crate::api::order_info::HoldInvoiceState::Canceled,
+            4 => crate::api::order_info::HoldInvoiceState::NotFound,
+            5 => crate::api::order_info::HoldInvoiceState::Unavailable,
+            6 => crate::api::order_info::HoldInvoiceState::Unknown,
+            _ => unreachable!("Invalid variant for HoldInvoiceState: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2780,6 +2945,20 @@ impl SseDecode for Vec<crate::api::observer::ObservedMessage> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<crate::api::observer::ObservedMessage>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::order_info::OrderBond> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::order_info::OrderBond>::sse_decode(
                 deserializer,
             ));
         }
@@ -3049,11 +3228,37 @@ impl SseDecode for Option<crate::api::resolve::BondSlash> {
     }
 }
 
+impl SseDecode for Option<crate::api::order_info::BondSlashReason> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::order_info::BondSlashReason>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<bool> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<bool>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::order_info::CashuEscrow> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::order_info::CashuEscrow>::sse_decode(
+                deserializer,
+            ));
         } else {
             return None;
         }
@@ -3165,6 +3370,19 @@ impl SseDecode for Option<f64> {
     }
 }
 
+impl SseDecode for Option<crate::api::order_info::HoldInvoice> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::order_info::HoldInvoice>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<i64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3218,6 +3436,43 @@ impl SseDecode for Option<crate::api::observer::ObservedChat> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<crate::api::observer::ObservedChat>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::order_info::OrderSnapshot> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::order_info::OrderSnapshot>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::order_info::Payout> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::order_info::Payout>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::order_info::PayoutFailureReason> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::order_info::PayoutFailureReason>::sse_decode(
                 deserializer,
             ));
         } else {
@@ -3317,6 +3572,242 @@ impl SseDecode for Option<Vec<crate::api::disputes::DisputeSummary>> {
         } else {
             return None;
         }
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderBond {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_role = <crate::api::order_info::BondRole>::sse_decode(deserializer);
+        let mut var_amount = <i64>::sse_decode(deserializer);
+        let mut var_state = <crate::api::order_info::BondState>::sse_decode(deserializer);
+        let mut var_slashReason =
+            <Option<crate::api::order_info::BondSlashReason>>::sse_decode(deserializer);
+        let mut var_kind = <crate::api::order_info::BondKind>::sse_decode(deserializer);
+        let mut var_rootOrderId = <Option<String>>::sse_decode(deserializer);
+        return crate::api::order_info::OrderBond {
+            role: var_role,
+            amount: var_amount,
+            state: var_state,
+            slash_reason: var_slashReason,
+            kind: var_kind,
+            root_order_id: var_rootOrderId,
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderKind {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::OrderKind::Buy,
+            1 => crate::api::order_info::OrderKind::Sell,
+            2 => crate::api::order_info::OrderKind::Unknown,
+            _ => unreachable!("Invalid variant for OrderKind: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderLookupError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::OrderLookupError::NoKey,
+            1 => crate::api::order_info::OrderLookupError::NoNode,
+            2 => crate::api::order_info::OrderLookupError::NoRelays,
+            3 => crate::api::order_info::OrderLookupError::InvalidOrderId,
+            4 => crate::api::order_info::OrderLookupError::ProtocolUnsupported,
+            5 => crate::api::order_info::OrderLookupError::NodeInfoUnavailable,
+            6 => crate::api::order_info::OrderLookupError::SendFailed,
+            _ => unreachable!("Invalid variant for OrderLookupError: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderLookupOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::OrderLookupOutcome::Found,
+            1 => crate::api::order_info::OrderLookupOutcome::NotFound,
+            2 => crate::api::order_info::OrderLookupOutcome::NotSolver,
+            3 => crate::api::order_info::OrderLookupOutcome::Refused,
+            4 => crate::api::order_info::OrderLookupOutcome::NoAnswer,
+            _ => unreachable!("Invalid variant for OrderLookupOutcome: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderLookupResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_mostroPubkey = <String>::sse_decode(deserializer);
+        let mut var_orderId = <String>::sse_decode(deserializer);
+        let mut var_outcome =
+            <crate::api::order_info::OrderLookupOutcome>::sse_decode(deserializer);
+        let mut var_order =
+            <Option<crate::api::order_info::OrderSnapshot>>::sse_decode(deserializer);
+        let mut var_reason = <Option<String>>::sse_decode(deserializer);
+        let mut var_askedAt = <i64>::sse_decode(deserializer);
+        return crate::api::order_info::OrderLookupResult {
+            mostro_pubkey: var_mostroPubkey,
+            order_id: var_orderId,
+            outcome: var_outcome,
+            order: var_order,
+            reason: var_reason,
+            asked_at: var_askedAt,
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderSnapshot {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_orderId = <String>::sse_decode(deserializer);
+        let mut var_kind = <crate::api::order_info::OrderKind>::sse_decode(deserializer);
+        let mut var_kindRaw = <String>::sse_decode(deserializer);
+        let mut var_status = <crate::api::order_info::OrderStatus>::sse_decode(deserializer);
+        let mut var_statusRaw = <String>::sse_decode(deserializer);
+        let mut var_amount = <i64>::sse_decode(deserializer);
+        let mut var_fee = <i64>::sse_decode(deserializer);
+        let mut var_routingFee = <i64>::sse_decode(deserializer);
+        let mut var_fiatCode = <String>::sse_decode(deserializer);
+        let mut var_fiatAmount = <i64>::sse_decode(deserializer);
+        let mut var_minAmount = <Option<i64>>::sse_decode(deserializer);
+        let mut var_maxAmount = <Option<i64>>::sse_decode(deserializer);
+        let mut var_paymentMethod = <String>::sse_decode(deserializer);
+        let mut var_premium = <i64>::sse_decode(deserializer);
+        let mut var_rangeParentId = <Option<String>>::sse_decode(deserializer);
+        let mut var_createdAt = <Option<i64>>::sse_decode(deserializer);
+        let mut var_takenAt = <Option<i64>>::sse_decode(deserializer);
+        let mut var_expiresAt = <Option<i64>>::sse_decode(deserializer);
+        let mut var_buyerTradePubkey = <Option<String>>::sse_decode(deserializer);
+        let mut var_sellerTradePubkey = <Option<String>>::sse_decode(deserializer);
+        let mut var_buyerDispute = <bool>::sse_decode(deserializer);
+        let mut var_sellerDispute = <bool>::sse_decode(deserializer);
+        let mut var_buyerCooperativeCancel = <bool>::sse_decode(deserializer);
+        let mut var_sellerCooperativeCancel = <bool>::sse_decode(deserializer);
+        let mut var_failedPayment = <bool>::sse_decode(deserializer);
+        let mut var_paymentAttempts = <i64>::sse_decode(deserializer);
+        let mut var_holdSettledAt = <Option<i64>>::sse_decode(deserializer);
+        let mut var_holdInvoice =
+            <Option<crate::api::order_info::HoldInvoice>>::sse_decode(deserializer);
+        let mut var_cashuEscrow =
+            <Option<crate::api::order_info::CashuEscrow>>::sse_decode(deserializer);
+        let mut var_payout = <Option<crate::api::order_info::Payout>>::sse_decode(deserializer);
+        let mut var_bonds = <Vec<crate::api::order_info::OrderBond>>::sse_decode(deserializer);
+        return crate::api::order_info::OrderSnapshot {
+            order_id: var_orderId,
+            kind: var_kind,
+            kind_raw: var_kindRaw,
+            status: var_status,
+            status_raw: var_statusRaw,
+            amount: var_amount,
+            fee: var_fee,
+            routing_fee: var_routingFee,
+            fiat_code: var_fiatCode,
+            fiat_amount: var_fiatAmount,
+            min_amount: var_minAmount,
+            max_amount: var_maxAmount,
+            payment_method: var_paymentMethod,
+            premium: var_premium,
+            range_parent_id: var_rangeParentId,
+            created_at: var_createdAt,
+            taken_at: var_takenAt,
+            expires_at: var_expiresAt,
+            buyer_trade_pubkey: var_buyerTradePubkey,
+            seller_trade_pubkey: var_sellerTradePubkey,
+            buyer_dispute: var_buyerDispute,
+            seller_dispute: var_sellerDispute,
+            buyer_cooperative_cancel: var_buyerCooperativeCancel,
+            seller_cooperative_cancel: var_sellerCooperativeCancel,
+            failed_payment: var_failedPayment,
+            payment_attempts: var_paymentAttempts,
+            hold_settled_at: var_holdSettledAt,
+            hold_invoice: var_holdInvoice,
+            cashu_escrow: var_cashuEscrow,
+            payout: var_payout,
+            bonds: var_bonds,
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::OrderStatus {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::OrderStatus::Pending,
+            1 => crate::api::order_info::OrderStatus::WaitingMakerBond,
+            2 => crate::api::order_info::OrderStatus::WaitingTakerBond,
+            3 => crate::api::order_info::OrderStatus::WaitingBuyerInvoice,
+            4 => crate::api::order_info::OrderStatus::WaitingPayment,
+            5 => crate::api::order_info::OrderStatus::InProgress,
+            6 => crate::api::order_info::OrderStatus::Active,
+            7 => crate::api::order_info::OrderStatus::FiatSent,
+            8 => crate::api::order_info::OrderStatus::SettledHoldInvoice,
+            9 => crate::api::order_info::OrderStatus::Success,
+            10 => crate::api::order_info::OrderStatus::Dispute,
+            11 => crate::api::order_info::OrderStatus::Canceled,
+            12 => crate::api::order_info::OrderStatus::CooperativelyCanceled,
+            13 => crate::api::order_info::OrderStatus::CanceledByAdmin,
+            14 => crate::api::order_info::OrderStatus::SettledByAdmin,
+            15 => crate::api::order_info::OrderStatus::CompletedByAdmin,
+            16 => crate::api::order_info::OrderStatus::Expired,
+            17 => crate::api::order_info::OrderStatus::Unknown,
+            _ => unreachable!("Invalid variant for OrderStatus: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::Payout {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_state = <crate::api::order_info::PayoutState>::sse_decode(deserializer);
+        let mut var_failureReason =
+            <Option<crate::api::order_info::PayoutFailureReason>>::sse_decode(deserializer);
+        let mut var_resolvedAt = <Option<i64>>::sse_decode(deserializer);
+        return crate::api::order_info::Payout {
+            state: var_state,
+            failure_reason: var_failureReason,
+            resolved_at: var_resolvedAt,
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::PayoutFailureReason {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::PayoutFailureReason::Timeout,
+            1 => crate::api::order_info::PayoutFailureReason::NoRoute,
+            2 => crate::api::order_info::PayoutFailureReason::Error,
+            3 => crate::api::order_info::PayoutFailureReason::IncorrectPaymentDetails,
+            4 => crate::api::order_info::PayoutFailureReason::InsufficientBalance,
+            5 => crate::api::order_info::PayoutFailureReason::Canceled,
+            6 => crate::api::order_info::PayoutFailureReason::Unknown,
+            _ => unreachable!("Invalid variant for PayoutFailureReason: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::api::order_info::PayoutState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::order_info::PayoutState::InFlight,
+            1 => crate::api::order_info::PayoutState::Succeeded,
+            2 => crate::api::order_info::PayoutState::Failed,
+            3 => crate::api::order_info::PayoutState::NotFound,
+            4 => crate::api::order_info::PayoutState::Unavailable,
+            5 => crate::api::order_info::PayoutState::Unknown,
+            _ => unreachable!("Invalid variant for PayoutState: {}", inner),
+        };
     }
 }
 
@@ -3717,83 +4208,84 @@ fn pde_ffi_dispatcher_primary_impl(
         22 => wire__crate__api__init_app_impl(port, ptr, rust_vec_len, data_len),
         23 => wire__crate__api__init_db_impl(port, ptr, rust_vec_len, data_len),
         24 => wire__crate__api__relays__initialize_relays_impl(port, ptr, rust_vec_len, data_len),
-        25 => wire__crate__api__nodes__list_mostro_nodes_impl(port, ptr, rust_vec_len, data_len),
-        26 => wire__crate__api__solver__load_solver_key_impl(port, ptr, rust_vec_len, data_len),
-        27 => {
+        26 => wire__crate__api__nodes__list_mostro_nodes_impl(port, ptr, rust_vec_len, data_len),
+        27 => wire__crate__api__solver__load_solver_key_impl(port, ptr, rust_vec_len, data_len),
+        28 => wire__crate__api__order_info__lookup_order_impl(port, ptr, rust_vec_len, data_len),
+        29 => {
             wire__crate__api__node_info__node_info_default_impl(port, ptr, rust_vec_len, data_len)
         }
-        28 => wire__crate__api__observer__observed_chat_impl(port, ptr, rust_vec_len, data_len),
-        29 => {
+        30 => wire__crate__api__observer__observed_chat_impl(port, ptr, rust_vec_len, data_len),
+        31 => {
             wire__crate__api__chat__on_attachment_progress_impl(port, ptr, rust_vec_len, data_len)
         }
-        30 => wire__crate__api__chat__on_chat_updates_impl(port, ptr, rust_vec_len, data_len),
-        31 => wire__crate__api__relays__on_connection_state_changed_impl(
+        32 => wire__crate__api__chat__on_chat_updates_impl(port, ptr, rust_vec_len, data_len),
+        33 => wire__crate__api__relays__on_connection_state_changed_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        32 => {
+        34 => {
             wire__crate__api__disputes__on_dispute_updates_impl(port, ptr, rust_vec_len, data_len)
         }
-        33 => wire__crate__api__relays__on_relay_status_changed_impl(
+        35 => wire__crate__api__relays__on_relay_status_changed_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        34 => wire__crate__api__chat__open_chat_attachment_impl(port, ptr, rust_vec_len, data_len),
-        35 => wire__crate__api__observer__paste_shared_key_impl(port, ptr, rust_vec_len, data_len),
-        36 => wire__crate__api__disputes__pending_disputes_impl(port, ptr, rust_vec_len, data_len),
-        38 => wire__crate__api__node_info__protocol_support_default_impl(
+        36 => wire__crate__api__chat__open_chat_attachment_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__api__observer__paste_shared_key_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__api__disputes__pending_disputes_impl(port, ptr, rust_vec_len, data_len),
+        40 => wire__crate__api__node_info__protocol_support_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        39 => {
+        41 => {
             wire__crate__api__observer__read_observed_chat_impl(port, ptr, rust_vec_len, data_len)
         }
-        40 => wire__crate__api__take__recover_candidates_impl(port, ptr, rust_vec_len, data_len),
-        41 => wire__crate__api__nodes__refresh_mostro_node_metadata_impl(
+        42 => wire__crate__api__take__recover_candidates_impl(port, ptr, rust_vec_len, data_len),
+        43 => wire__crate__api__nodes__refresh_mostro_node_metadata_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        42 => {
+        44 => {
             wire__crate__api__nodes__rehydrate_active_node_impl(port, ptr, rust_vec_len, data_len)
         }
-        43 => wire__crate__api__nodes__remove_custom_mostro_node_impl(
+        45 => wire__crate__api__nodes__remove_custom_mostro_node_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        44 => wire__crate__api__relays__remove_relay_impl(port, ptr, rust_vec_len, data_len),
-        45 => wire__crate__api__resolve__resolve_dispute_impl(port, ptr, rust_vec_len, data_len),
-        46 => wire__crate__api__chat__retry_chat_message_impl(port, ptr, rust_vec_len, data_len),
-        47 => wire__crate__api__nodes__select_active_node_impl(port, ptr, rust_vec_len, data_len),
-        48 => wire__crate__api__chat__send_chat_attachment_impl(port, ptr, rust_vec_len, data_len),
-        49 => wire__crate__api__chat__send_chat_message_impl(port, ptr, rust_vec_len, data_len),
-        50 => wire__crate__api__settings__set_language_impl(port, ptr, rust_vec_len, data_len),
-        51 => wire__crate__api__take__solver_permission_default_impl(
+        46 => wire__crate__api__relays__remove_relay_impl(port, ptr, rust_vec_len, data_len),
+        47 => wire__crate__api__resolve__resolve_dispute_impl(port, ptr, rust_vec_len, data_len),
+        48 => wire__crate__api__chat__retry_chat_message_impl(port, ptr, rust_vec_len, data_len),
+        49 => wire__crate__api__nodes__select_active_node_impl(port, ptr, rust_vec_len, data_len),
+        50 => wire__crate__api__chat__send_chat_attachment_impl(port, ptr, rust_vec_len, data_len),
+        51 => wire__crate__api__chat__send_chat_message_impl(port, ptr, rust_vec_len, data_len),
+        52 => wire__crate__api__settings__set_language_impl(port, ptr, rust_vec_len, data_len),
+        53 => wire__crate__api__take__solver_permission_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        52 => wire__crate__api__solver__solver_pubkey_impl(port, ptr, rust_vec_len, data_len),
-        53 => wire__crate__api__take__solver_standing_impl(port, ptr, rust_vec_len, data_len),
-        54 => wire__crate__api__take__solver_status_default_impl(port, ptr, rust_vec_len, data_len),
-        55 => wire__crate__api__nodes__sync_mostro_node_pictures_impl(
+        54 => wire__crate__api__solver__solver_pubkey_impl(port, ptr, rust_vec_len, data_len),
+        55 => wire__crate__api__take__solver_standing_impl(port, ptr, rust_vec_len, data_len),
+        56 => wire__crate__api__take__solver_status_default_impl(port, ptr, rust_vec_len, data_len),
+        57 => wire__crate__api__nodes__sync_mostro_node_pictures_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        56 => wire__crate__api__take__take_dispute_impl(port, ptr, rust_vec_len, data_len),
-        57 => wire__crate__api__solver__unload_solver_key_impl(port, ptr, rust_vec_len, data_len),
+        58 => wire__crate__api__take__take_dispute_impl(port, ptr, rust_vec_len, data_len),
+        59 => wire__crate__api__solver__unload_solver_key_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -3809,7 +4301,8 @@ fn pde_ffi_dispatcher_sync_impl(
         6 => wire__crate__api__nodes__active_node_impl(ptr, rust_vec_len, data_len),
         9 => wire__crate__api__app_version_impl(ptr, rust_vec_len, data_len),
         13 => wire__crate__api__solver__create_solver_account_impl(ptr, rust_vec_len, data_len),
-        37 => wire__crate__api__solver__preview_npub_impl(ptr, rust_vec_len, data_len),
+        25 => wire__crate__api__order_info__is_order_id_impl(ptr, rust_vec_len, data_len),
+        39 => wire__crate__api__solver__preview_npub_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -3926,6 +4419,51 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::chat::AttachmentProgress>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::BondKind {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Bond => 0.into_dart(),
+            Self::SliceSlash => 1.into_dart(),
+            Self::MakerRefund => 2.into_dart(),
+            Self::Unknown => 3.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::BondKind
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::BondKind>
+    for crate::api::order_info::BondKind
+{
+    fn into_into_dart(self) -> crate::api::order_info::BondKind {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::BondRole {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Maker => 0.into_dart(),
+            Self::Taker => 1.into_dart(),
+            Self::Unknown => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::BondRole
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::BondRole>
+    for crate::api::order_info::BondRole
+{
+    fn into_into_dart(self) -> crate::api::order_info::BondRole {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::resolve::BondSlash {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -3945,6 +4483,76 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::resolve::BondSlash>
     for crate::api::resolve::BondSlash
 {
     fn into_into_dart(self) -> crate::api::resolve::BondSlash {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::BondSlashReason {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::LostDispute => 0.into_dart(),
+            Self::Timeout => 1.into_dart(),
+            Self::Unknown => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::BondSlashReason
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::BondSlashReason>
+    for crate::api::order_info::BondSlashReason
+{
+    fn into_into_dart(self) -> crate::api::order_info::BondSlashReason {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::BondState {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Requested => 0.into_dart(),
+            Self::Locked => 1.into_dart(),
+            Self::Released => 2.into_dart(),
+            Self::PendingPayout => 3.into_dart(),
+            Self::Slashed => 4.into_dart(),
+            Self::Forfeited => 5.into_dart(),
+            Self::Failed => 6.into_dart(),
+            Self::Unknown => 7.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::BondState
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::BondState>
+    for crate::api::order_info::BondState
+{
+    fn into_into_dart(self) -> crate::api::order_info::BondState {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::CashuEscrow {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.mint_url.into_into_dart().into_dart(),
+            self.locked_at.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::CashuEscrow
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::CashuEscrow>
+    for crate::api::order_info::CashuEscrow
+{
+    fn into_into_dart(self) -> crate::api::order_info::CashuEscrow {
         self
     }
 }
@@ -4331,6 +4939,53 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::disputes::DisputeUpdate>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::HoldInvoice {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.state.into_into_dart().into_dart(),
+            self.held_at.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::HoldInvoice
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::HoldInvoice>
+    for crate::api::order_info::HoldInvoice
+{
+    fn into_into_dart(self) -> crate::api::order_info::HoldInvoice {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::HoldInvoiceState {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Open => 0.into_dart(),
+            Self::Accepted => 1.into_dart(),
+            Self::Settled => 2.into_dart(),
+            Self::Canceled => 3.into_dart(),
+            Self::NotFound => 4.into_dart(),
+            Self::Unavailable => 5.into_dart(),
+            Self::Unknown => 6.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::HoldInvoiceState
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::HoldInvoiceState>
+    for crate::api::order_info::HoldInvoiceState
+{
+    fn into_into_dart(self) -> crate::api::order_info::HoldInvoiceState {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::take::InProgressDisputes {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -4588,6 +5243,288 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::chat::OpenedAttachment>
     for crate::api::chat::OpenedAttachment
 {
     fn into_into_dart(self) -> crate::api::chat::OpenedAttachment {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderBond {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.role.into_into_dart().into_dart(),
+            self.amount.into_into_dart().into_dart(),
+            self.state.into_into_dart().into_dart(),
+            self.slash_reason.into_into_dart().into_dart(),
+            self.kind.into_into_dart().into_dart(),
+            self.root_order_id.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderBond
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderBond>
+    for crate::api::order_info::OrderBond
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderBond {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderKind {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Buy => 0.into_dart(),
+            Self::Sell => 1.into_dart(),
+            Self::Unknown => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderKind
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderKind>
+    for crate::api::order_info::OrderKind
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderKind {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderLookupError {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::NoKey => 0.into_dart(),
+            Self::NoNode => 1.into_dart(),
+            Self::NoRelays => 2.into_dart(),
+            Self::InvalidOrderId => 3.into_dart(),
+            Self::ProtocolUnsupported => 4.into_dart(),
+            Self::NodeInfoUnavailable => 5.into_dart(),
+            Self::SendFailed => 6.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderLookupError
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderLookupError>
+    for crate::api::order_info::OrderLookupError
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderLookupError {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderLookupOutcome {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Found => 0.into_dart(),
+            Self::NotFound => 1.into_dart(),
+            Self::NotSolver => 2.into_dart(),
+            Self::Refused => 3.into_dart(),
+            Self::NoAnswer => 4.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderLookupOutcome
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderLookupOutcome>
+    for crate::api::order_info::OrderLookupOutcome
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderLookupOutcome {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderLookupResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.mostro_pubkey.into_into_dart().into_dart(),
+            self.order_id.into_into_dart().into_dart(),
+            self.outcome.into_into_dart().into_dart(),
+            self.order.into_into_dart().into_dart(),
+            self.reason.into_into_dart().into_dart(),
+            self.asked_at.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderLookupResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderLookupResult>
+    for crate::api::order_info::OrderLookupResult
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderLookupResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderSnapshot {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.order_id.into_into_dart().into_dart(),
+            self.kind.into_into_dart().into_dart(),
+            self.kind_raw.into_into_dart().into_dart(),
+            self.status.into_into_dart().into_dart(),
+            self.status_raw.into_into_dart().into_dart(),
+            self.amount.into_into_dart().into_dart(),
+            self.fee.into_into_dart().into_dart(),
+            self.routing_fee.into_into_dart().into_dart(),
+            self.fiat_code.into_into_dart().into_dart(),
+            self.fiat_amount.into_into_dart().into_dart(),
+            self.min_amount.into_into_dart().into_dart(),
+            self.max_amount.into_into_dart().into_dart(),
+            self.payment_method.into_into_dart().into_dart(),
+            self.premium.into_into_dart().into_dart(),
+            self.range_parent_id.into_into_dart().into_dart(),
+            self.created_at.into_into_dart().into_dart(),
+            self.taken_at.into_into_dart().into_dart(),
+            self.expires_at.into_into_dart().into_dart(),
+            self.buyer_trade_pubkey.into_into_dart().into_dart(),
+            self.seller_trade_pubkey.into_into_dart().into_dart(),
+            self.buyer_dispute.into_into_dart().into_dart(),
+            self.seller_dispute.into_into_dart().into_dart(),
+            self.buyer_cooperative_cancel.into_into_dart().into_dart(),
+            self.seller_cooperative_cancel.into_into_dart().into_dart(),
+            self.failed_payment.into_into_dart().into_dart(),
+            self.payment_attempts.into_into_dart().into_dart(),
+            self.hold_settled_at.into_into_dart().into_dart(),
+            self.hold_invoice.into_into_dart().into_dart(),
+            self.cashu_escrow.into_into_dart().into_dart(),
+            self.payout.into_into_dart().into_dart(),
+            self.bonds.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderSnapshot
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderSnapshot>
+    for crate::api::order_info::OrderSnapshot
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderSnapshot {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::OrderStatus {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Pending => 0.into_dart(),
+            Self::WaitingMakerBond => 1.into_dart(),
+            Self::WaitingTakerBond => 2.into_dart(),
+            Self::WaitingBuyerInvoice => 3.into_dart(),
+            Self::WaitingPayment => 4.into_dart(),
+            Self::InProgress => 5.into_dart(),
+            Self::Active => 6.into_dart(),
+            Self::FiatSent => 7.into_dart(),
+            Self::SettledHoldInvoice => 8.into_dart(),
+            Self::Success => 9.into_dart(),
+            Self::Dispute => 10.into_dart(),
+            Self::Canceled => 11.into_dart(),
+            Self::CooperativelyCanceled => 12.into_dart(),
+            Self::CanceledByAdmin => 13.into_dart(),
+            Self::SettledByAdmin => 14.into_dart(),
+            Self::CompletedByAdmin => 15.into_dart(),
+            Self::Expired => 16.into_dart(),
+            Self::Unknown => 17.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::OrderStatus
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::OrderStatus>
+    for crate::api::order_info::OrderStatus
+{
+    fn into_into_dart(self) -> crate::api::order_info::OrderStatus {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::Payout {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.state.into_into_dart().into_dart(),
+            self.failure_reason.into_into_dart().into_dart(),
+            self.resolved_at.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::Payout
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::Payout>
+    for crate::api::order_info::Payout
+{
+    fn into_into_dart(self) -> crate::api::order_info::Payout {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::PayoutFailureReason {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Timeout => 0.into_dart(),
+            Self::NoRoute => 1.into_dart(),
+            Self::Error => 2.into_dart(),
+            Self::IncorrectPaymentDetails => 3.into_dart(),
+            Self::InsufficientBalance => 4.into_dart(),
+            Self::Canceled => 5.into_dart(),
+            Self::Unknown => 6.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::PayoutFailureReason
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::PayoutFailureReason>
+    for crate::api::order_info::PayoutFailureReason
+{
+    fn into_into_dart(self) -> crate::api::order_info::PayoutFailureReason {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::order_info::PayoutState {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::InFlight => 0.into_dart(),
+            Self::Succeeded => 1.into_dart(),
+            Self::Failed => 2.into_dart(),
+            Self::NotFound => 3.into_dart(),
+            Self::Unavailable => 4.into_dart(),
+            Self::Unknown => 5.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::order_info::PayoutState
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::order_info::PayoutState>
+    for crate::api::order_info::PayoutState
+{
+    fn into_into_dart(self) -> crate::api::order_info::PayoutState {
         self
     }
 }
@@ -5164,6 +6101,41 @@ impl SseEncode for crate::api::chat::AttachmentProgress {
     }
 }
 
+impl SseEncode for crate::api::order_info::BondKind {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::BondKind::Bond => 0,
+                crate::api::order_info::BondKind::SliceSlash => 1,
+                crate::api::order_info::BondKind::MakerRefund => 2,
+                crate::api::order_info::BondKind::Unknown => 3,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::BondRole {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::BondRole::Maker => 0,
+                crate::api::order_info::BondRole::Taker => 1,
+                crate::api::order_info::BondRole::Unknown => 2,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::api::resolve::BondSlash {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5182,10 +6154,57 @@ impl SseEncode for crate::api::resolve::BondSlash {
     }
 }
 
+impl SseEncode for crate::api::order_info::BondSlashReason {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::BondSlashReason::LostDispute => 0,
+                crate::api::order_info::BondSlashReason::Timeout => 1,
+                crate::api::order_info::BondSlashReason::Unknown => 2,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::BondState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::BondState::Requested => 0,
+                crate::api::order_info::BondState::Locked => 1,
+                crate::api::order_info::BondState::Released => 2,
+                crate::api::order_info::BondState::PendingPayout => 3,
+                crate::api::order_info::BondState::Slashed => 4,
+                crate::api::order_info::BondState::Forfeited => 5,
+                crate::api::order_info::BondState::Failed => 6,
+                crate::api::order_info::BondState::Unknown => 7,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_u8(self as _).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::order_info::CashuEscrow {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.mint_url, serializer);
+        <Option<i64>>::sse_encode(self.locked_at, serializer);
     }
 }
 
@@ -5460,6 +6479,35 @@ impl SseEncode for f64 {
     }
 }
 
+impl SseEncode for crate::api::order_info::HoldInvoice {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::order_info::HoldInvoiceState>::sse_encode(self.state, serializer);
+        <Option<i64>>::sse_encode(self.held_at, serializer);
+    }
+}
+
+impl SseEncode for crate::api::order_info::HoldInvoiceState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::HoldInvoiceState::Open => 0,
+                crate::api::order_info::HoldInvoiceState::Accepted => 1,
+                crate::api::order_info::HoldInvoiceState::Settled => 2,
+                crate::api::order_info::HoldInvoiceState::Canceled => 3,
+                crate::api::order_info::HoldInvoiceState::NotFound => 4,
+                crate::api::order_info::HoldInvoiceState::Unavailable => 5,
+                crate::api::order_info::HoldInvoiceState::Unknown => 6,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5547,6 +6595,16 @@ impl SseEncode for Vec<crate::api::observer::ObservedMessage> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::observer::ObservedMessage>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::order_info::OrderBond> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::order_info::OrderBond>::sse_encode(item, serializer);
         }
     }
 }
@@ -5731,12 +6789,32 @@ impl SseEncode for Option<crate::api::resolve::BondSlash> {
     }
 }
 
+impl SseEncode for Option<crate::api::order_info::BondSlashReason> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::order_info::BondSlashReason>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<bool> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <bool>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::order_info::CashuEscrow> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::order_info::CashuEscrow>::sse_encode(value, serializer);
         }
     }
 }
@@ -5831,6 +6909,16 @@ impl SseEncode for Option<f64> {
     }
 }
 
+impl SseEncode for Option<crate::api::order_info::HoldInvoice> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::order_info::HoldInvoice>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<i64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5877,6 +6965,36 @@ impl SseEncode for Option<crate::api::observer::ObservedChat> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::api::observer::ObservedChat>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::order_info::OrderSnapshot> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::order_info::OrderSnapshot>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::order_info::Payout> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::order_info::Payout>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::order_info::PayoutFailureReason> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::order_info::PayoutFailureReason>::sse_encode(value, serializer);
         }
     }
 }
@@ -5958,6 +7076,212 @@ impl SseEncode for Option<Vec<crate::api::disputes::DisputeSummary>> {
         if let Some(value) = self {
             <Vec<crate::api::disputes::DisputeSummary>>::sse_encode(value, serializer);
         }
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderBond {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::order_info::BondRole>::sse_encode(self.role, serializer);
+        <i64>::sse_encode(self.amount, serializer);
+        <crate::api::order_info::BondState>::sse_encode(self.state, serializer);
+        <Option<crate::api::order_info::BondSlashReason>>::sse_encode(
+            self.slash_reason,
+            serializer,
+        );
+        <crate::api::order_info::BondKind>::sse_encode(self.kind, serializer);
+        <Option<String>>::sse_encode(self.root_order_id, serializer);
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderKind {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::OrderKind::Buy => 0,
+                crate::api::order_info::OrderKind::Sell => 1,
+                crate::api::order_info::OrderKind::Unknown => 2,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderLookupError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::OrderLookupError::NoKey => 0,
+                crate::api::order_info::OrderLookupError::NoNode => 1,
+                crate::api::order_info::OrderLookupError::NoRelays => 2,
+                crate::api::order_info::OrderLookupError::InvalidOrderId => 3,
+                crate::api::order_info::OrderLookupError::ProtocolUnsupported => 4,
+                crate::api::order_info::OrderLookupError::NodeInfoUnavailable => 5,
+                crate::api::order_info::OrderLookupError::SendFailed => 6,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderLookupOutcome {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::OrderLookupOutcome::Found => 0,
+                crate::api::order_info::OrderLookupOutcome::NotFound => 1,
+                crate::api::order_info::OrderLookupOutcome::NotSolver => 2,
+                crate::api::order_info::OrderLookupOutcome::Refused => 3,
+                crate::api::order_info::OrderLookupOutcome::NoAnswer => 4,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderLookupResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.mostro_pubkey, serializer);
+        <String>::sse_encode(self.order_id, serializer);
+        <crate::api::order_info::OrderLookupOutcome>::sse_encode(self.outcome, serializer);
+        <Option<crate::api::order_info::OrderSnapshot>>::sse_encode(self.order, serializer);
+        <Option<String>>::sse_encode(self.reason, serializer);
+        <i64>::sse_encode(self.asked_at, serializer);
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderSnapshot {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.order_id, serializer);
+        <crate::api::order_info::OrderKind>::sse_encode(self.kind, serializer);
+        <String>::sse_encode(self.kind_raw, serializer);
+        <crate::api::order_info::OrderStatus>::sse_encode(self.status, serializer);
+        <String>::sse_encode(self.status_raw, serializer);
+        <i64>::sse_encode(self.amount, serializer);
+        <i64>::sse_encode(self.fee, serializer);
+        <i64>::sse_encode(self.routing_fee, serializer);
+        <String>::sse_encode(self.fiat_code, serializer);
+        <i64>::sse_encode(self.fiat_amount, serializer);
+        <Option<i64>>::sse_encode(self.min_amount, serializer);
+        <Option<i64>>::sse_encode(self.max_amount, serializer);
+        <String>::sse_encode(self.payment_method, serializer);
+        <i64>::sse_encode(self.premium, serializer);
+        <Option<String>>::sse_encode(self.range_parent_id, serializer);
+        <Option<i64>>::sse_encode(self.created_at, serializer);
+        <Option<i64>>::sse_encode(self.taken_at, serializer);
+        <Option<i64>>::sse_encode(self.expires_at, serializer);
+        <Option<String>>::sse_encode(self.buyer_trade_pubkey, serializer);
+        <Option<String>>::sse_encode(self.seller_trade_pubkey, serializer);
+        <bool>::sse_encode(self.buyer_dispute, serializer);
+        <bool>::sse_encode(self.seller_dispute, serializer);
+        <bool>::sse_encode(self.buyer_cooperative_cancel, serializer);
+        <bool>::sse_encode(self.seller_cooperative_cancel, serializer);
+        <bool>::sse_encode(self.failed_payment, serializer);
+        <i64>::sse_encode(self.payment_attempts, serializer);
+        <Option<i64>>::sse_encode(self.hold_settled_at, serializer);
+        <Option<crate::api::order_info::HoldInvoice>>::sse_encode(self.hold_invoice, serializer);
+        <Option<crate::api::order_info::CashuEscrow>>::sse_encode(self.cashu_escrow, serializer);
+        <Option<crate::api::order_info::Payout>>::sse_encode(self.payout, serializer);
+        <Vec<crate::api::order_info::OrderBond>>::sse_encode(self.bonds, serializer);
+    }
+}
+
+impl SseEncode for crate::api::order_info::OrderStatus {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::OrderStatus::Pending => 0,
+                crate::api::order_info::OrderStatus::WaitingMakerBond => 1,
+                crate::api::order_info::OrderStatus::WaitingTakerBond => 2,
+                crate::api::order_info::OrderStatus::WaitingBuyerInvoice => 3,
+                crate::api::order_info::OrderStatus::WaitingPayment => 4,
+                crate::api::order_info::OrderStatus::InProgress => 5,
+                crate::api::order_info::OrderStatus::Active => 6,
+                crate::api::order_info::OrderStatus::FiatSent => 7,
+                crate::api::order_info::OrderStatus::SettledHoldInvoice => 8,
+                crate::api::order_info::OrderStatus::Success => 9,
+                crate::api::order_info::OrderStatus::Dispute => 10,
+                crate::api::order_info::OrderStatus::Canceled => 11,
+                crate::api::order_info::OrderStatus::CooperativelyCanceled => 12,
+                crate::api::order_info::OrderStatus::CanceledByAdmin => 13,
+                crate::api::order_info::OrderStatus::SettledByAdmin => 14,
+                crate::api::order_info::OrderStatus::CompletedByAdmin => 15,
+                crate::api::order_info::OrderStatus::Expired => 16,
+                crate::api::order_info::OrderStatus::Unknown => 17,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::Payout {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::order_info::PayoutState>::sse_encode(self.state, serializer);
+        <Option<crate::api::order_info::PayoutFailureReason>>::sse_encode(
+            self.failure_reason,
+            serializer,
+        );
+        <Option<i64>>::sse_encode(self.resolved_at, serializer);
+    }
+}
+
+impl SseEncode for crate::api::order_info::PayoutFailureReason {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::PayoutFailureReason::Timeout => 0,
+                crate::api::order_info::PayoutFailureReason::NoRoute => 1,
+                crate::api::order_info::PayoutFailureReason::Error => 2,
+                crate::api::order_info::PayoutFailureReason::IncorrectPaymentDetails => 3,
+                crate::api::order_info::PayoutFailureReason::InsufficientBalance => 4,
+                crate::api::order_info::PayoutFailureReason::Canceled => 5,
+                crate::api::order_info::PayoutFailureReason::Unknown => 6,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::order_info::PayoutState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::order_info::PayoutState::InFlight => 0,
+                crate::api::order_info::PayoutState::Succeeded => 1,
+                crate::api::order_info::PayoutState::Failed => 2,
+                crate::api::order_info::PayoutState::NotFound => 3,
+                crate::api::order_info::PayoutState::Unavailable => 4,
+                crate::api::order_info::PayoutState::Unknown => 5,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 

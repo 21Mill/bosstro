@@ -38,6 +38,7 @@ use nostr_sdk::prelude::*;
 
 use super::replies::{self, Purpose, Reply, Request};
 use super::take::{new_request_id, reason_marker, take_pow_on, wrap_mined, ANSWER_WAIT};
+use crate::api::order_info::OrderLookupError;
 use crate::api::take::{SolverStatus, TakeError};
 
 /// What the node said about one lookup.
@@ -57,22 +58,6 @@ pub(crate) enum Lookup {
     NoAnswer,
 }
 
-/// Why a lookup was not sent.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum LookupError {
-    NoKey,
-    NoNode,
-    NoRelays,
-    /// The text is not an order id (a UUID).
-    InvalidOrderId,
-    /// The node's kind 38385 could not be read, so its PoW is unknown.
-    NodeInfoUnavailable,
-    /// The node speaks a protocol this app does not.
-    ProtocolUnsupported,
-    /// No relay took the request.
-    SendFailed,
-}
-
 /// The request: the `order` wrapper, the order's id, no payload.
 pub(crate) fn request_message(order_id: uuid::Uuid, request_id: u64) -> Message {
     Message::new_order(
@@ -86,8 +71,8 @@ pub(crate) fn request_message(order_id: uuid::Uuid, request_id: u64) -> Message 
 
 /// An order id as the solver gave it: a UUID, with any space around it
 /// dropped.
-pub(crate) fn parse_order_id(text: &str) -> Result<uuid::Uuid, LookupError> {
-    uuid::Uuid::parse_str(text.trim()).map_err(|_| LookupError::InvalidOrderId)
+pub(crate) fn parse_order_id(text: &str) -> Result<uuid::Uuid, OrderLookupError> {
+    uuid::Uuid::parse_str(text.trim()).map_err(|_| OrderLookupError::InvalidOrderId)
 }
 
 /// Read `message` as the answer to a lookup of `order_id`. A snapshot counts
@@ -144,24 +129,27 @@ pub(crate) async fn apply(request: &Request, order_id: &str, message: &Message) 
     lookup
 }
 
-/// Ask the active node for the state of `order_id` and wait for the answer.
-// Called by the bridge (`api::order_info`), which the next change adds.
-#[allow(dead_code)]
-pub(crate) async fn lookup(order_id: &str) -> Result<Lookup, LookupError> {
+/// Ask the active node for the state of `order_id` and wait for the answer
+/// (`api::order_info::lookup_order`): the node asked, the order as a UUID,
+/// and what the node said.
+pub(crate) async fn lookup(
+    order_id: &str,
+) -> Result<(String, uuid::Uuid, Lookup), OrderLookupError> {
     let order_id = parse_order_id(order_id)?;
     let keys = crate::solver_slot::SOLVER_SLOT
         .keys()
         .await
-        .ok_or(LookupError::NoKey)?;
-    let node = crate::config::active_mostro_pubkey().ok_or(LookupError::NoNode)?;
-    let pool = crate::api::relays::pool().map_err(|_| LookupError::NoRelays)?;
-    let router = replies::router().ok_or(LookupError::NoRelays)?;
+        .ok_or(OrderLookupError::NoKey)?;
+    let node = crate::config::active_mostro_pubkey().ok_or(OrderLookupError::NoNode)?;
+    let pool = crate::api::relays::pool().map_err(|_| OrderLookupError::NoRelays)?;
+    let router = replies::router().ok_or(OrderLookupError::NoRelays)?;
     // The answer must have a subscription to land on before the request
     // leaves (a no-op when the router already follows this node and key).
     router
         .retarget(Some(node.clone()), Some(keys.clone()))
         .await;
-    lookup_on(&router, &pool.client(), &keys, &node, order_id, ANSWER_WAIT).await
+    let lookup = lookup_on(&router, &pool.client(), &keys, &node, order_id, ANSWER_WAIT).await?;
+    Ok((node, order_id, lookup))
 }
 
 /// The lookup on explicit parts: the node's PoW first, then the request.
@@ -172,12 +160,12 @@ pub(crate) async fn lookup_on(
     node: &str,
     order_id: uuid::Uuid,
     wait: std::time::Duration,
-) -> Result<Lookup, LookupError> {
+) -> Result<Lookup, OrderLookupError> {
     // A solver key is inside mostrod's spam gate only while it holds an
     // active dispute, so this pays what a take pays.
     let pow = take_pow_on(client, node).await.map_err(|e| match e {
-        TakeError::ProtocolUnsupported => LookupError::ProtocolUnsupported,
-        _ => LookupError::NodeInfoUnavailable,
+        TakeError::ProtocolUnsupported => OrderLookupError::ProtocolUnsupported,
+        _ => OrderLookupError::NodeInfoUnavailable,
     })?;
     send_lookup(router, client, keys, node, order_id, pow, wait).await
 }
@@ -191,8 +179,8 @@ pub(crate) async fn send_lookup(
     order_id: uuid::Uuid,
     pow: u8,
     wait: std::time::Duration,
-) -> Result<Lookup, LookupError> {
-    let node_key = PublicKey::from_hex(node).map_err(|_| LookupError::NoNode)?;
+) -> Result<Lookup, OrderLookupError> {
+    let node_key = PublicKey::from_hex(node).map_err(|_| OrderLookupError::NoNode)?;
     let request_id = new_request_id();
     let request = Request {
         node: node.to_string(),
@@ -207,22 +195,22 @@ pub(crate) async fn send_lookup(
     // ever did, nothing was sent.
     let answer = router
         .register(request_id, request)
-        .map_err(|_| LookupError::SendFailed)?;
+        .map_err(|_| OrderLookupError::SendFailed)?;
     let message = request_message(order_id, request_id);
     let sent = async {
         let event = wrap_mined(keys, &node_key, &message, pow)
             .await
             .map_err(|e| {
                 log::warn!("[order-info] request not built: {e}");
-                LookupError::SendFailed
+                OrderLookupError::SendFailed
             })?;
         let output = client.send_event(&event).await.map_err(|e| {
             log::warn!("[order-info] request not sent: {e}");
-            LookupError::SendFailed
+            OrderLookupError::SendFailed
         })?;
         if output.success.is_empty() {
             log::warn!("[order-info] no relay took the request");
-            return Err(LookupError::SendFailed);
+            return Err(OrderLookupError::SendFailed);
         }
         Ok(())
     }
@@ -312,7 +300,7 @@ pub(crate) mod tests {
         Message::cant_do(Some(order()), Some(request_id), Some(Payload::CantDo(reason)))
     }
 
-    async fn ask(rig: &Rig, wait: Duration) -> Result<Lookup, LookupError> {
+    async fn ask(rig: &Rig, wait: Duration) -> Result<Lookup, OrderLookupError> {
         send_lookup(
             &rig.router,
             &rig.client,
@@ -345,11 +333,11 @@ pub(crate) mod tests {
     #[test]
     fn an_order_id_is_a_uuid_with_the_space_around_it_dropped() {
         assert_eq!(parse_order_id(&format!("  {ORDER}\n")), Ok(order()));
-        assert_eq!(parse_order_id(""), Err(LookupError::InvalidOrderId));
-        assert_eq!(parse_order_id("308e1272"), Err(LookupError::InvalidOrderId));
+        assert_eq!(parse_order_id(""), Err(OrderLookupError::InvalidOrderId));
+        assert_eq!(parse_order_id("308e1272"), Err(OrderLookupError::InvalidOrderId));
         assert_eq!(
             parse_order_id(&"a".repeat(64)),
-            Err(LookupError::InvalidOrderId)
+            Err(OrderLookupError::InvalidOrderId)
         );
     }
 
@@ -520,7 +508,7 @@ pub(crate) mod tests {
         let rig = Rig::new("initiated", silent()).await;
         rig.client.disconnect().await;
 
-        assert_eq!(ask(&rig, WAIT).await, Err(LookupError::SendFailed));
+        assert_eq!(ask(&rig, WAIT).await, Err(OrderLookupError::SendFailed));
         assert_eq!(rig.router.waiting_len(), 0);
     }
 

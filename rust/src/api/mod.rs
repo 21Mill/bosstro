@@ -7,6 +7,7 @@ pub mod disputes;
 pub mod node_info;
 pub mod nodes;
 pub mod observer;
+pub mod order_info;
 pub mod relays;
 pub mod resolve;
 pub mod settings;
