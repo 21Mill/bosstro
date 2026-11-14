@@ -14,6 +14,10 @@
 //! answer is still applied. A retarget to another node or key drops the requests of the old
 //! one: their answers are not taken.
 //!
+//! An order lookup (`order_info`) waits there too, but it only reads: it is
+//! never refused because a request of a dispute is waited for, and it never
+//! makes one wait.
+//!
 //! **Since.** The subscription starts a minute before it is opened, so a
 //! reconnect never replays the node's older answers; requests exist only in
 //! this process, so an older answer could match none anyway.
@@ -50,6 +54,8 @@ pub(crate) struct Request {
     pub node: String,
     /// The key that signed it (hex).
     pub solver: String,
+    /// The dispute it is about; empty for a request about no dispute (an
+    /// order lookup).
     pub dispute_id: String,
     pub purpose: Purpose,
 }
@@ -66,6 +72,19 @@ pub(crate) enum Purpose {
         order_id: String,
         bond: BondSlash,
     },
+    /// `AdminOrderInfo` about `order_id`: read only, about no dispute.
+    OrderInfo { order_id: String },
+}
+
+impl Purpose {
+    /// Whether the request may change its dispute (a take, a resolution), so
+    /// only one of them is waited for per dispute. A lookup may not.
+    fn changes_a_dispute(&self) -> bool {
+        match self {
+            Purpose::Take { .. } | Purpose::Resolve { .. } => true,
+            Purpose::OrderInfo { .. } => false,
+        }
+    }
 }
 
 /// What the caller of a request gets back.
@@ -73,6 +92,7 @@ pub(crate) enum Purpose {
 pub(crate) enum Reply {
     Take(TakeResult),
     Resolve(ResolveResult),
+    OrderInfo(super::order_info::Lookup),
 }
 
 /// A request of the same dispute on the same node is still waited for.
@@ -260,7 +280,8 @@ impl Router {
 
     /// Wait for the answer to `request_id`. Refused while a request (a take
     /// or a resolution) of the same dispute on the same node is still waited
-    /// for; one whose caller stopped waiting does not count.
+    /// for; one whose caller stopped waiting does not count. A request that
+    /// only reads (an order lookup) is never refused and never counts.
     pub(crate) fn register(
         &self,
         request_id: u64,
@@ -270,11 +291,13 @@ impl Router {
         let (tx, rx) = oneshot::channel();
         let mut waiting = lock(&self.waiting);
         waiting.retain(|_, w| now - w.registered_at < LATE_WINDOW_SECS);
-        let busy = waiting.values().any(|w| {
-            w.request.node == request.node
-                && w.request.dispute_id == request.dispute_id
-                && w.reply.as_ref().is_some_and(|r| !r.is_closed())
-        });
+        let busy = request.purpose.changes_a_dispute()
+            && waiting.values().any(|w| {
+                w.request.purpose.changes_a_dispute()
+                    && w.request.node == request.node
+                    && w.request.dispute_id == request.dispute_id
+                    && w.reply.as_ref().is_some_and(|r| !r.is_closed())
+            });
         if busy {
             return Err(Busy);
         }
@@ -316,7 +339,7 @@ impl Router {
             .max_by_key(|w| w.registered_at)
             .and_then(|w| match &w.request.purpose {
                 Purpose::Resolve { resolution, .. } => Some(*resolution),
-                Purpose::Take { .. } => None,
+                Purpose::Take { .. } | Purpose::OrderInfo { .. } => None,
             })
     }
 
@@ -385,6 +408,9 @@ impl Router {
                     &opened.message,
                 )
                 .await,
+            ),
+            Purpose::OrderInfo { order_id } => Reply::OrderInfo(
+                super::order_info::apply(&waiting.request, order_id, &opened.message).await,
             ),
         };
         if let Some(reply) = waiting.reply {

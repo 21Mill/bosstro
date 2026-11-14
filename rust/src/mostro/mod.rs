@@ -6,8 +6,11 @@
 //! - [`take`] sends `AdminTakeDispute` and applies the answer.
 //! - [`resolve`] sends `AdminSettle` / `AdminCancel` and applies the answer
 //!   (phase 6).
+//! - [`order_info`] sends `AdminOrderInfo` and reads the answer: the real
+//!   state of any order of the node, read only (issue #51).
 //! - [`standing`] keeps what the answers taught about this key on each node.
 
+pub mod order_info;
 pub mod replies;
 pub mod resolve;
 pub mod standing;
