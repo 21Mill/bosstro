@@ -311,7 +311,7 @@ void main() {
         expect(find.byType(OrderSummaryCard), findsOneWidget);
         await _fitsToTheEnd(tester, 'Orders, an order');
 
-        // The whole snapshot, every folded card open, with the parts an
+        // The whole snapshot, both folded cards open, with the parts an
         // ordinary order lacks: a failed payment, deposits in every state.
         Future<void> wholeSnapshot(OrderSnapshot order, String where) async {
           final core = FakeOrdersCore()..order = order;
@@ -320,7 +320,6 @@ void main() {
           for (final title in [
             l10n.orderPartiesTitle,
             l10n.orderDepositsTitle(order.bonds.length),
-            l10n.orderDetailsTitle,
           ]) {
             await _tapText(tester, title);
           }
@@ -381,6 +380,9 @@ void main() {
               mintUrl: 'https://mint.example.com/a/long/path',
               lockedAt: 1700000150,
             ),
+            minAmount: 10,
+            maxAmount: 100000,
+            rangeParentId: '0d4f6a2b-7c1e-4f3a-8b5d-9e0f1a2b3c4d',
           ),
           'a Cashu order',
         );

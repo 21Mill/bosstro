@@ -2119,9 +2119,9 @@
       }
     }
   },
-  "orderStatusPending": "Waiting for a taker",
+  "orderStatusPending": "Pending",
   "@orderStatusPending": {
-    "description": "Order status: published, nobody took it yet"
+    "description": "Order status: published and waiting, nobody took it yet. The protocol's own word for it, as the solver knows it"
   },
   "orderStatusWaitingMakerDeposit": "Waiting for the maker's deposit",
   "@orderStatusWaitingMakerDeposit": {
@@ -2374,10 +2374,6 @@
   "orderBondTimeout": "did not act in time",
   "@orderBondTimeout": {
     "description": "Why a deposit was slashed, after its state: its owner did not act in time"
-  },
-  "orderDetailsTitle": "More details",
-  "@orderDetailsTitle": {
-    "description": "Orders, an order: title of the card with the rest of the order's data"
   },
   "orderCreatedAt": "Created",
   "@orderCreatedAt": {

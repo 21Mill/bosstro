@@ -24,7 +24,8 @@ import 'package:bosstro/shared/widgets/tab_app_bar.dart';
 /// not (mostrod's `admin-order-info`, issue #51). The form first, and under
 /// it what the lookup is for, then how it ended: the order as the node sees it now, or why there
 /// is none. Read only: nothing here changes an order or a dispute, and
-/// nothing looked up is stored.
+/// nothing looked up is stored. An order shows only when it was just asked
+/// for: leaving the tab empties it, the app going to the background does not.
 ///
 /// The lookup is offered only for a text that is an order id, so no proof of
 /// work is spent on a request the node would refuse.
@@ -79,6 +80,12 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     final pal = ShellPalette.of(context);
     final hasNode = ref.watch(activeNodeProvider) != null;
     final view = ref.watch(orderLookupProvider);
+    // The tab starts empty again (the solver left it, or the node or the key
+    // changed): the id asked about goes with the order.
+    ref.listen(orderLookupProvider.select((view) => view.session), (_, _) {
+      _id.clear();
+      setState(() => _fieldError = null);
+    });
 
     final form = SurfaceCard(
       child: Column(

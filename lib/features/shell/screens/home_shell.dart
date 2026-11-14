@@ -2,11 +2,13 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/core/app_theme.dart';
 import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/nodes/providers/node_providers.dart';
 import 'package:bosstro/features/nodes/providers/relay_providers.dart';
 import 'package:bosstro/features/nodes/services/nodes_core.dart';
+import 'package:bosstro/features/orders/providers/orders_providers.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
 import 'package:bosstro/shared/utils/short_id.dart';
 import 'package:bosstro/shared/widgets/bottom_nav_bar.dart';
@@ -60,12 +62,19 @@ class HomeShell extends ConsumerWidget {
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: shell.currentIndex,
-        onSelect:
-            (index) => shell.goBranch(
-              index,
-              // A tap on the active tab returns it to its root.
-              initialLocation: index == shell.currentIndex,
-            ),
+        onSelect: (index) {
+          // An order shows only while the solver stays on Orders: leaving
+          // the tab empties it.
+          final orders = AppRoute.tabs.indexOf(AppRoute.orders);
+          if (shell.currentIndex == orders && index != orders) {
+            ref.read(orderLookupProvider.notifier).clear();
+          }
+          shell.goBranch(
+            index,
+            // A tap on the active tab returns it to its root.
+            initialLocation: index == shell.currentIndex,
+          );
+        },
       ),
     );
   }

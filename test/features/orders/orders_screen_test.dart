@@ -128,8 +128,8 @@ void main() {
         find.text('Sats liberados, comprador aún sin pagar'),
         findsOneWidget,
       );
-      // Every folded card open: the whole snapshot, to its end.
-      for (final title in ['Partes', 'Depósitos (2)', 'Más detalles']) {
+      // Both folded cards open: the whole snapshot, to its end.
+      for (final title in ['Partes', 'Depósitos (2)']) {
         await tester.ensureVisible(find.text(title));
         await tester.pumpAndSettle();
         await tester.tap(find.text(title));
@@ -303,6 +303,7 @@ void main() {
       expect(core.lookups, [sampleOrderId]);
       expect(find.text('Sats released, buyer not paid yet'), findsOneWidget);
       expect(find.text('Sell order · 50 EUR · SEPA'), findsOneWidget);
+      expect(find.text('Status'), findsOneWidget);
       expect(find.text('308e1272…9c23'), findsOneWidget);
       expect(find.text('100,000 sats'), findsOneWidget);
       expect(find.text('600 sats'), findsOneWidget);
@@ -550,14 +551,15 @@ void main() {
           holdInvoice: null,
           cashuEscrow: const CashuEscrow(
             mintUrl: 'https://mint.example',
-            lockedAt: 1700000150,
+            // Another minute than the order's own dates, now in view too.
+            lockedAt: 1700003000,
           ),
         ),
       );
 
       await _show(tester, 'Cashu mint');
       expect(find.text('https://mint.example'), findsOneWidget);
-      expect(find.text(_date(1700000150)), findsOneWidget);
+      expect(find.text(_date(1700003000)), findsOneWidget);
       expect(find.text('Locked sats'), findsNothing);
     });
 
@@ -644,17 +646,65 @@ void main() {
       expect(find.text('4,500 sats · Returned'), findsOneWidget);
     });
 
-    testWidgets('more details: the dates and the premium', (tester) async {
+    testWidgets('the order\'s dates and premium are in the summary, in view '
+        'without opening anything', (tester) async {
       await shown(tester, sampleOrder());
 
-      await _open(tester, 'More details');
-      await _show(tester, 'Premium');
-
-      expect(find.text(_date(1700000000)), findsOneWidget);
-      expect(find.text(_date(1700000100)), findsOneWidget);
-      expect(find.text(_date(1700086400)), findsOneWidget);
-      expect(find.text('1 %'), findsOneWidget);
+      await _show(tester, 'Expires');
+      final summary = find.byType(OrderSummaryCard);
+      Finder inSummary(String text) =>
+          find.descendant(of: summary, matching: find.text(text));
+      expect(inSummary('Created'), findsOneWidget);
+      expect(inSummary(_date(1700000000)), findsOneWidget);
+      expect(inSummary('Taken'), findsOneWidget);
+      expect(inSummary(_date(1700000100)), findsOneWidget);
+      expect(inSummary(_date(1700086400)), findsOneWidget);
+      expect(inSummary('1 %'), findsOneWidget);
+      // Not a range order: no range.
       expect(find.text('Fiat range'), findsNothing);
+      expect(find.text('More details'), findsNothing);
+    });
+
+    testWidgets('an order nobody took yet reads Pending, with no taken time', (
+      tester,
+    ) async {
+      setSurface(tester, width: 400, height: 800);
+      final core =
+          FakeOrdersCore()
+            ..order = sampleOrder(
+              status: OrderStatus.pending,
+              statusRaw: 'pending',
+              takenAt: null,
+            );
+      await _pump(tester, core);
+      await _ask(tester);
+
+      expect(find.text('Pending'), findsOneWidget);
+      await _show(tester, 'Taken');
+      expect(
+        find.descendant(
+          of: find.byType(OrderSummaryCard),
+          matching: find.text('Not known'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a range order shows its range and the order it is part of', (
+      tester,
+    ) async {
+      await shown(
+        tester,
+        sampleOrder(
+          minAmount: 10,
+          maxAmount: 100,
+          rangeParentId: '0d4f6a2b-7c1e-4f3a-8b5d-9e0f1a2b3c4d',
+        ),
+      );
+
+      await _show(tester, 'Part of range order');
+      expect(find.text('10 – 100 EUR'), findsOneWidget);
+      expect(find.text('0d4f6a2b…3c4d'), findsOneWidget);
     });
 
     testWidgets('it says when it was asked, and Refresh asks about the order '
@@ -694,21 +744,92 @@ void main() {
     });
   });
 
-  group('kept in memory only', () {
-    testWidgets('the answer and the id are still there after a look at '
-        'another tab', (tester) async {
+  group('only while the solver stays on the tab', () {
+    testWidgets('a look at another tab empties it: the order and the id', (
+      tester,
+    ) async {
+      setSurface(tester, width: 400, height: 800);
+      final core = FakeOrdersCore();
+      await _pump(tester, core);
+      await _ask(tester);
+      expect(find.byType(OrderSnapshotView), findsOneWidget);
+
+      for (final other in ['Settings', 'Disputes']) {
+        await tester.tap(find.text(other));
+        await tester.pumpAndSettle();
+        expect(find.byType(OrdersScreen), findsNothing);
+        await tester.tap(find.text('Orders'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(OrderSnapshotView), findsNothing, reason: other);
+        expect(find.text(sampleOrderId), findsNothing, reason: other);
+        expect(_button(tester).onPressed, isNull, reason: other);
+        // What the lookup is for, as before the first one.
+        expect(find.textContaining('Looking changes nothing'), findsOneWidget);
+
+        await _ask(tester);
+        expect(find.byType(OrderSnapshotView), findsOneWidget, reason: other);
+      }
+      expect(core.lookups, hasLength(3), reason: 'only when asked');
+    });
+
+    testWidgets('a tap on Orders itself keeps the order', (tester) async {
       setSurface(tester, width: 400, height: 800);
       await _pump(tester, FakeOrdersCore());
       await _ask(tester);
 
-      await tester.tap(find.text('Settings'));
-      await tester.pumpAndSettle();
-      expect(find.byType(OrdersScreen), findsNothing);
       await tester.tap(find.text('Orders'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(OrderSummaryCard), findsOneWidget);
+      expect(find.byType(OrderSnapshotView), findsOneWidget);
       expect(find.text(sampleOrderId), findsOneWidget);
+    });
+
+    testWidgets('the app going to the background and back keeps the order', (
+      tester,
+    ) async {
+      setSurface(tester, width: 400, height: 800);
+      final core = FakeOrdersCore();
+      await _pump(tester, core);
+      await _ask(tester);
+
+      for (final state in [
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+        AppLifecycleState.hidden,
+        AppLifecycleState.inactive,
+        AppLifecycleState.resumed,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(state);
+        await tester.pump();
+      }
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OrderSnapshotView), findsOneWidget);
+      expect(find.text(sampleOrderId), findsOneWidget);
+      expect(core.lookups, [sampleOrderId], reason: 'not asked again');
+    });
+
+    testWidgets('an answer that arrives after the solver left the tab is '
+        'dropped', (tester) async {
+      setSurface(tester, width: 400, height: 800);
+      final core = FakeOrdersCore()..hold = Completer();
+      await _pump(tester, core);
+      await tester.enterText(find.byType(TextField), sampleOrderId);
+      await tester.pump();
+      await tester.tap(find.byType(PrimaryButton));
+      await tester.pump();
+
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
+      core.hold!.complete();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Orders'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OrderSnapshotView), findsNothing);
+      expect(_button(tester).busy, isFalse);
     });
 
     testWidgets('another node starts empty: an order of one node is never '

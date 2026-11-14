@@ -2940,10 +2940,10 @@ abstract class AppLocalizations {
   /// **'Its reason: {reason}. Try again later, or ask the node\'s operator.'**
   String orderRefusedReasonBody(String reason);
 
-  /// Order status: published, nobody took it yet
+  /// Order status: published and waiting, nobody took it yet. The protocol's own word for it, as the solver knows it
   ///
   /// In en, this message translates to:
-  /// **'Waiting for a taker'**
+  /// **'Pending'**
   String get orderStatusPending;
 
   /// Order status: the maker has not posted the anti-abuse deposit yet, so the order is not published
@@ -3323,12 +3323,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'did not act in time'**
   String get orderBondTimeout;
-
-  /// Orders, an order: title of the card with the rest of the order's data
-  ///
-  /// In en, this message translates to:
-  /// **'More details'**
-  String get orderDetailsTitle;
 
   /// Orders, an order: when the order was created
   ///

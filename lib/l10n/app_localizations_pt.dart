@@ -1701,7 +1701,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get orderStatusPending => 'Aguardando alguém aceitar';
+  String get orderStatusPending => 'Pendente';
 
   @override
   String get orderStatusWaitingMakerDeposit =>
@@ -1898,9 +1898,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get orderBondTimeout => 'não agiu a tempo';
-
-  @override
-  String get orderDetailsTitle => 'Mais detalhes';
 
   @override
   String get orderCreatedAt => 'Criada';

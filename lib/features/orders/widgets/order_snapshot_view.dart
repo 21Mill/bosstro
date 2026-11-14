@@ -9,10 +9,11 @@ import 'package:bosstro/shared/widgets/labeled_icon_action.dart';
 import 'package:bosstro/shared/widgets/order_data_card.dart';
 
 /// One order as the node saw it when it was asked: the summary, always open,
-/// then the two things a solver looks an order up for, open as well (where
-/// the seller's sats are, and the payment to the buyer), then the rest,
-/// folded: the parties, the deposits, the remaining data. Under it, when the
-/// node answered and the way to ask again.
+/// with the order's own data (id, amounts, dates, premium), then the two
+/// things a solver looks an order up for, open as well (where the seller's
+/// sats are, and the payment to the buyer), then the rest, folded: the
+/// parties and the deposits. Under it, when the node answered and the way to
+/// ask again.
 ///
 /// What the node's database recorded and what its Lightning node reports now
 /// sit in neighbouring rows, each named by where it comes from, and are never
@@ -171,41 +172,6 @@ class OrderSnapshotView extends StatelessWidget {
         row(Icons.shield_outlined, l10n.detailBonds, l10n.orderDepositsNone),
     ];
 
-    final details = <Widget>[
-      row(
-        Icons.schedule_rounded,
-        l10n.orderCreatedAt,
-        dateTime(order.createdAt?.toInt()),
-      ),
-      row(
-        Icons.how_to_reg_outlined,
-        l10n.orderTakenAt,
-        dateTime(order.takenAt?.toInt()),
-      ),
-      row(
-        Icons.timer_outlined,
-        l10n.orderExpiresAt,
-        dateTime(order.expiresAt?.toInt()),
-      ),
-      figure(
-        Icons.percent_rounded,
-        l10n.detailPremium,
-        l10n.detailPremiumValue(number.format(order.premium.toInt())),
-      ),
-      if ((order.minAmount, order.maxAmount) case (final min?, final max?))
-        figure(
-          Icons.straighten_rounded,
-          l10n.orderFiatRange,
-          l10n.orderFiatRangeValue(
-            number.format(min.toInt()),
-            number.format(max.toInt()),
-            order.fiatCode,
-          ),
-        ),
-      if (order.rangeParentId case final parent?)
-        idRow(Icons.account_tree_outlined, l10n.orderRangeParent, parent),
-    ];
-
     final asked = DateFormat.Hm(
       locale,
     ).format(DateTime.fromMillisecondsSinceEpoch(askedAt * 1000));
@@ -239,12 +205,6 @@ class OrderSnapshotView extends StatelessWidget {
           icon: Icons.shield_outlined,
           title: l10n.orderDepositsTitle(order.bonds.length),
           rows: deposits,
-        ),
-        const SizedBox(height: 12),
-        CollapsibleDataCard(
-          icon: Icons.info_outline_rounded,
-          title: l10n.orderDetailsTitle,
-          rows: details,
         ),
         const SizedBox(height: 4),
         // A snapshot, not a live view: when it was taken, and the way to

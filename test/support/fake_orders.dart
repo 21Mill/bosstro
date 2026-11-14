@@ -70,6 +70,10 @@ OrderSnapshot sampleOrder({
   ),
   CashuEscrow? cashuEscrow,
   Payout? payout,
+  int? takenAt = 1700000100,
+  int? minAmount,
+  int? maxAmount,
+  String? rangeParentId,
   List<OrderBond> bonds = const [
     OrderBond(
       role: BondRole.maker,
@@ -99,7 +103,10 @@ OrderSnapshot sampleOrder({
   paymentMethod: paymentMethod,
   premium: 1,
   createdAt: 1700000000,
-  takenAt: 1700000100,
+  takenAt: takenAt,
+  minAmount: minAmount,
+  maxAmount: maxAmount,
+  rangeParentId: rangeParentId,
   expiresAt: 1700086400,
   buyerTradePubkey: '22' * 32,
   sellerTradePubkey: '11' * 32,

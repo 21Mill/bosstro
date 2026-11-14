@@ -1707,7 +1707,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get orderStatusPending => 'Wacht op een tegenpartij';
+  String get orderStatusPending => 'Openstaand';
 
   @override
   String get orderStatusWaitingMakerDeposit => 'Wacht op de borg van de maker';
@@ -1904,9 +1904,6 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get orderBondTimeout => 'handelde niet op tijd';
-
-  @override
-  String get orderDetailsTitle => 'Meer details';
 
   @override
   String get orderCreatedAt => 'Aangemaakt';

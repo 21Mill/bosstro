@@ -118,8 +118,9 @@ Three tabs, branches of one shell (`lib/core/app_routes.dart`), each keeping its
   a restart nothing says so; the dispute's 38386 tells, and a request sent again after the node
   did act is refused by the order's status, so nothing is paid twice.
 - **A looked-up order is a snapshot, kept in memory only:** it says how the node saw the order
-  when it answered, not how it is now (the screen says when, and offers Refresh), and it is
-  gone when the app stops or the node or key changes. Nothing of it is stored: it carries the
+  when it answered, not how it is now (the screen says when, and offers Refresh). It shows
+  only while the solver stays on the Orders tab: another tab, another node or key, or the app
+  stopping empties it; the app going to the background does not. Nothing of it is stored: it carries the
   parties' trade keys and the amounts, and the database is not encrypted (A4).
 - **An order lookup with no answer cannot tell a lost request from an old node:** a mostrod
   that does not know `admin-order-info` answers nothing, as a relay that dropped the request
