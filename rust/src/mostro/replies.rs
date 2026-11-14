@@ -461,7 +461,9 @@ where
 {
     use futures_util::future::{select, Either};
 
-    match select(std::pin::pin!(send), &mut answer).await {
+    // Boxed rather than `std::pin::pin!`: the macro expands to `super let`,
+    // which flutter_rust_bridge's codegen cannot parse in the expanded crate.
+    match select(Box::pin(send), &mut answer).await {
         Either::Right((reply, _send)) => return Ok(reply.ok()),
         Either::Left((sent, _answer)) => sent?,
     }
