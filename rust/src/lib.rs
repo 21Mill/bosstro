@@ -9,6 +9,13 @@ mod chat;
 mod config;
 pub mod crypto;
 mod db;
+#[cfg(not(any(
+    target_os = "android",
+    target_os = "ios",
+    target_os = "macos",
+    target_family = "wasm"
+)))]
+mod desktop_log;
 mod disputes;
 mod mostro;
 mod node_pictures;
