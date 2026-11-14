@@ -1769,4 +1769,189 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get orderStatusExpired => 'Abgelaufen';
+
+  @override
+  String get orderFundsTitle => 'Die Sats des Verkäufers';
+
+  @override
+  String get orderOnLightning => 'Auf Lightning jetzt';
+
+  @override
+  String get orderFundsLocked => 'Gesperrte Sats';
+
+  @override
+  String get orderValueNone => 'Keine';
+
+  @override
+  String get orderFundsHeldAt => 'Gesperrt (laut Node)';
+
+  @override
+  String get orderFundsSettledAt => 'Eingezogen (laut Node)';
+
+  @override
+  String get orderHoldOpen => 'Noch nicht gesperrt';
+
+  @override
+  String get orderHoldAccepted => 'Gesperrt';
+
+  @override
+  String get orderHoldSettled => 'Vom Node eingezogen';
+
+  @override
+  String get orderHoldCanceled => 'Zurück beim Verkäufer';
+
+  @override
+  String get orderLnNotFound => 'Kein Eintrag';
+
+  @override
+  String get orderLnUnavailable => 'Lightning hat nicht geantwortet';
+
+  @override
+  String get orderValueUnknown => 'Dieser Version unbekannt';
+
+  @override
+  String get orderCashuMint => 'Cashu-Mint';
+
+  @override
+  String get orderPayoutTitle => 'Zahlung an den Käufer';
+
+  @override
+  String get orderPayoutUnderWay => 'Laufende Zahlung';
+
+  @override
+  String get orderPayoutInFlight => 'Läuft';
+
+  @override
+  String get orderPayoutSucceeded => 'Bezahlt';
+
+  @override
+  String get orderPayoutFailed => 'Fehlgeschlagen';
+
+  @override
+  String get orderPayoutWhyFailed => 'Grund des Fehlers';
+
+  @override
+  String get orderPayoutReasonTimeout => 'Zeit abgelaufen';
+
+  @override
+  String get orderPayoutReasonNoRoute => 'Keine Route zum Käufer';
+
+  @override
+  String get orderPayoutReasonError => 'Lightning-Fehler';
+
+  @override
+  String get orderPayoutReasonDetails => 'Falsche Zahlungsdaten';
+
+  @override
+  String get orderPayoutReasonBalance => 'Zu wenig Guthaben auf dem Node';
+
+  @override
+  String get orderPayoutReasonCanceled => 'Storniert';
+
+  @override
+  String get orderPayoutEndedAt => 'Beendet';
+
+  @override
+  String get orderPayoutLastFailed => 'Letzte Zahlung fehlgeschlagen';
+
+  @override
+  String get orderPayoutAttempts => 'Zahlungsversuche';
+
+  @override
+  String get orderRoutingFee => 'Routing-Gebühr';
+
+  @override
+  String get orderPartiesTitle => 'Parteien';
+
+  @override
+  String get orderDisputeOpenedBy => 'Streitfall eröffnet von';
+
+  @override
+  String get orderCancelAskedBy => 'Stornierung angefragt von';
+
+  @override
+  String get orderPartyBoth => 'Beide';
+
+  @override
+  String get orderPartyNobody => 'Niemand';
+
+  @override
+  String get orderDepositsNone => 'Keine Einlage für diese Order';
+
+  @override
+  String get orderBondMaker => 'Ersteller';
+
+  @override
+  String get orderBondTaker => 'Nehmer';
+
+  @override
+  String get orderBondSliceSlash => 'Für einen Teil eingezogen';
+
+  @override
+  String get orderBondMakerRefund => 'Rest zurück an den Ersteller';
+
+  @override
+  String get orderBondRequested => 'Angefordert';
+
+  @override
+  String get orderBondLocked => 'Gesperrt';
+
+  @override
+  String get orderBondReleased => 'Zurückgegeben';
+
+  @override
+  String get orderBondPendingPayout => 'Eingezogen, Auszahlung ausstehend';
+
+  @override
+  String get orderBondSlashed => 'Eingezogen und ausgezahlt';
+
+  @override
+  String get orderBondForfeited => 'Eingezogen, nie eingefordert';
+
+  @override
+  String get orderBondFailed => 'Auszahlung fehlgeschlagen';
+
+  @override
+  String get orderBondLostDispute => 'Streitfall verloren';
+
+  @override
+  String get orderBondTimeout => 'nicht rechtzeitig gehandelt';
+
+  @override
+  String get orderDetailsTitle => 'Weitere Details';
+
+  @override
+  String get orderCreatedAt => 'Erstellt';
+
+  @override
+  String get orderTakenAt => 'Angenommen';
+
+  @override
+  String get orderExpiresAt => 'Läuft ab';
+
+  @override
+  String get orderFiatRange => 'Fiat-Spanne';
+
+  @override
+  String get orderRangeParent => 'Teil der Spannen-Order';
+
+  @override
+  String orderDepositsTitle(int count) {
+    return 'Einlagen ($count)';
+  }
+
+  @override
+  String orderBondOfRoot(String role) {
+    return '$role (Haupt-Order)';
+  }
+
+  @override
+  String orderFiatRangeValue(String min, String max, String code) {
+    return '$min – $max $code';
+  }
+
+  @override
+  String orderAskedAt(String time) {
+    return 'Abgefragt um $time';
+  }
 }

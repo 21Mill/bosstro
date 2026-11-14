@@ -242,18 +242,27 @@ class OrderDataRow extends StatelessWidget {
 /// Plain value text of a data row: in the figures face when [figures] (an
 /// amount or a count).
 class OrderDataValue extends StatelessWidget {
-  const OrderDataValue(this.text, {super.key, this.figures = false});
+  const OrderDataValue(
+    this.text, {
+    super.key,
+    this.figures = false,
+    this.wrap = false,
+  });
 
   final String text;
   final bool figures;
+
+  /// A value that is a phrase rather than a figure (a state in words): it
+  /// takes the lines it needs instead of being cut at one.
+  final bool wrap;
 
   @override
   Widget build(BuildContext context) {
     final pal = ShellPalette.of(context);
     return Text(
       text,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
+      maxLines: wrap ? null : 1,
+      overflow: wrap ? null : TextOverflow.ellipsis,
       textAlign: TextAlign.end,
       style: TextStyle(
         fontFamily: figures ? AppFonts.figures : null,

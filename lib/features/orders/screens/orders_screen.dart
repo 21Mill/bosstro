@@ -10,7 +10,7 @@ import 'package:bosstro/features/nodes/providers/node_providers.dart';
 import 'package:bosstro/features/orders/providers/orders_providers.dart';
 import 'package:bosstro/features/orders/services/orders_core.dart';
 import 'package:bosstro/features/orders/widgets/lookup_notice.dart';
-import 'package:bosstro/features/orders/widgets/order_summary_card.dart';
+import 'package:bosstro/features/orders/widgets/order_snapshot_view.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
 import 'package:bosstro/shared/widgets/boxed_field.dart';
 import 'package:bosstro/shared/widgets/input_source_action.dart';
@@ -190,7 +190,14 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     if (result == null) return null;
     return switch (result.outcome) {
       OrderLookupOutcome.found => switch (result.order) {
-        final order? => OrderSummaryCard(order: order),
+        final order? => OrderSnapshotView(
+          order: order,
+          askedAt: result.askedAt.toInt(),
+          // The order on screen, whatever the field says by now.
+          onRefresh:
+              () =>
+                  ref.read(orderLookupProvider.notifier).lookup(result.orderId),
+        ),
         // Found always carries its order; without one there is nothing to
         // show but that the answer could not be read.
         null => LookupNotice(

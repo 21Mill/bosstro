@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 
 import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/features/disputes/providers/pending_providers.dart';
@@ -14,6 +15,7 @@ import 'package:bosstro/features/orders/providers/orders_providers.dart';
 import 'package:bosstro/features/orders/screens/orders_screen.dart';
 import 'package:bosstro/features/orders/services/orders_core.dart';
 import 'package:bosstro/features/orders/widgets/lookup_notice.dart';
+import 'package:bosstro/features/orders/widgets/order_snapshot_view.dart';
 import 'package:bosstro/features/orders/widgets/order_summary_card.dart';
 import 'package:bosstro/shared/widgets/primary_button.dart';
 
@@ -55,6 +57,33 @@ Future<void> _pump(
     disputes: disputes,
   ),
 );
+
+/// The screen's own scroll.
+Finder _list() =>
+    find
+        .descendant(
+          of: find.byType(OrdersScreen),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+
+/// Brings [text] on screen (the snapshot is longer than the screen).
+Future<void> _show(WidgetTester tester, String text) async {
+  await tester.scrollUntilVisible(find.text(text), 120, scrollable: _list());
+  await tester.pumpAndSettle();
+}
+
+/// Opens the folded card titled [title].
+Future<void> _open(WidgetTester tester, String title) async {
+  await _show(tester, title);
+  await tester.tap(find.text(title));
+  await tester.pumpAndSettle();
+}
+
+/// A Unix time as the snapshot writes a date and a time, in English.
+String _date(int seconds) => DateFormat.yMMMd(
+  'en',
+).add_Hm().format(DateTime.fromMillisecondsSinceEpoch(seconds * 1000));
 
 PrimaryButton _button(WidgetTester tester) =>
     tester.widget<PrimaryButton>(find.byType(PrimaryButton));
@@ -99,17 +128,20 @@ void main() {
         find.text('Sats liberados, comprador aún sin pagar'),
         findsOneWidget,
       );
+      // Every folded card open: the whole snapshot, to its end.
+      for (final title in ['Partes', 'Depósitos (2)', 'Más detalles']) {
+        await tester.ensureVisible(find.text(title));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(title));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull, reason: title);
+      }
       await expectClearOfNavBar(
         tester,
-        scrollable:
-            find
-                .descendant(
-                  of: find.byType(OrdersScreen),
-                  matching: find.byType(Scrollable),
-                )
-                .first,
-        last: find.text('Comisión del nodo'),
+        scrollable: _list(),
+        last: find.text('Actualizar'),
       );
+      expect(tester.takeException(), isNull);
     });
 
     for (final answer in <Object>[
@@ -427,6 +459,238 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('0d4f6a2b…3c4d'), findsOneWidget);
       expect(find.text('308e1272…9c23'), findsNothing);
+    });
+  });
+
+  group('the snapshot', () {
+    Future<void> shown(WidgetTester tester, OrderSnapshot order) async {
+      setSurface(tester, width: 400, height: 800);
+      await _pump(tester, FakeOrdersCore()..order = order);
+      await _ask(tester);
+      expect(find.byType(OrderSnapshotView), findsOneWidget);
+    }
+
+    testWidgets('the seller\'s sats: what Lightning says now beside what the '
+        'node recorded, each named by where it comes from', (tester) async {
+      await shown(tester, sampleOrder());
+
+      // Open without a tap: it is what the solver came for.
+      await _show(tester, 'On Lightning now');
+      expect(find.text('Collected by the node'), findsOneWidget);
+      expect(find.text('Locked (node\'s record)'), findsOneWidget);
+      expect(find.text(_date(1700000200)), findsOneWidget);
+      expect(find.text('Collected (node\'s record)'), findsOneWidget);
+      expect(find.text(_date(1700000250)), findsOneWidget);
+    });
+
+    testWidgets('no payment under way is said, with whether the last one '
+        'failed and how many were tried', (tester) async {
+      await shown(tester, sampleOrder());
+
+      await _show(tester, 'Payment attempts');
+      expect(find.text('Payment under way'), findsOneWidget);
+      expect(find.text('None'), findsOneWidget);
+      expect(find.text('Last payment failed'), findsOneWidget);
+      expect(find.text('Yes'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      await _show(tester, 'Routing fee');
+      expect(find.text('12 sats'), findsOneWidget);
+    });
+
+    testWidgets('a payment that failed says why and when', (tester) async {
+      await shown(
+        tester,
+        sampleOrder(
+          payout: const Payout(
+            state: PayoutState.failed,
+            failureReason: PayoutFailureReason.noRoute,
+            resolvedAt: 1700000300,
+          ),
+        ),
+      );
+
+      await _show(tester, 'Why it failed');
+      expect(find.text('Failed'), findsOneWidget);
+      expect(find.text('No route to the buyer'), findsOneWidget);
+      expect(find.text(_date(1700000300)), findsOneWidget);
+      expect(find.text('Payment under way'), findsNothing);
+    });
+
+    testWidgets('"Lightning did not answer" and "not known to this version" '
+        'are two different things', (tester) async {
+      await shown(
+        tester,
+        sampleOrder(
+          holdInvoice: const HoldInvoice(state: HoldInvoiceState.unavailable),
+          payout: const Payout(state: PayoutState.unknown),
+        ),
+      );
+
+      await _show(tester, 'Payment attempts');
+      expect(find.text('Lightning did not answer'), findsOneWidget);
+      expect(find.text('Not known to this version'), findsOneWidget);
+    });
+
+    testWidgets('an order with no sats locked says so', (tester) async {
+      await shown(tester, sampleOrder(holdInvoice: null));
+
+      await _show(tester, 'Payment attempts');
+      expect(find.text('Locked sats'), findsOneWidget);
+      expect(find.text('On Lightning now'), findsNothing);
+      // None locked, and no payment under way.
+      expect(find.text('None'), findsNWidgets(2));
+    });
+
+    testWidgets('a Cashu order shows its mint in place of Lightning', (
+      tester,
+    ) async {
+      await shown(
+        tester,
+        sampleOrder(
+          holdInvoice: null,
+          cashuEscrow: const CashuEscrow(
+            mintUrl: 'https://mint.example',
+            lockedAt: 1700000150,
+          ),
+        ),
+      );
+
+      await _show(tester, 'Cashu mint');
+      expect(find.text('https://mint.example'), findsOneWidget);
+      expect(find.text(_date(1700000150)), findsOneWidget);
+      expect(find.text('Locked sats'), findsNothing);
+    });
+
+    testWidgets('the parties are folded; open, their keys read short and who '
+        'opened a dispute or asked to cancel is named', (tester) async {
+      await shown(tester, sampleOrder());
+
+      await _show(tester, 'Parties');
+      expect(find.text('Buyer\'s trade key'), findsNothing);
+      await _open(tester, 'Parties');
+      await _show(tester, 'Cancel asked by');
+
+      expect(find.text('22222222…2222'), findsOneWidget);
+      expect(find.text('11111111…1111'), findsOneWidget);
+      expect(find.text('Dispute opened by'), findsOneWidget);
+      expect(find.text('Seller'), findsOneWidget);
+      expect(find.text('Nobody'), findsOneWidget);
+    });
+
+    testWidgets('the deposits are counted in their title and read as amount, '
+        'state and why', (tester) async {
+      await shown(tester, sampleOrder());
+
+      await _open(tester, 'Deposits (2)');
+      await _show(tester, 'Taker');
+
+      expect(find.text('Maker'), findsOneWidget);
+      expect(find.text('5,000 sats · Locked'), findsOneWidget);
+      expect(
+        find.text('1,000 sats · Slashed, payout owed · lost the dispute'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('an order with no deposit says so', (tester) async {
+      await shown(tester, sampleOrder(bonds: const []));
+
+      await _open(tester, 'Deposits (0)');
+      await _show(tester, 'No deposit on this order');
+      expect(find.text('No deposit on this order'), findsOneWidget);
+    });
+
+    testWidgets('a range order\'s deposits name what each row is', (
+      tester,
+    ) async {
+      const root = '0d4f6a2b-7c1e-4f3a-8b5d-9e0f1a2b3c4d';
+      await shown(
+        tester,
+        sampleOrder(
+          bonds: const [
+            OrderBond(
+              role: BondRole.maker,
+              amount: 5000,
+              state: BondState.locked,
+              kind: BondKind.bond,
+              rootOrderId: root,
+            ),
+            OrderBond(
+              role: BondRole.maker,
+              amount: 500,
+              state: BondState.slashed,
+              slashReason: BondSlashReason.timeout,
+              kind: BondKind.sliceSlash,
+            ),
+            OrderBond(
+              role: BondRole.maker,
+              amount: 4500,
+              state: BondState.released,
+              kind: BondKind.makerRefund,
+            ),
+          ],
+        ),
+      );
+
+      await _open(tester, 'Deposits (3)');
+      await _show(tester, 'Rest returned to the maker');
+
+      expect(find.text('Maker (root order)'), findsOneWidget);
+      expect(find.text('Slashed on one slice'), findsOneWidget);
+      expect(
+        find.text('500 sats · Slashed and paid out · did not act in time'),
+        findsOneWidget,
+      );
+      expect(find.text('4,500 sats · Returned'), findsOneWidget);
+    });
+
+    testWidgets('more details: the dates and the premium', (tester) async {
+      await shown(tester, sampleOrder());
+
+      await _open(tester, 'More details');
+      await _show(tester, 'Premium');
+
+      expect(find.text(_date(1700000000)), findsOneWidget);
+      expect(find.text(_date(1700000100)), findsOneWidget);
+      expect(find.text(_date(1700086400)), findsOneWidget);
+      expect(find.text('1 %'), findsOneWidget);
+      expect(find.text('Fiat range'), findsNothing);
+    });
+
+    testWidgets('it says when it was asked, and Refresh asks about the order '
+        'on screen again, whatever the field says by now', (tester) async {
+      setSurface(tester, width: 400, height: 800);
+      final core = FakeOrdersCore();
+      await _pump(tester, core);
+      await _ask(tester);
+      final asked = DateFormat.Hm(
+        'en',
+      ).format(DateTime.fromMillisecondsSinceEpoch(1700000500 * 1000));
+
+      await tester.enterText(find.byType(TextField), 'something else');
+      await tester.pump();
+      await _show(tester, 'Refresh');
+      expect(find.text('Asked at $asked'), findsOneWidget);
+
+      core.hold = Completer();
+      await tester.tap(find.text('Refresh'));
+      await tester.pump();
+      // The snapshot stays while its newer one is on the way.
+      expect(find.byType(OrderSnapshotView), findsOneWidget);
+      expect(core.lookups, [sampleOrderId, sampleOrderId]);
+
+      core.order = sampleOrder(
+        status: OrderStatus.success,
+        statusRaw: 'success',
+      );
+      core.hold!.complete();
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Completed'),
+        -200,
+        scrollable: _list(),
+      );
+      expect(find.text('Completed'), findsOneWidget);
     });
   });
 

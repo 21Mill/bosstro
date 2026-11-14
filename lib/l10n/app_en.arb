@@ -2178,5 +2178,267 @@
   "orderStatusExpired": "Expired",
   "@orderStatusExpired": {
     "description": "Order status: nobody took it in time"
+  },
+  "orderFundsTitle": "The seller's sats",
+  "@orderFundsTitle": {
+    "description": "Orders, an order: title of the card about the sats the seller locked for the trade"
+  },
+  "orderOnLightning": "On Lightning now",
+  "@orderOnLightning": {
+    "description": "Orders, an order: label of what the node's Lightning node reports right now, next to what the node's database recorded"
+  },
+  "orderFundsLocked": "Locked sats",
+  "@orderFundsLocked": {
+    "description": "Orders, an order: label of the row that says no sats are locked for this order"
+  },
+  "orderValueNone": "None",
+  "@orderValueNone": {
+    "description": "Orders, an order: value of something the order does not have"
+  },
+  "orderFundsHeldAt": "Locked (node's record)",
+  "@orderFundsHeldAt": {
+    "description": "Orders, an order: when the node's database says the seller's sats were locked"
+  },
+  "orderFundsSettledAt": "Collected (node's record)",
+  "@orderFundsSettledAt": {
+    "description": "Orders, an order: when the node's database says it collected the seller's sats"
+  },
+  "orderHoldOpen": "Not locked yet",
+  "@orderHoldOpen": {
+    "description": "Seller's sats on Lightning: the seller has not locked them yet"
+  },
+  "orderHoldAccepted": "Locked",
+  "@orderHoldAccepted": {
+    "description": "Seller's sats on Lightning: locked, still the seller's"
+  },
+  "orderHoldSettled": "Collected by the node",
+  "@orderHoldSettled": {
+    "description": "Seller's sats on Lightning: the node took them"
+  },
+  "orderHoldCanceled": "Back with the seller",
+  "@orderHoldCanceled": {
+    "description": "Seller's sats on Lightning: the lock was cancelled, they went back to the seller"
+  },
+  "orderLnNotFound": "No record of it",
+  "@orderLnNotFound": {
+    "description": "Orders, an order: the node's Lightning node has no record of this payment"
+  },
+  "orderLnUnavailable": "Lightning did not answer",
+  "@orderLnUnavailable": {
+    "description": "Orders, an order: the node could not ask its Lightning node (an error, or no answer in time)"
+  },
+  "orderValueUnknown": "Not known to this version",
+  "@orderValueUnknown": {
+    "description": "Orders, an order: a value a newer node sent that this version of the app does not know"
+  },
+  "orderCashuMint": "Cashu mint",
+  "@orderCashuMint": {
+    "description": "Orders, an order on a Cashu node: the mint that holds the escrow"
+  },
+  "orderPayoutTitle": "Payment to the buyer",
+  "@orderPayoutTitle": {
+    "description": "Orders, an order: title of the card about the node's payment to the buyer"
+  },
+  "orderPayoutUnderWay": "Payment under way",
+  "@orderPayoutUnderWay": {
+    "description": "Orders, an order: label of the row that says no payment to the buyer is under way"
+  },
+  "orderPayoutInFlight": "Under way",
+  "@orderPayoutInFlight": {
+    "description": "Payment to the buyer on Lightning: sent, not finished"
+  },
+  "orderPayoutSucceeded": "Paid",
+  "@orderPayoutSucceeded": {
+    "description": "Payment to the buyer on Lightning: it arrived"
+  },
+  "orderPayoutFailed": "Failed",
+  "@orderPayoutFailed": {
+    "description": "Payment to the buyer on Lightning: it failed"
+  },
+  "orderPayoutWhyFailed": "Why it failed",
+  "@orderPayoutWhyFailed": {
+    "description": "Orders, an order: label of the reason a payment to the buyer failed"
+  },
+  "orderPayoutReasonTimeout": "Timed out",
+  "@orderPayoutReasonTimeout": {
+    "description": "Why a payment to the buyer failed: it took too long"
+  },
+  "orderPayoutReasonNoRoute": "No route to the buyer",
+  "@orderPayoutReasonNoRoute": {
+    "description": "Why a payment to the buyer failed: Lightning found no path to the buyer"
+  },
+  "orderPayoutReasonError": "Lightning error",
+  "@orderPayoutReasonError": {
+    "description": "Why a payment to the buyer failed: an error of the Lightning node"
+  },
+  "orderPayoutReasonDetails": "Wrong payment details",
+  "@orderPayoutReasonDetails": {
+    "description": "Why a payment to the buyer failed: the buyer's invoice was wrong or expired"
+  },
+  "orderPayoutReasonBalance": "Not enough balance on the node",
+  "@orderPayoutReasonBalance": {
+    "description": "Why a payment to the buyer failed: the node's Lightning node had too little balance"
+  },
+  "orderPayoutReasonCanceled": "Cancelled",
+  "@orderPayoutReasonCanceled": {
+    "description": "Why a payment to the buyer failed: it was cancelled"
+  },
+  "orderPayoutEndedAt": "Ended",
+  "@orderPayoutEndedAt": {
+    "description": "Orders, an order: when a payment to the buyer reached its final state"
+  },
+  "orderPayoutLastFailed": "Last payment failed",
+  "@orderPayoutLastFailed": {
+    "description": "Orders, an order: whether the node's last payment to the buyer failed (Yes / No)"
+  },
+  "orderPayoutAttempts": "Payment attempts",
+  "@orderPayoutAttempts": {
+    "description": "Orders, an order: how many times the node tried to pay the buyer"
+  },
+  "orderRoutingFee": "Routing fee",
+  "@orderRoutingFee": {
+    "description": "Orders, an order: what Lightning charged to route the payment to the buyer"
+  },
+  "orderPartiesTitle": "Parties",
+  "@orderPartiesTitle": {
+    "description": "Orders, an order: title of the card about the buyer and the seller"
+  },
+  "orderDisputeOpenedBy": "Dispute opened by",
+  "@orderDisputeOpenedBy": {
+    "description": "Orders, an order: which party opened a dispute (Buyer, Seller, Both, Nobody)"
+  },
+  "orderCancelAskedBy": "Cancel asked by",
+  "@orderCancelAskedBy": {
+    "description": "Orders, an order: which party asked to cancel the trade by agreement (Buyer, Seller, Both, Nobody)"
+  },
+  "orderPartyBoth": "Both",
+  "@orderPartyBoth": {
+    "description": "Orders, an order: both the buyer and the seller"
+  },
+  "orderPartyNobody": "Nobody",
+  "@orderPartyNobody": {
+    "description": "Orders, an order: neither the buyer nor the seller"
+  },
+  "orderDepositsNone": "No deposit on this order",
+  "@orderDepositsNone": {
+    "description": "Orders, an order: the order has no anti-abuse deposit"
+  },
+  "orderBondMaker": "Maker",
+  "@orderBondMaker": {
+    "description": "Whose anti-abuse deposit: the party who created the order"
+  },
+  "orderBondTaker": "Taker",
+  "@orderBondTaker": {
+    "description": "Whose anti-abuse deposit: the party who took the order"
+  },
+  "orderBondSliceSlash": "Slashed on one slice",
+  "@orderBondSliceSlash": {
+    "description": "A deposit row of a range order: the part of the maker's deposit slashed for one slice"
+  },
+  "orderBondMakerRefund": "Rest returned to the maker",
+  "@orderBondMakerRefund": {
+    "description": "A deposit row of a range order: what was left of the maker's deposit, returned"
+  },
+  "orderBondRequested": "Asked for",
+  "@orderBondRequested": {
+    "description": "Deposit state: asked for, not posted yet"
+  },
+  "orderBondLocked": "Locked",
+  "@orderBondLocked": {
+    "description": "Deposit state: posted and held"
+  },
+  "orderBondReleased": "Returned",
+  "@orderBondReleased": {
+    "description": "Deposit state: given back"
+  },
+  "orderBondPendingPayout": "Slashed, payout owed",
+  "@orderBondPendingPayout": {
+    "description": "Deposit state: slashed, its payout to the other party still owed"
+  },
+  "orderBondSlashed": "Slashed and paid out",
+  "@orderBondSlashed": {
+    "description": "Deposit state: slashed and paid to the other party"
+  },
+  "orderBondForfeited": "Slashed, never claimed",
+  "@orderBondForfeited": {
+    "description": "Deposit state: slashed, and the other party never claimed it"
+  },
+  "orderBondFailed": "Payout failed",
+  "@orderBondFailed": {
+    "description": "Deposit state: its payout failed"
+  },
+  "orderBondLostDispute": "lost the dispute",
+  "@orderBondLostDispute": {
+    "description": "Why a deposit was slashed, after its state: its owner lost the dispute"
+  },
+  "orderBondTimeout": "did not act in time",
+  "@orderBondTimeout": {
+    "description": "Why a deposit was slashed, after its state: its owner did not act in time"
+  },
+  "orderDetailsTitle": "More details",
+  "@orderDetailsTitle": {
+    "description": "Orders, an order: title of the card with the rest of the order's data"
+  },
+  "orderCreatedAt": "Created",
+  "@orderCreatedAt": {
+    "description": "Orders, an order: when the order was created"
+  },
+  "orderTakenAt": "Taken",
+  "@orderTakenAt": {
+    "description": "Orders, an order: when the order was taken"
+  },
+  "orderExpiresAt": "Expires",
+  "@orderExpiresAt": {
+    "description": "Orders, an order: when the order expires"
+  },
+  "orderFiatRange": "Fiat range",
+  "@orderFiatRange": {
+    "description": "Orders, a range order: the smallest and largest fiat amount it accepts"
+  },
+  "orderRangeParent": "Part of range order",
+  "@orderRangeParent": {
+    "description": "Orders, an order: the range order this one is a part of"
+  },
+  "orderDepositsTitle": "Deposits ({count})",
+  "@orderDepositsTitle": {
+    "description": "Orders, an order: title of the card about the anti-abuse deposits, with how many rows it has",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderBondOfRoot": "{role} (root order)",
+  "@orderBondOfRoot": {
+    "description": "A deposit row on a part of a range order: {role} is whose deposit it is (Maker), and it belongs to the whole range order",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "orderFiatRangeValue": "{min} – {max} {code}",
+  "@orderFiatRangeValue": {
+    "description": "A range order's fiat range: smallest, largest and the currency code",
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "orderAskedAt": "Asked at {time}",
+  "@orderAskedAt": {
+    "description": "Orders, under an order: the time of day the node answered, as the locale writes it",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -311,6 +311,80 @@ void main() {
         expect(find.byType(OrderSummaryCard), findsOneWidget);
         await _fitsToTheEnd(tester, 'Orders, an order');
 
+        // The whole snapshot, every folded card open, with the parts an
+        // ordinary order lacks: a failed payment, deposits in every state.
+        Future<void> wholeSnapshot(OrderSnapshot order, String where) async {
+          final core = FakeOrdersCore()..order = order;
+          await _pump(tester, locale, AppRoute.orders, orders: core);
+          await ask();
+          for (final title in [
+            l10n.orderPartiesTitle,
+            l10n.orderDepositsTitle(order.bonds.length),
+            l10n.orderDetailsTitle,
+          ]) {
+            await _tapText(tester, title);
+          }
+          await _fitsToTheEnd(tester, 'Orders, $where');
+        }
+
+        await wholeSnapshot(
+          sampleOrder(
+            payout: const Payout(
+              state: PayoutState.unavailable,
+              failureReason: PayoutFailureReason.insufficientBalance,
+              resolvedAt: 1700000300,
+            ),
+            bonds: [
+              for (final state in BondState.values)
+                OrderBond(
+                  role: BondRole.taker,
+                  amount: 1000,
+                  state: state,
+                  slashReason: BondSlashReason.timeout,
+                  kind: BondKind.bond,
+                ),
+              const OrderBond(
+                role: BondRole.maker,
+                amount: 5000,
+                state: BondState.pendingPayout,
+                slashReason: BondSlashReason.lostDispute,
+                kind: BondKind.sliceSlash,
+              ),
+              const OrderBond(
+                role: BondRole.maker,
+                amount: 5000,
+                state: BondState.released,
+                kind: BondKind.makerRefund,
+              ),
+              const OrderBond(
+                role: BondRole.maker,
+                amount: 5000,
+                state: BondState.locked,
+                kind: BondKind.bond,
+                rootOrderId: '0d4f6a2b-7c1e-4f3a-8b5d-9e0f1a2b3c4d',
+              ),
+            ],
+          ),
+          'the whole snapshot',
+        );
+        await wholeSnapshot(
+          sampleOrder(
+            holdInvoice: const HoldInvoice(state: HoldInvoiceState.unavailable),
+            bonds: const [],
+          ),
+          'Lightning silent, no deposit',
+        );
+        await wholeSnapshot(
+          sampleOrder(
+            holdInvoice: null,
+            cashuEscrow: const CashuEscrow(
+              mintUrl: 'https://mint.example.com/a/long/path',
+              lockedAt: 1700000150,
+            ),
+          ),
+          'a Cashu order',
+        );
+
         // The longest status of each locale, whichever it is.
         for (final status in OrderStatus.values) {
           final core =

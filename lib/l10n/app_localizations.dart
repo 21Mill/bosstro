@@ -3029,6 +3029,360 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expired'**
   String get orderStatusExpired;
+
+  /// Orders, an order: title of the card about the sats the seller locked for the trade
+  ///
+  /// In en, this message translates to:
+  /// **'The seller\'s sats'**
+  String get orderFundsTitle;
+
+  /// Orders, an order: label of what the node's Lightning node reports right now, next to what the node's database recorded
+  ///
+  /// In en, this message translates to:
+  /// **'On Lightning now'**
+  String get orderOnLightning;
+
+  /// Orders, an order: label of the row that says no sats are locked for this order
+  ///
+  /// In en, this message translates to:
+  /// **'Locked sats'**
+  String get orderFundsLocked;
+
+  /// Orders, an order: value of something the order does not have
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get orderValueNone;
+
+  /// Orders, an order: when the node's database says the seller's sats were locked
+  ///
+  /// In en, this message translates to:
+  /// **'Locked (node\'s record)'**
+  String get orderFundsHeldAt;
+
+  /// Orders, an order: when the node's database says it collected the seller's sats
+  ///
+  /// In en, this message translates to:
+  /// **'Collected (node\'s record)'**
+  String get orderFundsSettledAt;
+
+  /// Seller's sats on Lightning: the seller has not locked them yet
+  ///
+  /// In en, this message translates to:
+  /// **'Not locked yet'**
+  String get orderHoldOpen;
+
+  /// Seller's sats on Lightning: locked, still the seller's
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get orderHoldAccepted;
+
+  /// Seller's sats on Lightning: the node took them
+  ///
+  /// In en, this message translates to:
+  /// **'Collected by the node'**
+  String get orderHoldSettled;
+
+  /// Seller's sats on Lightning: the lock was cancelled, they went back to the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Back with the seller'**
+  String get orderHoldCanceled;
+
+  /// Orders, an order: the node's Lightning node has no record of this payment
+  ///
+  /// In en, this message translates to:
+  /// **'No record of it'**
+  String get orderLnNotFound;
+
+  /// Orders, an order: the node could not ask its Lightning node (an error, or no answer in time)
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning did not answer'**
+  String get orderLnUnavailable;
+
+  /// Orders, an order: a value a newer node sent that this version of the app does not know
+  ///
+  /// In en, this message translates to:
+  /// **'Not known to this version'**
+  String get orderValueUnknown;
+
+  /// Orders, an order on a Cashu node: the mint that holds the escrow
+  ///
+  /// In en, this message translates to:
+  /// **'Cashu mint'**
+  String get orderCashuMint;
+
+  /// Orders, an order: title of the card about the node's payment to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Payment to the buyer'**
+  String get orderPayoutTitle;
+
+  /// Orders, an order: label of the row that says no payment to the buyer is under way
+  ///
+  /// In en, this message translates to:
+  /// **'Payment under way'**
+  String get orderPayoutUnderWay;
+
+  /// Payment to the buyer on Lightning: sent, not finished
+  ///
+  /// In en, this message translates to:
+  /// **'Under way'**
+  String get orderPayoutInFlight;
+
+  /// Payment to the buyer on Lightning: it arrived
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get orderPayoutSucceeded;
+
+  /// Payment to the buyer on Lightning: it failed
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get orderPayoutFailed;
+
+  /// Orders, an order: label of the reason a payment to the buyer failed
+  ///
+  /// In en, this message translates to:
+  /// **'Why it failed'**
+  String get orderPayoutWhyFailed;
+
+  /// Why a payment to the buyer failed: it took too long
+  ///
+  /// In en, this message translates to:
+  /// **'Timed out'**
+  String get orderPayoutReasonTimeout;
+
+  /// Why a payment to the buyer failed: Lightning found no path to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'No route to the buyer'**
+  String get orderPayoutReasonNoRoute;
+
+  /// Why a payment to the buyer failed: an error of the Lightning node
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning error'**
+  String get orderPayoutReasonError;
+
+  /// Why a payment to the buyer failed: the buyer's invoice was wrong or expired
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong payment details'**
+  String get orderPayoutReasonDetails;
+
+  /// Why a payment to the buyer failed: the node's Lightning node had too little balance
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough balance on the node'**
+  String get orderPayoutReasonBalance;
+
+  /// Why a payment to the buyer failed: it was cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderPayoutReasonCanceled;
+
+  /// Orders, an order: when a payment to the buyer reached its final state
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get orderPayoutEndedAt;
+
+  /// Orders, an order: whether the node's last payment to the buyer failed (Yes / No)
+  ///
+  /// In en, this message translates to:
+  /// **'Last payment failed'**
+  String get orderPayoutLastFailed;
+
+  /// Orders, an order: how many times the node tried to pay the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Payment attempts'**
+  String get orderPayoutAttempts;
+
+  /// Orders, an order: what Lightning charged to route the payment to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Routing fee'**
+  String get orderRoutingFee;
+
+  /// Orders, an order: title of the card about the buyer and the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Parties'**
+  String get orderPartiesTitle;
+
+  /// Orders, an order: which party opened a dispute (Buyer, Seller, Both, Nobody)
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute opened by'**
+  String get orderDisputeOpenedBy;
+
+  /// Orders, an order: which party asked to cancel the trade by agreement (Buyer, Seller, Both, Nobody)
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel asked by'**
+  String get orderCancelAskedBy;
+
+  /// Orders, an order: both the buyer and the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get orderPartyBoth;
+
+  /// Orders, an order: neither the buyer nor the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody'**
+  String get orderPartyNobody;
+
+  /// Orders, an order: the order has no anti-abuse deposit
+  ///
+  /// In en, this message translates to:
+  /// **'No deposit on this order'**
+  String get orderDepositsNone;
+
+  /// Whose anti-abuse deposit: the party who created the order
+  ///
+  /// In en, this message translates to:
+  /// **'Maker'**
+  String get orderBondMaker;
+
+  /// Whose anti-abuse deposit: the party who took the order
+  ///
+  /// In en, this message translates to:
+  /// **'Taker'**
+  String get orderBondTaker;
+
+  /// A deposit row of a range order: the part of the maker's deposit slashed for one slice
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed on one slice'**
+  String get orderBondSliceSlash;
+
+  /// A deposit row of a range order: what was left of the maker's deposit, returned
+  ///
+  /// In en, this message translates to:
+  /// **'Rest returned to the maker'**
+  String get orderBondMakerRefund;
+
+  /// Deposit state: asked for, not posted yet
+  ///
+  /// In en, this message translates to:
+  /// **'Asked for'**
+  String get orderBondRequested;
+
+  /// Deposit state: posted and held
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get orderBondLocked;
+
+  /// Deposit state: given back
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get orderBondReleased;
+
+  /// Deposit state: slashed, its payout to the other party still owed
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed, payout owed'**
+  String get orderBondPendingPayout;
+
+  /// Deposit state: slashed and paid to the other party
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed and paid out'**
+  String get orderBondSlashed;
+
+  /// Deposit state: slashed, and the other party never claimed it
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed, never claimed'**
+  String get orderBondForfeited;
+
+  /// Deposit state: its payout failed
+  ///
+  /// In en, this message translates to:
+  /// **'Payout failed'**
+  String get orderBondFailed;
+
+  /// Why a deposit was slashed, after its state: its owner lost the dispute
+  ///
+  /// In en, this message translates to:
+  /// **'lost the dispute'**
+  String get orderBondLostDispute;
+
+  /// Why a deposit was slashed, after its state: its owner did not act in time
+  ///
+  /// In en, this message translates to:
+  /// **'did not act in time'**
+  String get orderBondTimeout;
+
+  /// Orders, an order: title of the card with the rest of the order's data
+  ///
+  /// In en, this message translates to:
+  /// **'More details'**
+  String get orderDetailsTitle;
+
+  /// Orders, an order: when the order was created
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get orderCreatedAt;
+
+  /// Orders, an order: when the order was taken
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get orderTakenAt;
+
+  /// Orders, an order: when the order expires
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get orderExpiresAt;
+
+  /// Orders, a range order: the smallest and largest fiat amount it accepts
+  ///
+  /// In en, this message translates to:
+  /// **'Fiat range'**
+  String get orderFiatRange;
+
+  /// Orders, an order: the range order this one is a part of
+  ///
+  /// In en, this message translates to:
+  /// **'Part of range order'**
+  String get orderRangeParent;
+
+  /// Orders, an order: title of the card about the anti-abuse deposits, with how many rows it has
+  ///
+  /// In en, this message translates to:
+  /// **'Deposits ({count})'**
+  String orderDepositsTitle(int count);
+
+  /// A deposit row on a part of a range order: {role} is whose deposit it is (Maker), and it belongs to the whole range order
+  ///
+  /// In en, this message translates to:
+  /// **'{role} (root order)'**
+  String orderBondOfRoot(String role);
+
+  /// A range order's fiat range: smallest, largest and the currency code
+  ///
+  /// In en, this message translates to:
+  /// **'{min} – {max} {code}'**
+  String orderFiatRangeValue(String min, String max, String code);
+
+  /// Orders, under an order: the time of day the node answered, as the locale writes it
+  ///
+  /// In en, this message translates to:
+  /// **'Asked at {time}'**
+  String orderAskedAt(String time);
 }
 
 class _AppLocalizationsDelegate
