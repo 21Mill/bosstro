@@ -12,6 +12,7 @@ import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/nodes/providers/node_providers.dart';
 import 'package:bosstro/features/nodes/providers/relay_providers.dart';
 import 'package:bosstro/features/observer/providers/observer_providers.dart';
+import 'package:bosstro/features/orders/providers/orders_providers.dart';
 import 'package:bosstro/features/settings/providers/language_provider.dart';
 import 'package:bosstro/features/solver_key/providers/solver_key_providers.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
@@ -24,6 +25,7 @@ import 'fake_device_security.dart';
 import 'fake_disputes.dart';
 import 'fake_nodes.dart';
 import 'fake_observer.dart';
+import 'fake_orders.dart';
 import 'fake_settings.dart';
 import 'fake_solver_key.dart';
 
@@ -32,6 +34,7 @@ export 'fake_device_security.dart';
 export 'fake_disputes.dart';
 export 'fake_nodes.dart';
 export 'fake_observer.dart';
+export 'fake_orders.dart';
 export 'fake_settings.dart';
 export 'fake_solver_key.dart';
 
@@ -76,6 +79,7 @@ List<Override> fakeCoreOverrides({
   FakeDisputesCore? disputes,
   FakeChatCore? chat,
   FakeObserverCore? observer,
+  FakeOrdersCore? orders,
   FakeSettingsCore? settings,
 }) {
   final nodeCore = nodes ?? FakeNodesCore(active: mostroNodePubkey);
@@ -102,6 +106,7 @@ List<Override> fakeCoreOverrides({
     ),
     chatCoreProvider.overrideWithValue(chat ?? FakeChatCore()),
     observerCoreProvider.overrideWithValue(observer ?? FakeObserverCore()),
+    ordersCoreProvider.overrideWithValue(orders ?? FakeOrdersCore()),
     settingsCoreProvider.overrideWithValue(settings ?? FakeSettingsCore()),
     languageProvider.overrideWith(() => LanguageNotifier(settings?.saved)),
   ];

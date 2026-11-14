@@ -1661,4 +1661,100 @@ class AppLocalizationsNl extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get navOrders => 'Orders';
+
+  @override
+  String get ordersTitle => 'Order opzoeken';
+
+  @override
+  String get ordersIntro =>
+      'Bekijk hoe deze node een van zijn orders er nu voor heeft staan, in dispuut of niet. Opzoeken verandert niets.';
+
+  @override
+  String get ordersNoNodeBody =>
+      'Orders zoek je op bij één Mostro-node tegelijk. Kies de node waar je solver bent.';
+
+  @override
+  String get orderIdHint => 'Plak de order-ID';
+
+  @override
+  String get orderIdInvalid =>
+      'Dat is geen order-ID. Die ziet er zo uit: 308e1272-d5f4-47e6-bd97-3504baea9c23.';
+
+  @override
+  String get orderLookupAction => 'Order opzoeken';
+
+  @override
+  String get orderNotFoundTitle => 'Order niet gevonden';
+
+  @override
+  String get orderNotFoundBody =>
+      'Deze node heeft geen order met die ID. Controleer de ID, en of de order bij deze node hoort.';
+
+  @override
+  String get orderNoAnswerBody =>
+      'Het verzoek of het antwoord is misschien verloren gegaan, of deze node beantwoordt het opzoeken van orders nog niet. Er is niets veranderd: je kunt het opnieuw vragen.';
+
+  @override
+  String get orderRefusedBody =>
+      'De node gaf geen reden. Probeer het later opnieuw, of vraag het de beheerder van de node.';
+
+  @override
+  String orderRefusedReasonBody(String reason) {
+    return 'De reden: $reason. Probeer het later opnieuw, of vraag het de beheerder van de node.';
+  }
+
+  @override
+  String get orderStatusPending => 'Wacht op een tegenpartij';
+
+  @override
+  String get orderStatusWaitingMakerDeposit => 'Wacht op de borg van de maker';
+
+  @override
+  String get orderStatusWaitingTakerDeposit =>
+      'Wacht op de borg van de tegenpartij';
+
+  @override
+  String get orderStatusWaitingBuyerInvoice =>
+      'Wacht op de invoice van de koper';
+
+  @override
+  String get orderStatusWaitingPayment =>
+      'Wacht tot de verkoper de sats vastzet';
+
+  @override
+  String get orderStatusInProgress => 'Lopend';
+
+  @override
+  String get orderStatusSatsReleased =>
+      'Sats vrijgegeven, koper nog niet betaald';
+
+  @override
+  String get orderStatusSuccess => 'Afgerond';
+
+  @override
+  String get orderStatusDispute => 'In dispuut';
+
+  @override
+  String get orderStatusCanceled => 'Geannuleerd';
+
+  @override
+  String get orderStatusCooperativelyCanceled =>
+      'Door beide partijen geannuleerd';
+
+  @override
+  String get orderStatusRefundedBySolver =>
+      'Door een solver terugbetaald aan de verkoper';
+
+  @override
+  String get orderStatusSettledBySolver =>
+      'Door een solver beslist voor de koper, nog niet betaald';
+
+  @override
+  String get orderStatusPaidBySolver => 'Door een solver betaald aan de koper';
+
+  @override
+  String get orderStatusExpired => 'Verlopen';
 }

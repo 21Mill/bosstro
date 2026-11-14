@@ -8,6 +8,7 @@ import 'package:bosstro/features/disputes/screens/recover_screen.dart';
 import 'package:bosstro/features/nodes/screens/choose_node_screen.dart';
 import 'package:bosstro/features/nodes/screens/node_info_screen.dart';
 import 'package:bosstro/features/nodes/screens/relays_screen.dart';
+import 'package:bosstro/features/orders/screens/orders_screen.dart';
 import 'package:bosstro/features/settings/screens/about_screen.dart';
 import 'package:bosstro/features/settings/screens/settings_screen.dart';
 import 'package:bosstro/features/shell/screens/home_shell.dart';
@@ -37,6 +38,9 @@ abstract final class AppRoute {
   /// phone; beside the list on a tablet).
   static String disputeDetail(String disputeId) =>
       '/disputes/in-progress/dispute/$disputeId';
+
+  /// Look up any order of the active node by its id.
+  static const orders = '/orders';
   static const settings = '/settings';
   static const backup = '/settings/backup';
 
@@ -59,7 +63,7 @@ abstract final class AppRoute {
   static String home({required bool hasNode}) => hasNode ? pending : chooseNode;
 
   /// The bottom bar's destinations, in order.
-  static const tabs = [pending, settings];
+  static const tabs = [pending, orders, settings];
 
   /// The parts of the Disputes tab, in the order of its segments.
   static const disputeSections = [pending, inProgress, closed];
@@ -152,6 +156,14 @@ GoRouter buildRouter({
                 ],
               ),
               _disputes(DisputesSection.closed),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.orders,
+                builder: (context, state) => const OrdersScreen(),
+              ),
             ],
           ),
           StatefulShellBranch(

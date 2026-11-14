@@ -35,10 +35,14 @@ void main() {
     // The tab and its title read the same.
     expect(find.text('Disputes'), findsNWidgets(2));
 
+    await tester.tap(find.text('Orders'));
+    await tester.pumpAndSettle();
+    expect(find.text('Look up an order'), findsOneWidget);
+    expect(find.byType(DisputesScreen), findsNothing);
+
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
     expect(find.text('Language'), findsOneWidget);
-    expect(find.byType(DisputesScreen), findsNothing);
 
     await tester.tap(find.text('Disputes'));
     await tester.pumpAndSettle();
@@ -125,6 +129,11 @@ void main() {
     // Recover sits beside this title, a 48-dp target.
     final recover = tester.getCenter(find.text('Recover'));
     expect(recover.dy, closeTo(title().center.dy, 1));
+    expect(title().top, pending.top);
+
+    await tester.tap(find.text('Orders'));
+    await tester.pumpAndSettle();
+    expect(find.text('Look up an order'), findsOneWidget);
     expect(title().top, pending.top);
 
     await tester.tap(find.text('Settings'));

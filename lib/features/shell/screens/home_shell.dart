@@ -13,7 +13,7 @@ import 'package:bosstro/shared/widgets/bottom_nav_bar.dart';
 import 'package:bosstro/shared/widgets/tab_app_bar.dart';
 
 /// The tab shell: the tab app bar on top, the active tab, and the bottom bar
-/// (Disputes · Settings).
+/// (Disputes · Orders · Settings).
 class HomeShell extends ConsumerWidget {
   const HomeShell({super.key, required this.shell});
 

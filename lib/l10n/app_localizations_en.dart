@@ -1645,4 +1645,99 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get navOrders => 'Orders';
+
+  @override
+  String get ordersTitle => 'Look up an order';
+
+  @override
+  String get ordersIntro =>
+      'See how this node holds any of its orders right now, in dispute or not. Looking changes nothing.';
+
+  @override
+  String get ordersNoNodeBody =>
+      'Orders are looked up on one Mostro node at a time. Pick the node where you are a solver.';
+
+  @override
+  String get orderIdHint => 'Paste the order\'s ID';
+
+  @override
+  String get orderIdInvalid =>
+      'That is not an order ID. One looks like 308e1272-d5f4-47e6-bd97-3504baea9c23.';
+
+  @override
+  String get orderLookupAction => 'Look up order';
+
+  @override
+  String get orderNotFoundTitle => 'Order not found';
+
+  @override
+  String get orderNotFoundBody =>
+      'This node has no order with that ID. Check the ID, and that the order belongs to this node.';
+
+  @override
+  String get orderNoAnswerBody =>
+      'The request or its answer may have been lost, or this node does not answer order lookups yet. Nothing was changed: you can ask again.';
+
+  @override
+  String get orderRefusedBody =>
+      'It gave no reason. Try again later, or ask the node\'s operator.';
+
+  @override
+  String orderRefusedReasonBody(String reason) {
+    return 'Its reason: $reason. Try again later, or ask the node\'s operator.';
+  }
+
+  @override
+  String get orderStatusPending => 'Waiting for a taker';
+
+  @override
+  String get orderStatusWaitingMakerDeposit =>
+      'Waiting for the maker\'s deposit';
+
+  @override
+  String get orderStatusWaitingTakerDeposit =>
+      'Waiting for the taker\'s deposit';
+
+  @override
+  String get orderStatusWaitingBuyerInvoice =>
+      'Waiting for the buyer\'s invoice';
+
+  @override
+  String get orderStatusWaitingPayment =>
+      'Waiting for the seller to lock the sats';
+
+  @override
+  String get orderStatusInProgress => 'In progress';
+
+  @override
+  String get orderStatusSatsReleased => 'Sats released, buyer not paid yet';
+
+  @override
+  String get orderStatusSuccess => 'Completed';
+
+  @override
+  String get orderStatusDispute => 'In dispute';
+
+  @override
+  String get orderStatusCanceled => 'Cancelled';
+
+  @override
+  String get orderStatusCooperativelyCanceled => 'Cancelled by both parties';
+
+  @override
+  String get orderStatusRefundedBySolver =>
+      'Refunded to the seller by a solver';
+
+  @override
+  String get orderStatusSettledBySolver =>
+      'Decided for the buyer by a solver, not paid yet';
+
+  @override
+  String get orderStatusPaidBySolver => 'Paid to the buyer by a solver';
+
+  @override
+  String get orderStatusExpired => 'Expired';
 }

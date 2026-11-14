@@ -2065,5 +2065,118 @@
         "type": "int"
       }
     }
+  },
+  "navOrders": "Orders",
+  "@navOrders": {
+    "description": "Bottom bar destination: look up any order of the active node by its ID"
+  },
+  "ordersTitle": "Look up an order",
+  "@ordersTitle": {
+    "description": "Header of the Orders tab"
+  },
+  "ordersIntro": "See how this node holds any of its orders right now, in dispute or not. Looking changes nothing.",
+  "@ordersIntro": {
+    "description": "Orders tab: what the lookup is for, above the form"
+  },
+  "ordersNoNodeBody": "Orders are looked up on one Mostro node at a time. Pick the node where you are a solver.",
+  "@ordersNoNodeBody": {
+    "description": "Orders tab empty state body before a node is chosen"
+  },
+  "orderIdHint": "Paste the order's ID",
+  "@orderIdHint": {
+    "description": "Orders tab: placeholder of the order ID field"
+  },
+  "orderIdInvalid": "That is not an order ID. One looks like 308e1272-d5f4-47e6-bd97-3504baea9c23.",
+  "@orderIdInvalid": {
+    "description": "Orders tab: the text in the field is not an order ID (a UUID)"
+  },
+  "orderLookupAction": "Look up order",
+  "@orderLookupAction": {
+    "description": "Orders tab: the primary button that asks the node about the order"
+  },
+  "orderNotFoundTitle": "Order not found",
+  "@orderNotFoundTitle": {
+    "description": "Orders tab: the node has no order with that ID"
+  },
+  "orderNotFoundBody": "This node has no order with that ID. Check the ID, and that the order belongs to this node.",
+  "@orderNotFoundBody": {
+    "description": "Orders tab: what to check when the node has no order with that ID"
+  },
+  "orderNoAnswerBody": "The request or its answer may have been lost, or this node does not answer order lookups yet. Nothing was changed: you can ask again.",
+  "@orderNoAnswerBody": {
+    "description": "Orders tab: the node did not answer a lookup in time; older nodes do not know the request"
+  },
+  "orderRefusedBody": "It gave no reason. Try again later, or ask the node's operator.",
+  "@orderRefusedBody": {
+    "description": "Orders tab: the node refused the lookup and gave no reason"
+  },
+  "orderRefusedReasonBody": "Its reason: {reason}. Try again later, or ask the node's operator.",
+  "@orderRefusedReasonBody": {
+    "description": "Orders tab: the node refused the lookup; {reason} is the protocol's own word for why (e.g. invalid_action), shown as it came",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "orderStatusPending": "Waiting for a taker",
+  "@orderStatusPending": {
+    "description": "Order status: published, nobody took it yet"
+  },
+  "orderStatusWaitingMakerDeposit": "Waiting for the maker's deposit",
+  "@orderStatusWaitingMakerDeposit": {
+    "description": "Order status: the maker has not posted the anti-abuse deposit yet, so the order is not published"
+  },
+  "orderStatusWaitingTakerDeposit": "Waiting for the taker's deposit",
+  "@orderStatusWaitingTakerDeposit": {
+    "description": "Order status: taken, the taker has not posted the anti-abuse deposit yet"
+  },
+  "orderStatusWaitingBuyerInvoice": "Waiting for the buyer's invoice",
+  "@orderStatusWaitingBuyerInvoice": {
+    "description": "Order status: the buyer has not given the invoice to be paid to yet"
+  },
+  "orderStatusWaitingPayment": "Waiting for the seller to lock the sats",
+  "@orderStatusWaitingPayment": {
+    "description": "Order status: the seller has not locked the sats yet"
+  },
+  "orderStatusInProgress": "In progress",
+  "@orderStatusInProgress": {
+    "description": "Order status: taken, under way"
+  },
+  "orderStatusSatsReleased": "Sats released, buyer not paid yet",
+  "@orderStatusSatsReleased": {
+    "description": "Order status: the seller's sats were taken by the node; the payment to the buyer is under way or failed"
+  },
+  "orderStatusSuccess": "Completed",
+  "@orderStatusSuccess": {
+    "description": "Order status: the trade ended, the buyer was paid"
+  },
+  "orderStatusDispute": "In dispute",
+  "@orderStatusDispute": {
+    "description": "Order status: a party opened a dispute"
+  },
+  "orderStatusCanceled": "Cancelled",
+  "@orderStatusCanceled": {
+    "description": "Order status: cancelled"
+  },
+  "orderStatusCooperativelyCanceled": "Cancelled by both parties",
+  "@orderStatusCooperativelyCanceled": {
+    "description": "Order status: both parties agreed to cancel"
+  },
+  "orderStatusRefundedBySolver": "Refunded to the seller by a solver",
+  "@orderStatusRefundedBySolver": {
+    "description": "Order status: a solver closed the dispute by refunding the seller"
+  },
+  "orderStatusSettledBySolver": "Decided for the buyer by a solver, not paid yet",
+  "@orderStatusSettledBySolver": {
+    "description": "Order status: a solver decided for the buyer; the payment to the buyer is under way or failed"
+  },
+  "orderStatusPaidBySolver": "Paid to the buyer by a solver",
+  "@orderStatusPaidBySolver": {
+    "description": "Order status: a solver decided for the buyer and the buyer was paid"
+  },
+  "orderStatusExpired": "Expired",
+  "@orderStatusExpired": {
+    "description": "Order status: nobody took it in time"
   }
 }

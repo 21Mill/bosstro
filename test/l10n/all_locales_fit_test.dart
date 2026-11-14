@@ -15,11 +15,14 @@ import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/disputes/widgets/pending_dispute_row.dart';
 import 'package:bosstro/features/observer/screens/observer_screen.dart';
 import 'package:bosstro/features/observer/services/observer_core.dart';
+import 'package:bosstro/features/orders/services/orders_core.dart';
+import 'package:bosstro/features/orders/widgets/order_summary_card.dart';
 import 'package:bosstro/features/resolution/screens/resolution_screen.dart';
 import 'package:bosstro/features/resolution/widgets/resolution_card.dart';
 import 'package:bosstro/features/settings/widgets/language_sheet.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
 import 'package:bosstro/shared/widgets/mostro_modal.dart';
+import 'package:bosstro/shared/widgets/primary_button.dart';
 
 import '../support/screen_harness.dart';
 
@@ -103,6 +106,7 @@ Future<void> _pump(
   String location, {
   bool signedIn = true,
   bool? bonds = true,
+  FakeOrdersCore? orders,
 }) async {
   // A fresh app each time: pumping a new one in its place would keep the
   // previous router and providers.
@@ -119,6 +123,7 @@ Future<void> _pump(
         disputes: _disputes(bonds: bonds),
         chat: _chat(),
         observer: _observer(),
+        orders: orders,
         nodes: FakeNodesCore(active: mostroNodePubkey, info: sampleInfo()),
       ),
     ),
@@ -283,6 +288,57 @@ void main() {
           );
         });
       }
+
+      testWidgets('Orders: the form, an order, and every other answer', (
+        tester,
+      ) async {
+        Future<void> ask() async {
+          // The field is the top of the list: back to it after a scroll.
+          tester
+              .state<ScrollableState>(find.byType(Scrollable).first)
+              .position
+              .jumpTo(0);
+          await tester.pumpAndSettle();
+          await tester.enterText(find.byType(TextField), sampleOrderId);
+          await tester.pump();
+          // By its type: in some locales the title reads as the button.
+          await _tap(tester, find.byType(PrimaryButton));
+        }
+
+        await _pump(tester, locale, AppRoute.orders);
+        await _fitsToTheEnd(tester, 'Orders');
+        await ask();
+        expect(find.byType(OrderSummaryCard), findsOneWidget);
+        await _fitsToTheEnd(tester, 'Orders, an order');
+
+        // The longest status of each locale, whichever it is.
+        for (final status in OrderStatus.values) {
+          final core =
+              FakeOrdersCore()
+                ..order = sampleOrder(status: status, statusRaw: 'unknown');
+          await _pump(tester, locale, AppRoute.orders, orders: core);
+          await ask();
+          await _fitsToTheEnd(tester, 'Orders, $status');
+        }
+
+        for (final answer in <Object>[
+          OrderLookupOutcome.notFound,
+          OrderLookupOutcome.notSolver,
+          OrderLookupOutcome.noAnswer,
+          OrderLookupOutcome.refused,
+          OrderLookupError.sendFailed,
+          OrderLookupError.nodeInfoUnavailable,
+          OrderLookupError.protocolUnsupported,
+        ]) {
+          final core =
+              FakeOrdersCore()
+                ..answer = answer
+                ..reason = 'invalid_order_status';
+          await _pump(tester, locale, AppRoute.orders, orders: core);
+          await ask();
+          await _fitsToTheEnd(tester, 'Orders, $answer');
+        }
+      });
 
       testWidgets('Settings and the language sheet', (tester) async {
         await _pump(tester, locale, AppRoute.settings);

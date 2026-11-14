@@ -2867,6 +2867,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{Closed 1 day ago} other{Closed {count} days ago}}'**
   String disputeClosedDaysAgo(int count);
+
+  /// Bottom bar destination: look up any order of the active node by its ID
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get navOrders;
+
+  /// Header of the Orders tab
+  ///
+  /// In en, this message translates to:
+  /// **'Look up an order'**
+  String get ordersTitle;
+
+  /// Orders tab: what the lookup is for, above the form
+  ///
+  /// In en, this message translates to:
+  /// **'See how this node holds any of its orders right now, in dispute or not. Looking changes nothing.'**
+  String get ordersIntro;
+
+  /// Orders tab empty state body before a node is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'Orders are looked up on one Mostro node at a time. Pick the node where you are a solver.'**
+  String get ordersNoNodeBody;
+
+  /// Orders tab: placeholder of the order ID field
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the order\'s ID'**
+  String get orderIdHint;
+
+  /// Orders tab: the text in the field is not an order ID (a UUID)
+  ///
+  /// In en, this message translates to:
+  /// **'That is not an order ID. One looks like 308e1272-d5f4-47e6-bd97-3504baea9c23.'**
+  String get orderIdInvalid;
+
+  /// Orders tab: the primary button that asks the node about the order
+  ///
+  /// In en, this message translates to:
+  /// **'Look up order'**
+  String get orderLookupAction;
+
+  /// Orders tab: the node has no order with that ID
+  ///
+  /// In en, this message translates to:
+  /// **'Order not found'**
+  String get orderNotFoundTitle;
+
+  /// Orders tab: what to check when the node has no order with that ID
+  ///
+  /// In en, this message translates to:
+  /// **'This node has no order with that ID. Check the ID, and that the order belongs to this node.'**
+  String get orderNotFoundBody;
+
+  /// Orders tab: the node did not answer a lookup in time; older nodes do not know the request
+  ///
+  /// In en, this message translates to:
+  /// **'The request or its answer may have been lost, or this node does not answer order lookups yet. Nothing was changed: you can ask again.'**
+  String get orderNoAnswerBody;
+
+  /// Orders tab: the node refused the lookup and gave no reason
+  ///
+  /// In en, this message translates to:
+  /// **'It gave no reason. Try again later, or ask the node\'s operator.'**
+  String get orderRefusedBody;
+
+  /// Orders tab: the node refused the lookup; {reason} is the protocol's own word for why (e.g. invalid_action), shown as it came
+  ///
+  /// In en, this message translates to:
+  /// **'Its reason: {reason}. Try again later, or ask the node\'s operator.'**
+  String orderRefusedReasonBody(String reason);
+
+  /// Order status: published, nobody took it yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a taker'**
+  String get orderStatusPending;
+
+  /// Order status: the maker has not posted the anti-abuse deposit yet, so the order is not published
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the maker\'s deposit'**
+  String get orderStatusWaitingMakerDeposit;
+
+  /// Order status: taken, the taker has not posted the anti-abuse deposit yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the taker\'s deposit'**
+  String get orderStatusWaitingTakerDeposit;
+
+  /// Order status: the buyer has not given the invoice to be paid to yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the buyer\'s invoice'**
+  String get orderStatusWaitingBuyerInvoice;
+
+  /// Order status: the seller has not locked the sats yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the seller to lock the sats'**
+  String get orderStatusWaitingPayment;
+
+  /// Order status: taken, under way
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get orderStatusInProgress;
+
+  /// Order status: the seller's sats were taken by the node; the payment to the buyer is under way or failed
+  ///
+  /// In en, this message translates to:
+  /// **'Sats released, buyer not paid yet'**
+  String get orderStatusSatsReleased;
+
+  /// Order status: the trade ended, the buyer was paid
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get orderStatusSuccess;
+
+  /// Order status: a party opened a dispute
+  ///
+  /// In en, this message translates to:
+  /// **'In dispute'**
+  String get orderStatusDispute;
+
+  /// Order status: cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderStatusCanceled;
+
+  /// Order status: both parties agreed to cancel
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by both parties'**
+  String get orderStatusCooperativelyCanceled;
+
+  /// Order status: a solver closed the dispute by refunding the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded to the seller by a solver'**
+  String get orderStatusRefundedBySolver;
+
+  /// Order status: a solver decided for the buyer; the payment to the buyer is under way or failed
+  ///
+  /// In en, this message translates to:
+  /// **'Decided for the buyer by a solver, not paid yet'**
+  String get orderStatusSettledBySolver;
+
+  /// Order status: a solver decided for the buyer and the buyer was paid
+  ///
+  /// In en, this message translates to:
+  /// **'Paid to the buyer by a solver'**
+  String get orderStatusPaidBySolver;
+
+  /// Order status: nobody took it in time
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get orderStatusExpired;
 }
 
 class _AppLocalizationsDelegate

@@ -1671,4 +1671,102 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get navOrders => 'Orders';
+
+  @override
+  String get ordersTitle => 'Order nachschlagen';
+
+  @override
+  String get ordersIntro =>
+      'Sieh nach, wie dieser Node eine seiner Orders gerade führt, ob im Streitfall oder nicht. Nachschlagen ändert nichts.';
+
+  @override
+  String get ordersNoNodeBody =>
+      'Orders werden auf jeweils einem Mostro-Node nachgeschlagen. Wähle den Node, auf dem du Solver bist.';
+
+  @override
+  String get orderIdHint => 'Order-ID einfügen';
+
+  @override
+  String get orderIdInvalid =>
+      'Das ist keine Order-ID. Sie sieht so aus: 308e1272-d5f4-47e6-bd97-3504baea9c23.';
+
+  @override
+  String get orderLookupAction => 'Order nachschlagen';
+
+  @override
+  String get orderNotFoundTitle => 'Order nicht gefunden';
+
+  @override
+  String get orderNotFoundBody =>
+      'Dieser Node hat keine Order mit dieser ID. Prüfe die ID und ob die Order zu diesem Node gehört.';
+
+  @override
+  String get orderNoAnswerBody =>
+      'Die Anfrage oder ihre Antwort ging vielleicht verloren, oder dieser Node beantwortet das Nachschlagen von Orders noch nicht. Es wurde nichts geändert: Du kannst erneut fragen.';
+
+  @override
+  String get orderRefusedBody =>
+      'Er hat keinen Grund genannt. Versuche es später erneut oder frag den Betreiber des Nodes.';
+
+  @override
+  String orderRefusedReasonBody(String reason) {
+    return 'Sein Grund: $reason. Versuche es später erneut oder frag den Betreiber des Nodes.';
+  }
+
+  @override
+  String get orderStatusPending => 'Warte auf Annahme';
+
+  @override
+  String get orderStatusWaitingMakerDeposit =>
+      'Warte auf die Einlage des Erstellers';
+
+  @override
+  String get orderStatusWaitingTakerDeposit =>
+      'Warte auf die Einlage des Nehmers';
+
+  @override
+  String get orderStatusWaitingBuyerInvoice =>
+      'Warte auf die Rechnung des Käufers';
+
+  @override
+  String get orderStatusWaitingPayment =>
+      'Warte, bis der Verkäufer die Sats sperrt';
+
+  @override
+  String get orderStatusInProgress => 'In Bearbeitung';
+
+  @override
+  String get orderStatusSatsReleased =>
+      'Sats freigegeben, Käufer noch nicht bezahlt';
+
+  @override
+  String get orderStatusSuccess => 'Abgeschlossen';
+
+  @override
+  String get orderStatusDispute => 'Streitfall offen';
+
+  @override
+  String get orderStatusCanceled => 'Storniert';
+
+  @override
+  String get orderStatusCooperativelyCanceled =>
+      'Von beiden Parteien storniert';
+
+  @override
+  String get orderStatusRefundedBySolver =>
+      'Von einem Solver dem Verkäufer erstattet';
+
+  @override
+  String get orderStatusSettledBySolver =>
+      'Von einem Solver für den Käufer entschieden, noch nicht bezahlt';
+
+  @override
+  String get orderStatusPaidBySolver =>
+      'Von einem Solver an den Käufer bezahlt';
+
+  @override
+  String get orderStatusExpired => 'Abgelaufen';
 }
