@@ -25,11 +25,7 @@ nostr-sdk = { version = "0.45", default-features = false }
 # itself and none are on by default (feature unification applies them to
 # nostr-sdk's copy too).
 nostr = { version = "0.45", default-features = false, features = ["std", "nip44"] }
-# TEMPORARY: pinned to the head of MostroP2P/mostro-core#190 (admin-order-info,
-# issue #51), the revision MostroP2P/mostro#1110 builds on. Back to the
-# released version, the same as MostroP2P/app, before this is merged: nothing
-# ships from a git pin.
-mostro-core = { git = "https://github.com/MostroP2P/mostro-core", rev = "dabb6f64883f913966f0da79c6c32f9e538aedd9" }
+mostro-core = "0.17.4"
 # Dispute ids (the kind 38386 `d` tag) are UUIDs. Already in the tree through
 # mostro-core; same declaration as MostroP2P/app.
 uuid = { version = "1", features = ["v4"] }
