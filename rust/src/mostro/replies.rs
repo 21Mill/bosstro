@@ -813,6 +813,24 @@ pub(crate) mod tests {
         assert_eq!(rig.standing().await, SolverStatus::Unknown);
     }
 
+    /// The same key loaded again (a restarted Flutter engine restoring it,
+    /// MostroP2P/bosstro#54) parses into new `Keys` with the same pubkey:
+    /// the requests still waited for stay, and so does the subscription.
+    #[tokio::test]
+    async fn the_same_key_loaded_again_keeps_the_waiting_requests() {
+        let rig = Rig::new("initiated", silent()).await;
+        let result = rig.take(Duration::from_millis(300)).await.unwrap();
+        assert_eq!(result.outcome, TakeOutcome::NoAnswer);
+        let sub = rig.router.current_sub();
+
+        let reparsed = Keys::new(rig.solver.secret_key().clone());
+        rig.router
+            .retarget(Some(rig.node.public_key().to_hex()), Some(reparsed))
+            .await;
+        assert_eq!(rig.router.waiting_len(), 1, "the request is still waited for");
+        assert_eq!(rig.router.current_sub(), sub, "no new subscription");
+    }
+
     // ── The node's PoW ───────────────────────────────────────────────────
 
     /// The node's kind 38385, as mostrod publishes it, with its PoW.

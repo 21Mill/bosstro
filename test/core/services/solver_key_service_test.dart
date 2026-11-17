@@ -61,6 +61,34 @@ void main() {
       expect(store.entries[_key], 'garbage');
       expect(log, isNot(contains('delete')));
     });
+
+    // MostroP2P/bosstro#54: Android starts a new Flutter engine in a process
+    // that is still alive, and the Rust core still holds the key.
+    test('restores the key the core already holds', () async {
+      setUpWith({_key: sampleNsec});
+      core.loaded = sampleNsec;
+      final info = await service.restore();
+      expect(info?.npub, sampleNpub);
+      expect(core.loaded, sampleNsec);
+      expect(log, isNot(contains('unload')));
+      expectBuffersWiped();
+    });
+
+    test('another key in the core is a bug, not an unreadable key', () async {
+      setUpWith({_key: sampleNsec});
+      core.loaded = _other;
+      await expectLater(
+        service.restore(),
+        throwsA(
+          allOf(
+            isNot(isA<StoredKeyUnreadable>()),
+            equals(SolverKeyError.alreadyLoaded),
+          ),
+        ),
+      );
+      expect(core.loaded, _other);
+      expect(store.entries[_key], sampleNsec);
+    });
   });
 
   group('previewNpub', () {
