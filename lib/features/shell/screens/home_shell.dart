@@ -16,13 +16,35 @@ import 'package:bosstro/shared/widgets/tab_app_bar.dart';
 
 /// The tab shell: the tab app bar on top, the active tab, and the bottom bar
 /// (Disputes · Orders · Settings).
-class HomeShell extends ConsumerWidget {
+class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key, required this.shell});
 
   final StatefulNavigationShell shell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends ConsumerState<HomeShell> {
+  @override
+  void didUpdateWidget(HomeShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // An order shows only while the solver stays on Orders: leaving the tab
+    // empties it, however it is left (the bottom bar, the browser's Back, a
+    // link to another tab).
+    final orders = AppRoute.tabs.indexOf(AppRoute.orders);
+    if (oldWidget.shell.currentIndex == orders &&
+        widget.shell.currentIndex != orders) {
+      // After this build: a provider cannot change during one.
+      Future.microtask(() {
+        if (mounted) ref.read(orderLookupProvider.notifier).clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final shell = widget.shell;
     final pal = ShellPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final active = ref.watch(activeNodeProvider);
@@ -63,12 +85,6 @@ class HomeShell extends ConsumerWidget {
       bottomNavigationBar: BottomNavBar(
         currentIndex: shell.currentIndex,
         onSelect: (index) {
-          // An order shows only while the solver stays on Orders: leaving
-          // the tab empties it.
-          final orders = AppRoute.tabs.indexOf(AppRoute.orders);
-          if (shell.currentIndex == orders && index != orders) {
-            ref.read(orderLookupProvider.notifier).clear();
-          }
           shell.goBranch(
             index,
             // A tap on the active tab returns it to its root.

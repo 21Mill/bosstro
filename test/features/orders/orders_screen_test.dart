@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bosstro/core/app_routes.dart';
@@ -771,6 +772,30 @@ void main() {
         expect(find.byType(OrderSnapshotView), findsOneWidget, reason: other);
       }
       expect(core.lookups, hasLength(3), reason: 'only when asked');
+    });
+
+    testWidgets('the browser\'s Back and Forward empty it as the bottom bar '
+        'does', (tester) async {
+      setSurface(tester, width: 400, height: 800);
+      final core = FakeOrdersCore();
+      await _pump(tester, core);
+      await _ask(tester);
+      final router = GoRouter.of(tester.element(find.byType(OrdersScreen)));
+      // What the engine reports when the browser moves through its history.
+      Future<void> browserGoesTo(String location) async {
+        await router.routeInformationProvider.didPushRouteInformation(
+          RouteInformation(uri: Uri.parse(location)),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      await browserGoesTo(AppRoute.settings);
+      expect(find.byType(OrdersScreen), findsNothing);
+      await browserGoesTo(AppRoute.orders);
+
+      expect(find.byType(OrderSnapshotView), findsNothing);
+      expect(find.text(sampleOrderId), findsNothing);
+      expect(core.lookups, [sampleOrderId], reason: 'not asked again');
     });
 
     testWidgets('a tap on Orders itself keeps the order', (tester) async {
