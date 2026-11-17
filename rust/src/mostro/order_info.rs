@@ -134,8 +134,7 @@ pub(crate) async fn apply(
         Lookup::Refused(_) | Lookup::NoAnswer => {}
     }
     log::info!(
-        "[order-info] +{arrived} ms: answer read off the relay, order {}…: {}",
-        &order_id[..8.min(order_id.len())],
+        "[order-info] +{arrived} ms: answer read off the relay: {}",
         match &lookup {
             Lookup::Found(_) => "found",
             Lookup::NotFound => "not found",
@@ -168,9 +167,8 @@ pub(crate) async fn lookup(
         .retarget(Some(node.clone()), Some(keys.clone()))
         .await;
     log::info!(
-        "[order-info] +{} ms: lookup of {}… begun, subscription ready",
-        started.elapsed().as_millis(),
-        &order_id.to_string()[..8]
+        "[order-info] +{} ms: lookup begun, subscription ready",
+        started.elapsed().as_millis()
     );
     let lookup = lookup_on(
         &router,
