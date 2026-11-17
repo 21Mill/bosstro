@@ -80,10 +80,16 @@ pub(crate) fn request_message(order_id: uuid::Uuid, request_id: u64) -> Message 
     )
 }
 
-/// An order id as the solver gave it: a UUID, with any space around it
-/// dropped.
+/// An order id as the solver gave it: a UUID in the hyphenated form Mostro
+/// writes, with any space around it dropped. The other spellings of a UUID
+/// (no hyphens, braces, `urn:uuid:`) are not ids here, so an order has one
+/// spelling and the screen can tell the same order asked about again.
 pub(crate) fn parse_order_id(text: &str) -> Result<uuid::Uuid, OrderLookupError> {
-    uuid::Uuid::parse_str(text.trim()).map_err(|_| OrderLookupError::InvalidOrderId)
+    let text = text.trim();
+    if text.len() != uuid::fmt::Hyphenated::LENGTH {
+        return Err(OrderLookupError::InvalidOrderId);
+    }
+    uuid::Uuid::parse_str(text).map_err(|_| OrderLookupError::InvalidOrderId)
 }
 
 /// Read `message` as the answer to a lookup of `order_id`. A snapshot counts
@@ -406,6 +412,22 @@ pub(crate) mod tests {
             parse_order_id(&"a".repeat(64)),
             Err(OrderLookupError::InvalidOrderId)
         );
+    }
+
+    #[test]
+    fn an_order_id_has_one_spelling() {
+        assert_eq!(parse_order_id(&ORDER.to_uppercase()), Ok(order()));
+        for other in [
+            ORDER.replace('-', ""),
+            format!("{{{ORDER}}}"),
+            format!("urn:uuid:{ORDER}"),
+        ] {
+            assert_eq!(
+                parse_order_id(&other),
+                Err(OrderLookupError::InvalidOrderId),
+                "{other}"
+            );
+        }
     }
 
     // ── The answers table, row by row ────────────────────────────────────
