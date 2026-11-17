@@ -896,4 +896,35 @@ void main() {
       SolverStatus.no,
     );
   });
+
+  testWidgets('so is one that answers after the solver left the tab', (
+    tester,
+  ) async {
+    setSurface(tester, width: 400, height: 800);
+    final disputes = FakeDisputesCore();
+    final core =
+        FakeOrdersCore()
+          ..answer = OrderLookupOutcome.notSolver
+          ..hold = Completer();
+    await _pump(tester, core, disputes: disputes);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(OrdersScreen)),
+    );
+    await tester.enterText(find.byType(TextField), sampleOrderId);
+    await tester.pump();
+    await tester.tap(find.byType(PrimaryButton));
+    await tester.pump();
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+    disputes.status = SolverStatus.no;
+    core.hold!.complete();
+    await tester.pumpAndSettle();
+
+    expect(
+      container.read(solverStandingProvider).valueOrNull?.status,
+      SolverStatus.no,
+    );
+    expect(container.read(orderLookupProvider).result, isNull);
+  });
 }

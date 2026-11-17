@@ -96,10 +96,11 @@ class OrderLookupNotifier extends Notifier<OrderLookupView> {
         session: session,
       );
     }
-    if (!identical(epoch, _epoch)) return;
-    state = next;
-    // The answer may have taught whether this key is a solver here, and no
-    // dispute update says so: read it now.
+    // An answer to a request the solver left behind (another tab, node or
+    // key) is not shown.
+    if (identical(epoch, _epoch)) state = next;
+    // Shown or not, the answer may have taught whether this key is a solver
+    // here, and no dispute update says so: read it now.
     try {
       await ref.read(solverStandingProvider.notifier).refresh();
     } catch (e) {
