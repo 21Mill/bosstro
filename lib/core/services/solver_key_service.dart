@@ -102,8 +102,15 @@ class SolverKeyService {
 
   /// Startup: the stored key, loaded into Rust; null when there is none.
   ///
+  /// The Rust core outlives the Flutter engine: when Android starts a new
+  /// engine in a process that is still alive, Rust holds this key already and
+  /// keeps it (MostroP2P/bosstro#54).
+  ///
   /// Throws [StoredKeyUnreadable] when the entry cannot be read, or holds
-  /// something Rust refuses. The entry is left as it is.
+  /// something Rust refuses. The entry is left as it is. Another key loaded
+  /// in Rust ([rust.SolverKeyError.alreadyLoaded]) is not the stored key's
+  /// fault: it is a bug, thrown as it is, so the solver is not sent to
+  /// Welcome to replace a key that still reads.
   Future<rust.SolverKeyInfo?> restore() async {
     final String? stored;
     try {
@@ -114,6 +121,9 @@ class SolverKeyService {
     if (stored == null) return null;
     try {
       return await _load(stored);
+    } on rust.SolverKeyError catch (e) {
+      if (e == rust.SolverKeyError.alreadyLoaded) rethrow;
+      throw StoredKeyUnreadable(e);
     } catch (e) {
       throw StoredKeyUnreadable(e);
     }

@@ -12,8 +12,9 @@ use crate::crypto::nsec::{self, NsecError};
 pub enum SlotError {
     /// The secret did not parse.
     Key(NsecError),
-    /// A key is already loaded: a replacement unloads it first, so a second
-    /// load never silently swaps the key that signs.
+    /// Another key is already loaded: a replacement unloads it first, so a
+    /// second load never silently swaps the key that signs. Loading the key
+    /// already loaded is not refused.
     AlreadyLoaded,
 }
 
@@ -44,16 +45,25 @@ impl SolverSlot {
 
     /// Parses [secret] and installs it. The bytes are wiped whatever happens
     /// ([`nsec::parse_secret`]).
+    ///
+    /// The slot outlives the Flutter engine: when Android starts a new
+    /// engine in a process that is still alive (Back on a tab, then the app
+    /// opened again), startup restores the key this slot already holds. That
+    /// key is kept as it is, in the same generation, so nothing started
+    /// under it is retired (MostroP2P/bosstro#54). Another key is refused
+    /// with [`SlotError::AlreadyLoaded`]: a replacement unloads first.
     pub(crate) async fn load(&self, secret: Vec<u8>) -> Result<Keys, SlotError> {
         let _transition = self.lifecycle.lock().await;
-        if self.keys.read().await.is_some() {
-            // Parsed anyway, so the bytes are wiped on this path too.
-            let _ = nsec::parse_secret(secret);
-            return Err(SlotError::AlreadyLoaded);
-        }
         let keys = nsec::parse_secret(secret).map_err(SlotError::Key)?;
-        *self.keys.write().await = Some(keys.clone());
-        Ok(keys)
+        let mut slot = self.keys.write().await;
+        match slot.as_ref() {
+            Some(loaded) if loaded.public_key() == keys.public_key() => Ok(loaded.clone()),
+            Some(_) => Err(SlotError::AlreadyLoaded),
+            None => {
+                *slot = Some(keys.clone());
+                Ok(keys)
+            }
+        }
     }
 
     /// Drops the loaded key, if there is one, and bumps the generation.
@@ -132,6 +142,41 @@ mod tests {
             SlotError::AlreadyLoaded
         );
         assert_eq!(slot.keys().await.unwrap().public_key().to_hex(), PUBKEY_HEX);
+    }
+
+    /// A restarted Flutter engine in a live process restores the key the slot
+    /// already holds (MostroP2P/bosstro#54): it is kept, in the same
+    /// generation, so nothing started under it is retired.
+    #[tokio::test]
+    async fn loading_the_loaded_key_again_keeps_it() {
+        let slot = SolverSlot::new();
+        slot.load(bytes(NSEC)).await.unwrap();
+        let again = slot.load(bytes(NSEC)).await.unwrap();
+        assert_eq!(again.public_key().to_hex(), PUBKEY_HEX);
+        assert_eq!(slot.keys().await.unwrap().public_key().to_hex(), PUBKEY_HEX);
+        assert_eq!(slot.generation(), 0);
+    }
+
+    /// The same key in another accepted spelling (hex) is the same key.
+    #[tokio::test]
+    async fn the_loaded_key_in_hex_is_the_same_key() {
+        let slot = SolverSlot::new();
+        let keys = slot.load(bytes(NSEC)).await.unwrap();
+        let hex = keys.secret_key().to_secret_hex();
+        slot.load(bytes(&hex)).await.unwrap();
+        assert_eq!(slot.generation(), 0);
+    }
+
+    /// A secret that does not parse is refused as such, and the loaded key
+    /// stays.
+    #[tokio::test]
+    async fn a_refused_secret_over_a_loaded_key_keeps_it() {
+        let slot = SolverSlot::new();
+        slot.load(bytes(NSEC)).await.unwrap();
+        let err = slot.load(bytes("npub1…")).await.unwrap_err();
+        assert_eq!(err, SlotError::Key(NsecError::PublicKeyGiven));
+        assert_eq!(slot.keys().await.unwrap().public_key().to_hex(), PUBKEY_HEX);
+        assert_eq!(slot.generation(), 0);
     }
 
     #[tokio::test]

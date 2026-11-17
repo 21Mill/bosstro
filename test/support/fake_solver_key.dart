@@ -91,8 +91,12 @@ class FakeSolverCore implements SolverCore {
     final text = _parse(secret);
     log.add('load:$text');
     if (failLoad) throw SolverKeyError.invalid;
-    if (loaded != null) throw SolverKeyError.alreadyLoaded;
-    loaded = text;
+    // As Rust's slot: the key already loaded is kept (a new engine in a live
+    // process restores it); only another key is refused.
+    if (loaded != null && npubFor(loaded!) != npubFor(text)) {
+      throw SolverKeyError.alreadyLoaded;
+    }
+    loaded ??= text;
     final npub = npubFor(text);
     return SolverKeyInfo(npub: npub, publicKeyHex: 'hex:$npub');
   }

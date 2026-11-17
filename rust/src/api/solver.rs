@@ -38,7 +38,7 @@ pub enum SolverKeyError {
     PublicKeyGiven,
     /// Not an nsec and not a 64-character hex secret.
     Invalid,
-    /// A key is loaded already; unload it first (the safe replace).
+    /// Another key is loaded already; unload it first (the safe replace).
     AlreadyLoaded,
 }
 
@@ -92,7 +92,9 @@ pub fn preview_npub(secret: Vec<u8>) -> Result<String, SolverKeyError> {
 }
 
 /// Parses [secret] and makes it the key the app signs with. Refused with
-/// [`SolverKeyError::AlreadyLoaded`] while another key is loaded.
+/// [`SolverKeyError::AlreadyLoaded`] while another key is loaded. The key
+/// already loaded is kept as it is: the Rust core outlives the Flutter
+/// engine, so a new engine in a live process restores it again (#54).
 pub async fn load_solver_key(secret: Vec<u8>) -> Result<SolverKeyInfo, SolverKeyError> {
     let keys = SOLVER_SLOT.load(secret).await?;
     // The node's answers to this key are followed from now on, and the
@@ -162,9 +164,14 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(info.npub, account.npub);
+        assert_eq!(solver_pubkey().await, Some(info.clone()));
+        // A new Flutter engine in a live process restores the same key (#54).
+        assert_eq!(load_solver_key(account.nsec.into_bytes()).await, Ok(info.clone()));
         assert_eq!(solver_pubkey().await, Some(info));
+        // Another key is refused: a replacement unloads first.
+        let other = create_solver_account();
         assert_eq!(
-            load_solver_key(account.nsec.into_bytes()).await,
+            load_solver_key(other.nsec.into_bytes()).await,
             Err(SolverKeyError::AlreadyLoaded)
         );
         assert!(unload_solver_key().await);

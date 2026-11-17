@@ -182,7 +182,10 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
    (text field, clipboard, storage plugin) are immutable in Dart and live until collected, and
    flutter_rust_bridge copies the bytes into its own message buffer, which is not wiped.
 3. **Rust:** the input is held in `zeroize::Zeroizing` until it is parsed into `Keys`, then dropped.
-   Rust never writes the secret to disk and never logs it. Keys live in a `SolverSlot`.
+   Rust never writes the secret to disk and never logs it. Keys live in a `SolverSlot`, which
+   outlives the Flutter engine: Android can start a new engine (and run `main()` again) in a
+   process that is still alive, so loading the key already loaded keeps it, in the same
+   generation; only another key is refused (`AlreadyLoaded`, #54).
 4. **Replace / log out:** unload from Rust, install the new key, and only then write storage; on
    failure reload the previous key.
 5. The UI shows the npub. The nsec is shown only once on Create new account, for backup, and from

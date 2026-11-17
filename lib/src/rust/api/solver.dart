@@ -20,7 +20,9 @@ String previewNpub({required List<int> secret}) =>
     RustLib.instance.api.crateApiSolverPreviewNpub(secret: secret);
 
 /// Parses [secret] and makes it the key the app signs with. Refused with
-/// [`SolverKeyError::AlreadyLoaded`] while another key is loaded.
+/// [`SolverKeyError::AlreadyLoaded`] while another key is loaded. The key
+/// already loaded is kept as it is: the Rust core outlives the Flutter
+/// engine, so a new engine in a live process restores it again (#54).
 Future<SolverKeyInfo> loadSolverKey({required List<int> secret}) =>
     RustLib.instance.api.crateApiSolverLoadSolverKey(secret: secret);
 
@@ -64,7 +66,7 @@ enum SolverKeyError {
   /// Not an nsec and not a 64-character hex secret.
   invalid,
 
-  /// A key is loaded already; unload it first (the safe replace).
+  /// Another key is loaded already; unload it first (the safe replace).
   alreadyLoaded,
 }
 
