@@ -14,6 +14,16 @@
 //! answer is still applied. A retarget to another node or key drops the requests of the old
 //! one: their answers are not taken.
 //!
+//! An order lookup (`order_info`) waits there too, but it only reads: it is
+//! never refused because a request of a dispute is waited for, and it never
+//! makes one wait.
+//!
+//! **A slow relay.** Sending ends only when every relay acknowledged, refused
+//! or timed out, long after the node answered through the fastest one.
+//! [`answer_or_send`] waits for both and returns the answer as soon as it is
+//! there. The order lookup uses it; a take and a resolution still send first
+//! and wait after.
+//!
 //! **Since.** The subscription starts a minute before it is opened, so a
 //! reconnect never replays the node's older answers; requests exist only in
 //! this process, so an older answer could match none anyway.
@@ -50,6 +60,8 @@ pub(crate) struct Request {
     pub node: String,
     /// The key that signed it (hex).
     pub solver: String,
+    /// The dispute it is about; empty for a request about no dispute (an
+    /// order lookup).
     pub dispute_id: String,
     pub purpose: Purpose,
 }
@@ -66,6 +78,23 @@ pub(crate) enum Purpose {
         order_id: String,
         bond: BondSlash,
     },
+    /// `AdminOrderInfo` about `order_id`: read only, about no dispute.
+    /// `started` is when the lookup began, for the timings it logs.
+    OrderInfo {
+        order_id: String,
+        started: crate::rt::time::Instant,
+    },
+}
+
+impl Purpose {
+    /// Whether the request may change its dispute (a take, a resolution), so
+    /// only one of them is waited for per dispute. A lookup may not.
+    fn changes_a_dispute(&self) -> bool {
+        match self {
+            Purpose::Take { .. } | Purpose::Resolve { .. } => true,
+            Purpose::OrderInfo { .. } => false,
+        }
+    }
 }
 
 /// What the caller of a request gets back.
@@ -73,6 +102,7 @@ pub(crate) enum Purpose {
 pub(crate) enum Reply {
     Take(TakeResult),
     Resolve(ResolveResult),
+    OrderInfo(super::order_info::Lookup),
 }
 
 /// A request of the same dispute on the same node is still waited for.
@@ -260,7 +290,8 @@ impl Router {
 
     /// Wait for the answer to `request_id`. Refused while a request (a take
     /// or a resolution) of the same dispute on the same node is still waited
-    /// for; one whose caller stopped waiting does not count.
+    /// for; one whose caller stopped waiting does not count. A request that
+    /// only reads (an order lookup) is never refused and never counts.
     pub(crate) fn register(
         &self,
         request_id: u64,
@@ -270,11 +301,13 @@ impl Router {
         let (tx, rx) = oneshot::channel();
         let mut waiting = lock(&self.waiting);
         waiting.retain(|_, w| now - w.registered_at < LATE_WINDOW_SECS);
-        let busy = waiting.values().any(|w| {
-            w.request.node == request.node
-                && w.request.dispute_id == request.dispute_id
-                && w.reply.as_ref().is_some_and(|r| !r.is_closed())
-        });
+        let busy = request.purpose.changes_a_dispute()
+            && waiting.values().any(|w| {
+                w.request.purpose.changes_a_dispute()
+                    && w.request.node == request.node
+                    && w.request.dispute_id == request.dispute_id
+                    && w.reply.as_ref().is_some_and(|r| !r.is_closed())
+            });
         if busy {
             return Err(Busy);
         }
@@ -316,7 +349,7 @@ impl Router {
             .max_by_key(|w| w.registered_at)
             .and_then(|w| match &w.request.purpose {
                 Purpose::Resolve { resolution, .. } => Some(*resolution),
-                Purpose::Take { .. } => None,
+                Purpose::Take { .. } | Purpose::OrderInfo { .. } => None,
             })
     }
 
@@ -386,6 +419,10 @@ impl Router {
                 )
                 .await,
             ),
+            Purpose::OrderInfo { order_id, started } => Reply::OrderInfo(
+                super::order_info::apply(&waiting.request, order_id, *started, &opened.message)
+                    .await,
+            ),
         };
         if let Some(reply) = waiting.reply {
             let _ = reply.send(result);
@@ -401,6 +438,40 @@ impl Router {
 // ── The process-wide router ───────────────────────────────────────────────────
 
 static ROUTER: OnceLock<Arc<Router>> = OnceLock::new();
+
+/// Send a request and wait for its answer, whichever comes first.
+///
+/// `send` ends only when every relay has acknowledged the request, refused
+/// it or timed out (nostr-sdk waits ten seconds for each), while the node
+/// answers through the first relay that took it. So the answer is not kept
+/// behind the send: when it arrives first, it is returned at once and the
+/// send is dropped (the request has left: the node answered it).
+///
+/// - `Ok(Some(reply))`: the answer.
+/// - `Ok(None)`: the request left and nothing answered within `wait` of the
+///   send ending, or the router dropped the request (another node or key).
+/// - `Err(e)`: the send failed before any answer: nothing left.
+pub(crate) async fn answer_or_send<S, E>(
+    send: S,
+    mut answer: oneshot::Receiver<Reply>,
+    wait: std::time::Duration,
+) -> Result<Option<Reply>, E>
+where
+    S: std::future::Future<Output = Result<(), E>>,
+{
+    use futures_util::future::{select, Either};
+
+    // Boxed rather than `std::pin::pin!`: the macro expands to `super let`,
+    // which flutter_rust_bridge's codegen cannot parse in the expanded crate.
+    match select(Box::pin(send), &mut answer).await {
+        Either::Right((reply, _send)) => return Ok(reply.ok()),
+        Either::Left((sent, _answer)) => sent?,
+    }
+    Ok(crate::rt::time::timeout(wait, answer)
+        .await
+        .ok()
+        .and_then(Result::ok))
+}
 
 pub(crate) fn router() -> Option<Arc<Router>> {
     ROUTER.get().cloned()

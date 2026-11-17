@@ -12,10 +12,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get appName => 'Bosstro';
 
   @override
-  String get navPending => 'Openstaand';
-
-  @override
-  String get navInProgress => 'Mijn disputen';
+  String get navDisputes => 'Disputen';
 
   @override
   String get navSettings => 'Instellingen';
@@ -24,7 +21,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get noNodeSelected => 'Geen node gekozen';
 
   @override
-  String get pendingTitle => 'Openstaande disputen';
+  String get disputesTitle => 'Disputen';
 
   @override
   String get pendingEmptyTitle => 'Geen wachtende disputen';
@@ -32,9 +29,6 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get pendingEmptyBody =>
       'Geen enkel dispuut op deze node wacht op een solver. Wordt er in een trade een dispuut geopend, dan verschijnt het hier zodat je het kunt oppakken.';
-
-  @override
-  String get inProgressTitle => 'Mijn disputen';
 
   @override
   String get inProgressEmptyTitle => 'Geen lopende disputen';
@@ -827,13 +821,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get takeDisputeBody =>
-      'Je wordt er de solver van: de node laat het de koper en de verkoper weten, en het dispuut gaat naar Mijn disputen. Pak alleen een dispuut op dat je tot het einde kunt afhandelen.';
+      'Je wordt er de solver van: de node laat het de koper en de verkoper weten, en het dispuut gaat naar Lopend. Pak alleen een dispuut op dat je tot het einde kunt afhandelen.';
 
   @override
   String get takeDisputeAnswer => 'Dispuut oppakken';
 
   @override
-  String get takeTakenSnack => 'Dispuut opgepakt. Het staat in Mijn disputen.';
+  String get takeTakenSnack => 'Dispuut opgepakt. Het staat bij Lopend.';
 
   @override
   String get recoverAction => 'Terughalen';
@@ -843,14 +837,14 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get recoverNote =>
-      'De node publiceert niet wie een dispuut in handen heeft. Daarom toont deze lijst elk lopend dispuut op deze node dat op deze telefoon niet bij Mijn disputen staat: die van jou waarvan het antwoord verloren ging, en die van andere solvers. Haal ze één voor één terug.';
+      'De node publiceert niet wie een dispuut in handen heeft. Daarom toont deze lijst elk lopend dispuut op deze node dat op deze telefoon niet bij de jouwe staat: die van jou waarvan het antwoord verloren ging, en die van andere solvers. Haal ze één voor één terug.';
 
   @override
   String get recoverEmptyTitle => 'Niets om terug te halen';
 
   @override
   String get recoverEmptyBody =>
-      'Er ontbreekt geen enkel lopend dispuut van deze node in Mijn disputen.';
+      'Er ontbreekt geen enkel lopend dispuut van deze node bij de jouwe.';
 
   @override
   String get recoverDisputeHint => 'Dispuut terughalen';
@@ -866,8 +860,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get recoverDisputeAnswer => 'Dispuut terughalen';
 
   @override
-  String get recoverTakenSnack =>
-      'Dispuut teruggehaald. Het staat in Mijn disputen.';
+  String get recoverTakenSnack => 'Dispuut teruggehaald. Het staat bij Lopend.';
 
   @override
   String get notSolverTitle => 'Je bent geen solver op deze node';
@@ -902,7 +895,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get noAnswerBody =>
-      'Je verzoek kan de node toch hebben bereikt, dus Bosstro heeft het niet opnieuw verstuurd. Kijk zo meteen in Mijn disputen, of vraag het opnieuw aan via Dispuut terughalen.';
+      'Je verzoek kan de node toch hebben bereikt, dus Bosstro heeft het niet opnieuw verstuurd. Kijk zo meteen bij Lopend, of vraag het opnieuw aan via Dispuut terughalen.';
 
   @override
   String get takeFailedTitle => 'Het verzoek is niet verstuurd';
@@ -910,6 +903,14 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get takeFailedBody =>
       'Geen enkele relay heeft het geaccepteerd. Controleer je verbinding en de relays en probeer het opnieuw.';
+
+  @override
+  String get requestNoKeyBody =>
+      'Er is geen geheime sleutel geladen, dus er is niets verstuurd. Sluit Bosstro en open het opnieuw.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Er is geen node gekozen, dus er is niets verstuurd. Kies je node in Instellingen.';
 
   @override
   String get takeAlreadyTakingBody =>
@@ -1086,7 +1087,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get detailNotYoursBody =>
-      'De node heeft het heropend, of het hoort bij een andere sleutel. Het staat niet meer in Mijn disputen.';
+      'De node heeft het heropend, of het hoort bij een andere sleutel. Het staat niet meer bij jouw disputen.';
 
   @override
   String get chatSenderYou => 'Jij';
@@ -1502,7 +1503,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get takenOverBody =>
-      'De node heeft het aan een andere solver gegeven, dus er is niets betaald of terugbetaald. Het staat niet meer in Mijn disputen.';
+      'De node heeft het aan een andere solver gegeven, dus er is niets betaald of terugbetaald. Het staat niet meer bij jouw disputen.';
 
   @override
   String get notInDisputeTitle => 'Deze order is niet meer in dispuut';
@@ -1534,7 +1535,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get resolveBackToDispute => 'Terug naar het dispuut';
 
   @override
-  String get resolveGoToDisputes => 'Naar Mijn disputen';
+  String get resolveGoToDisputes => 'Naar Disputen';
 
   @override
   String get closedPaidBuyer => 'Je hebt de koper betaald';
@@ -1614,13 +1615,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get orderStatusFiatSent => 'Fiat verstuurd';
 
   @override
+  String get disputesPendingSegment => 'Openstaand';
+
+  @override
   String get myDisputesOpenSegment => 'Lopend';
 
   @override
   String get myDisputesClosedSegment => 'Gesloten';
 
   @override
-  String get myDisputesSegmentsLabel => 'Open of gesloten disputen';
+  String get disputesSegmentsLabel =>
+      'Openstaande, lopende of gesloten disputen';
 
   @override
   String get closedEmptyTitle => 'Nog geen gesloten disputen';
@@ -1663,5 +1668,290 @@ class AppLocalizationsNl extends AppLocalizations {
       one: '1 dag geleden gesloten',
     );
     return '$_temp0';
+  }
+
+  @override
+  String get navOrders => 'Orders';
+
+  @override
+  String get ordersTitle => 'Order opzoeken';
+
+  @override
+  String get ordersIntro =>
+      'Bekijk hoe deze node een van zijn orders er nu voor heeft staan, in dispuut of niet. Opzoeken verandert niets.';
+
+  @override
+  String get ordersNoNodeBody =>
+      'Orders zoek je op bij één Mostro-node tegelijk. Kies de node waar je solver bent.';
+
+  @override
+  String get orderIdHint => 'Plak de order-ID';
+
+  @override
+  String get orderIdInvalid =>
+      'Dat is geen order-ID. Die ziet er zo uit: 308e1272-d5f4-47e6-bd97-3504baea9c23.';
+
+  @override
+  String get orderLookupAction => 'Order opzoeken';
+
+  @override
+  String get orderNotFoundTitle => 'Order niet gevonden';
+
+  @override
+  String get orderNotFoundBody =>
+      'Deze node heeft geen order met die ID. Controleer de ID, en of de order bij deze node hoort.';
+
+  @override
+  String get orderNoAnswerBody =>
+      'Het verzoek of het antwoord is misschien verloren gegaan, of deze node beantwoordt het opzoeken van orders nog niet. Er is niets veranderd: je kunt het opnieuw vragen.';
+
+  @override
+  String get orderRefusedBody =>
+      'De node gaf geen reden. Probeer het later opnieuw, of vraag het de beheerder van de node.';
+
+  @override
+  String get orderRefusedUnsupportedBody =>
+      'Deze node beantwoordt het opzoeken van orders niet. De beheerder moet de node misschien bijwerken.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'De node krijgt te veel verzoeken. Wacht even en vraag het opnieuw.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'De node gaf een reden die deze versie van Bosstro niet kent. Probeer het later opnieuw, of vraag het de beheerder van de node.';
+
+  @override
+  String get orderStatusPending => 'Openstaand';
+
+  @override
+  String get orderStatusWaitingMakerDeposit => 'Wacht op de borg van de maker';
+
+  @override
+  String get orderStatusWaitingTakerDeposit =>
+      'Wacht op de borg van de tegenpartij';
+
+  @override
+  String get orderStatusWaitingBuyerInvoice =>
+      'Wacht op de invoice van de koper';
+
+  @override
+  String get orderStatusWaitingPayment =>
+      'Wacht tot de verkoper de sats vastzet';
+
+  @override
+  String get orderStatusInProgress => 'Lopend';
+
+  @override
+  String get orderStatusSatsReleased =>
+      'Sats vrijgegeven, koper nog niet betaald';
+
+  @override
+  String get orderStatusSuccess => 'Afgerond';
+
+  @override
+  String get orderStatusDispute => 'In dispuut';
+
+  @override
+  String get orderStatusCanceled => 'Geannuleerd';
+
+  @override
+  String get orderStatusCooperativelyCanceled =>
+      'Door beide partijen geannuleerd';
+
+  @override
+  String get orderStatusRefundedBySolver =>
+      'Door een solver terugbetaald aan de verkoper';
+
+  @override
+  String get orderStatusSettledBySolver =>
+      'Door een solver beslist voor de koper, nog niet betaald';
+
+  @override
+  String get orderStatusPaidBySolver => 'Door een solver betaald aan de koper';
+
+  @override
+  String get orderStatusExpired => 'Verlopen';
+
+  @override
+  String get orderFundsTitle => 'De sats van de verkoper';
+
+  @override
+  String get orderOnLightning => 'Op Lightning nu';
+
+  @override
+  String get orderFundsLocked => 'Vastgezette sats';
+
+  @override
+  String get orderValueNone => 'Geen';
+
+  @override
+  String get orderFundsHeldAt => 'Vastgezet (volgens de node)';
+
+  @override
+  String get orderFundsSettledAt => 'Geïnd (volgens de node)';
+
+  @override
+  String get orderHoldOpen => 'Nog niet vastgezet';
+
+  @override
+  String get orderHoldAccepted => 'Vastgezet';
+
+  @override
+  String get orderHoldSettled => 'Geïnd door de node';
+
+  @override
+  String get orderHoldCanceled => 'Terug bij de verkoper';
+
+  @override
+  String get orderLnNotFound => 'Niet bekend';
+
+  @override
+  String get orderLnUnavailable => 'Lightning antwoordde niet';
+
+  @override
+  String get orderValueUnknown => 'Onbekend voor deze versie';
+
+  @override
+  String get orderCashuMint => 'Cashu-mint';
+
+  @override
+  String get orderPayoutTitle => 'Betaling aan de koper';
+
+  @override
+  String get orderPayoutUnderWay => 'Lopende betaling';
+
+  @override
+  String get orderPayoutInFlight => 'Loopt';
+
+  @override
+  String get orderPayoutSucceeded => 'Betaald';
+
+  @override
+  String get orderPayoutFailed => 'Mislukt';
+
+  @override
+  String get orderPayoutWhyFailed => 'Waarom het mislukte';
+
+  @override
+  String get orderPayoutReasonTimeout => 'Time-out';
+
+  @override
+  String get orderPayoutReasonNoRoute => 'Geen route naar de koper';
+
+  @override
+  String get orderPayoutReasonError => 'Lightning-fout';
+
+  @override
+  String get orderPayoutReasonDetails => 'Onjuiste betaalgegevens';
+
+  @override
+  String get orderPayoutReasonBalance => 'Te weinig saldo op de node';
+
+  @override
+  String get orderPayoutReasonCanceled => 'Geannuleerd';
+
+  @override
+  String get orderPayoutEndedAt => 'Beëindigd';
+
+  @override
+  String get orderPayoutLastFailed => 'Laatste betaling mislukt';
+
+  @override
+  String get orderPayoutAttempts => 'Betaalpogingen';
+
+  @override
+  String get orderRoutingFee => 'Routingkosten';
+
+  @override
+  String get orderPartiesTitle => 'Partijen';
+
+  @override
+  String get orderDisputeOpenedBy => 'Dispuut geopend door';
+
+  @override
+  String get orderCancelAskedBy => 'Annulering gevraagd door';
+
+  @override
+  String get orderPartyBoth => 'Beide';
+
+  @override
+  String get orderPartyNobody => 'Niemand';
+
+  @override
+  String get orderDepositsNone => 'Geen borg bij deze order';
+
+  @override
+  String get orderBondMaker => 'Maker';
+
+  @override
+  String get orderBondTaker => 'Tegenpartij';
+
+  @override
+  String get orderBondSliceSlash => 'Ingehouden op één deel';
+
+  @override
+  String get orderBondMakerRefund => 'Rest terug naar de maker';
+
+  @override
+  String get orderBondRequested => 'Gevraagd';
+
+  @override
+  String get orderBondLocked => 'Vastgezet';
+
+  @override
+  String get orderBondReleased => 'Teruggegeven';
+
+  @override
+  String get orderBondPendingPayout => 'Ingehouden, uitbetaling wacht';
+
+  @override
+  String get orderBondSlashed => 'Ingehouden en uitbetaald';
+
+  @override
+  String get orderBondForfeited => 'Ingehouden, nooit opgeëist';
+
+  @override
+  String get orderBondFailed => 'Uitbetaling mislukt';
+
+  @override
+  String get orderBondLostDispute => 'verloor het dispuut';
+
+  @override
+  String get orderBondTimeout => 'handelde niet op tijd';
+
+  @override
+  String get orderCreatedAt => 'Aangemaakt';
+
+  @override
+  String get orderTakenAt => 'Geaccepteerd';
+
+  @override
+  String get orderExpiresAt => 'Verloopt';
+
+  @override
+  String get orderFiatRange => 'Fiat-bereik';
+
+  @override
+  String get orderRangeParent => 'Deel van de bereikorder';
+
+  @override
+  String orderDepositsTitle(int count) {
+    return 'Borg ($count)';
+  }
+
+  @override
+  String orderBondOfRoot(String role) {
+    return '$role (hoofdorder)';
+  }
+
+  @override
+  String orderFiatRangeValue(String min, String max, String code) {
+    return '$min – $max $code';
+  }
+
+  @override
+  String orderAskedAt(String time) {
+    return 'Opgevraagd om $time';
   }
 }

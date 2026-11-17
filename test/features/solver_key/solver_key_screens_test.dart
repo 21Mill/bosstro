@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/core/services/solver_key_service.dart';
+import 'package:bosstro/features/disputes/screens/disputes_screen.dart';
 import 'package:bosstro/features/solver_key/screens/backup_screen.dart';
 import 'package:bosstro/features/solver_key/screens/create_account_screen.dart';
 import 'package:bosstro/features/solver_key/screens/login_screen.dart';
@@ -158,7 +159,10 @@ void main() {
 
   group('routing', () {
     test('a solver without a key goes to Welcome', () {
-      for (final location in AppRoute.tabs) {
+      for (final location in [
+        ...AppRoute.tabs,
+        for (final section in DisputesSection.values) section.location,
+      ]) {
         expect(AppRoute.redirect(location, signedIn: false), AppRoute.welcome);
       }
       expect(
@@ -202,7 +206,7 @@ void main() {
         overrides: fakeCoreOverrides(signedIn: false),
       );
       expect(find.text('Create new account'), findsOneWidget);
-      expect(find.text('Pending disputes'), findsNothing);
+      expect(find.byType(DisputesScreen), findsNothing);
     });
   });
 
@@ -369,7 +373,7 @@ void main() {
       expect(find.text('ACTIVE'), findsOneWidget);
       await tester.tap(find.text('Mostro'));
       await tester.pumpAndSettle();
-      expect(find.text('Pending disputes'), findsOneWidget);
+      expect(find.byType(DisputesScreen), findsOneWidget);
     });
   });
 

@@ -7,6 +7,7 @@ pub mod disputes;
 pub mod node_info;
 pub mod nodes;
 pub mod observer;
+pub mod order_info;
 pub mod relays;
 pub mod resolve;
 pub mod settings;
@@ -37,6 +38,14 @@ pub async fn init_db(path: String) -> anyhow::Result<()> {
 #[flutter_rust_bridge::frb(init)]
 pub fn init_app() {
     flutter_rust_bridge::setup_default_user_utils();
+    // The bridge sets a logger on Android, iOS / macOS and the web only.
+    #[cfg(not(any(
+        target_os = "android",
+        target_os = "ios",
+        target_os = "macos",
+        target_family = "wasm"
+    )))]
+    crate::desktop_log::init();
 }
 
 #[cfg(test)]

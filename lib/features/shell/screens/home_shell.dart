@@ -2,25 +2,50 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/core/app_theme.dart';
+import 'package:bosstro/features/disputes/screens/disputes_screen.dart';
 import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/nodes/providers/node_providers.dart';
 import 'package:bosstro/features/nodes/providers/relay_providers.dart';
 import 'package:bosstro/features/nodes/services/nodes_core.dart';
+import 'package:bosstro/features/orders/providers/orders_providers.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
 import 'package:bosstro/shared/utils/short_id.dart';
 import 'package:bosstro/shared/widgets/bottom_nav_bar.dart';
 import 'package:bosstro/shared/widgets/tab_app_bar.dart';
 
-/// The three-tab shell: the tab app bar on top, the active tab, and the
-/// bottom bar (Pending · In progress · Settings).
-class HomeShell extends ConsumerWidget {
+/// The tab shell: the tab app bar on top, the active tab, and the bottom bar
+/// (Disputes · Orders · Settings).
+class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key, required this.shell});
 
   final StatefulNavigationShell shell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends ConsumerState<HomeShell> {
+  @override
+  void didUpdateWidget(HomeShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // An order shows only while the solver stays on Orders: leaving the tab
+    // empties it, however it is left (the bottom bar, the browser's Back, a
+    // link to another tab).
+    final orders = AppRoute.tabs.indexOf(AppRoute.orders);
+    if (oldWidget.shell.currentIndex == orders &&
+        widget.shell.currentIndex != orders) {
+      // After this build: a provider cannot change during one.
+      Future.microtask(() {
+        if (mounted) ref.read(orderLookupProvider.notifier).clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final shell = widget.shell;
     final pal = ShellPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final active = ref.watch(activeNodeProvider);
@@ -60,12 +85,26 @@ class HomeShell extends ConsumerWidget {
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: shell.currentIndex,
-        onSelect:
-            (index) => shell.goBranch(
-              index,
-              // A tap on the active tab returns it to its root.
-              initialLocation: index == shell.currentIndex,
-            ),
+        onSelect: (index) {
+          if (index != shell.currentIndex) {
+            shell.goBranch(index);
+            return;
+          }
+          // A tap on the active tab returns it to its root. Disputes has
+          // one per part: the solver stays on the part on screen, not sent
+          // back to Pending.
+          final router = GoRouter.of(context);
+          final path = router.routerDelegate.currentConfiguration.uri.path;
+          final section =
+              DisputesSection.values
+                  .where((s) => path.startsWith(s.location))
+                  .firstOrNull;
+          if (section != null) {
+            router.go(section.location);
+          } else {
+            shell.goBranch(index, initialLocation: true);
+          }
+        },
       ),
     );
   }

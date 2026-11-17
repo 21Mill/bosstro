@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:bosstro/core/app_routes.dart';
-import 'package:bosstro/core/app_theme.dart';
 import 'package:bosstro/features/disputes/providers/pending_providers.dart';
 import 'package:bosstro/features/disputes/services/disputes_core.dart';
 import 'package:bosstro/features/disputes/widgets/not_solver_banner.dart';
@@ -18,42 +17,27 @@ import 'package:bosstro/shared/widgets/list_empty_state.dart';
 import 'package:bosstro/shared/widgets/list_skeleton.dart';
 import 'package:bosstro/shared/widgets/primary_button.dart';
 import 'package:bosstro/shared/widgets/redesign_app_bar.dart';
-import 'package:bosstro/shared/widgets/tab_app_bar.dart';
 
-/// Pending tab: the active node's disputes waiting for a solver (kind 38386
-/// `initiated`, as Mostrix's Disputes Pending), the one that has waited
-/// longest first. Before a node is chosen it says so, with the way to choose
-/// one (D5). A tap on a row takes the dispute, after a confirmation; once
-/// the node refused this key a waiting dispute, a banner says it is no
-/// solver here.
-class PendingScreen extends ConsumerWidget {
-  const PendingScreen({super.key});
+/// The Pending part of the Disputes tab: the active node's disputes waiting
+/// for a solver (kind 38386 `initiated`, as Mostrix's Disputes Pending), the
+/// one that has waited longest first. Before a node is chosen it says so,
+/// with the way to choose one (D5). A tap on a row takes the dispute, after a
+/// confirmation; once the node refused this key a waiting dispute, a banner
+/// says it is no solver here. A sliver: the tab owns the scroll view.
+class PendingPane extends ConsumerWidget {
+  const PendingPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final hasNode = ref.watch(activeNodeProvider) != null;
-    return ColoredBox(
-      color: ShellPalette.of(context).bg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TabHeader(title: l10n.pendingTitle),
-          Expanded(
-            child:
-                hasNode
-                    ? const _PendingBody()
-                    : ListEmptyState(
-                      sticker: 'thinking',
-                      title: l10n.pendingNoNodeTitle,
-                      body: l10n.pendingNoNodeBody,
-                      action: PrimaryButton(
-                        label: l10n.pendingNoNodeAction,
-                        onPressed: () => context.push(AppRoute.settingsNode),
-                      ),
-                    ),
-          ),
-        ],
+    if (ref.watch(activeNodeProvider) != null) return const _PendingBody();
+    return ListEmptyState.sliver(
+      sticker: 'thinking',
+      title: l10n.pendingNoNodeTitle,
+      body: l10n.pendingNoNodeBody,
+      action: PrimaryButton(
+        label: l10n.pendingNoNodeAction,
+        onPressed: () => context.push(AppRoute.settingsNode),
       ),
     );
   }
@@ -72,9 +56,7 @@ class _PendingBody extends ConsumerWidget {
         ref.watch(solverStandingProvider).valueOrNull?.status == SolverStatus.no
             ? const NotSolverBanner()
             : null;
-    // Clipped rather than overflowing when the rows outgrow a short screen.
-    final skeleton = SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
+    final skeleton = SliverToBoxAdapter(
       child: Column(
         children: [
           if (banner case final top?)
@@ -92,7 +74,7 @@ class _PendingBody extends ConsumerWidget {
       ),
     );
     return switch (pending) {
-      AsyncError() => ListEmptyState(
+      AsyncError() => ListEmptyState.sliver(
         header: banner,
         sticker: 'thinking',
         title: l10n.pendingLoadErrorTitle,
@@ -103,7 +85,7 @@ class _PendingBody extends ConsumerWidget {
         header: banner,
       ),
       // Nothing stored and the relays not heard from yet: not known, not none.
-      AsyncData(:final value?) when value.synced => ListEmptyState(
+      AsyncData(:final value?) when value.synced => ListEmptyState.sliver(
         header: banner,
         sticker: 'dispute',
         title: l10n.pendingEmptyTitle,
@@ -152,31 +134,33 @@ class _PendingListState extends ConsumerState<_PendingList> {
   Widget build(BuildContext context) {
     final rows = widget.disputes;
     final offset = widget.header == null ? 0 : 1;
-    return ListView.separated(
+    return SliverPadding(
       padding: const EdgeInsets.fromLTRB(
         redesignSidePadding,
         4,
         redesignSidePadding,
         24,
       ),
-      itemCount: rows.length + offset,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, i) {
-        if (i < offset) return widget.header!;
-        final dispute = rows[i - offset];
-        return PendingDisputeRow(
-          key: ValueKey(dispute.disputeId),
-          dispute: dispute,
-          now: _now,
-          hint: AppLocalizations.of(context).takeDisputeHint,
-          onTap:
-              () => openTakeDialog(
-                context,
-                disputeId: dispute.disputeId,
-                kind: TakeKind.take,
-              ),
-        );
-      },
+      sliver: SliverList.separated(
+        itemCount: rows.length + offset,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (context, i) {
+          if (i < offset) return widget.header!;
+          final dispute = rows[i - offset];
+          return PendingDisputeRow(
+            key: ValueKey(dispute.disputeId),
+            dispute: dispute,
+            now: _now,
+            hint: AppLocalizations.of(context).takeDisputeHint,
+            onTap:
+                () => openTakeDialog(
+                  context,
+                  disputeId: dispute.disputeId,
+                  kind: TakeKind.take,
+                ),
+          );
+        },
+      ),
     );
   }
 }

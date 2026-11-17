@@ -607,9 +607,10 @@ String resolveNotSentBody(AppLocalizations l10n, ResolveError error) =>
       ResolveError.unknownDispute => l10n.takeUnknownBody,
       ResolveError.protocolUnsupported => l10n.takeProtocolBody,
       ResolveError.nodeInfoUnavailable => l10n.takeNodeInfoBody,
-      ResolveError.noKey ||
-      ResolveError.noNode ||
-      ResolveError.noRelays ||
+      // Nothing was tried: no relay refused it.
+      ResolveError.noKey => l10n.requestNoKeyBody,
+      ResolveError.noNode => l10n.requestNoNodeBody,
+      ResolveError.noRelays => l10n.chatErrorNoRelays,
       ResolveError.sendFailed => l10n.takeFailedBody,
     };
 

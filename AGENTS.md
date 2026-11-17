@@ -2,7 +2,8 @@
 
 Bosstro is a **mobile app for Mostro dispute solvers**. It brings the admin side of
 [Mostrix](https://github.com/MostroP2P/mostrix) (the Rust TUI client) to a phone: see a node's
-disputes, take one, chat with buyer and seller, and settle or cancel it.
+disputes, take one, chat with buyer and seller, and settle or cancel it; and look up the real
+state of any order of the node.
 
 It is built on the architecture of **Mostro v2** ([`app`](https://github.com/MostroP2P/app)): a
 Rust core with a Flutter UI, bridged by `flutter_rust_bridge`. Bosstro is a sibling of `app`, not
@@ -27,7 +28,7 @@ ARB files (`lib/l10n/app_en.arb` is the source).
 | D4 | The solver's nsec is stored in `flutter_secure_storage` v10 (Android Keystore). No biometric lock for now. |
 | D5 | One active node at a time, chosen with a node selector. No default node: after Log in or Create new account the solver picks theirs (Mostro first, then the trusted communities, then their own). |
 | D6 | Every dispute row stores `mostro_pubkey`. |
-| D7 | Screens follow Mostrix's admin flows; components and style follow `app`. |
+| D7 | Screens follow Mostrix's admin flows; components and style follow `app`. Orders has no Mostrix flow to follow: `admin-order-info` is newer than it. |
 | D8 | `app`'s design guide is the rule (`.specify/DESIGN_SYSTEM.md`, with Bosstro's amendments). |
 | D9 | Onboarding: *Log in* with an nsec, or *Create new account* (generates an nsec). No 12 words — as Mostrix, which loads the solver key only as an nsec. |
 | D10 | No mnemonic derivation for the solver key, so no derivation path. In Mostrix the only mnemonic-derived key is the trader identity, which must not be reused as the solver key. |
@@ -63,7 +64,7 @@ rust/src/attachments/ # chat files: what may be sent or opened (by the bytes), a
 rust/src/chat/       # the dispute chat: channel keys (in memory), the router, send / retry; observer.rs reads the parties' own chat
 rust/src/db/         # Storage: SQLite (native) and IndexedDB (web), one trait
 rust/src/disputes/   # kind 38386: parsing, merge (NIP-01 order), the active node's feed
-rust/src/mostro/     # the daemon's answers to the solver key, AdminTakeDispute, AdminSettle / AdminCancel, solver standing
+rust/src/mostro/     # the daemon's answers to the solver key, AdminTakeDispute, AdminSettle / AdminCancel, AdminOrderInfo, solver standing
 rust/src/nostr/      # the relay pool, live subscriptions, liveness probe, event readers, transport v2
 rust/migrations/     # sqlx migrations; never edit one that shipped, add a new file
 rust_builder/        # cargokit glue, copied from app
@@ -73,6 +74,17 @@ tool/                # design_check.dart, launcher_icon/build_sources.py, releas
 docs/RELEASING.md    # how a release is cut, signed and published
 .specify/DESIGN_SYSTEM.md
 ```
+
+### Navigation
+
+Three tabs, branches of one shell (`lib/core/app_routes.dart`), each keeping its own stack:
+
+- **Disputes** (`lib/features/disputes/`), the default: one segmented control, Pending · In
+  progress · Closed, never a second one under it. Each part is a location of the branch
+  (`/disputes/pending`, `/disputes/in-progress`, `/disputes/closed`) sharing one page, so the tab
+  comes back to the part it was left on and another screen can open it on a given part.
+- **Orders** (`lib/features/orders/`): look up any order of the active node by its ID.
+- **Settings** (`lib/features/settings/`).
 
 ### Platform code
 
@@ -99,12 +111,20 @@ docs/RELEASING.md    # how a release is cut, signed and published
   `pow_first_contact` would freeze a web tab for a while.
 - **A take-over of your dispute goes unseen until you try to resolve it:** when a Read-Write
   solver takes over a dispute this key holds, the node republishes it `in-progress` and the
-  38386 does not say who holds it, so it stays in My disputes. Settle and cancel learn it
+  38386 does not say who holds it, so it stays under In progress. Settle and cancel learn it
   from `IsNotYourDispute` / `DisputeTakenByAdmin` and drop the take then.
 - **A resolution with no answer is remembered in memory only:** the detail warns that the node
   may have acted on it while the request is still waited for (ten minutes, this process). After
   a restart nothing says so; the dispute's 38386 tells, and a request sent again after the node
   did act is refused by the order's status, so nothing is paid twice.
+- **A looked-up order is a snapshot, kept in memory only:** it says how the node saw the order
+  when it answered, not how it is now (the screen says when, and offers Refresh). It shows
+  only while the solver stays on the Orders tab: another tab, another node or key, or the app
+  stopping empties it; the app going to the background does not. Nothing of it is stored: it carries the
+  parties' trade keys and the amounts, and the database is not encrypted (A4).
+- **An order lookup with no answer cannot tell a lost request from an old node:** a mostrod
+  that does not know `admin-order-info` answers nothing, as a relay that dropped the request
+  does. The screen says both, and that asking again is safe.
 - **A cached "read" permission may be stale:** the operator can change it and Bosstro cannot ask.
   The resolution actions stay usable with a note; the next answer learns the permission again.
 - **Chat messages are stored in plain text** in the unencrypted database (A4): on Android
@@ -215,7 +235,8 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
   `close`), never a bare `client.subscribe` with an id or `client.unsubscribe`: it re-issues
   them on every relay that reconnects (a test enforces it).
 - **Admin actions** (`mostro-core`, same version as `app`): `AdminTakeDispute` →
-  `AdminTookDispute`, `AdminSettle` → `AdminSettled`, `AdminCancel` → `AdminCanceled`.
+  `AdminTookDispute`, `AdminSettle` → `AdminSettled`, `AdminCancel` → `AdminCanceled`,
+  `AdminOrderInfo` → `AdminOrderInfo` with an `order_info` payload.
 - **Dispute chat** (`rust/src/chat/`): <https://mostro.network/protocol/dispute_chat.html>. One
   channel per party of each dispute this key holds: ECDH between the solver key and the party's
   trade key (from the take's `SolverDisputeInfo`), split by HKDF into `K_conv` / `K_sign`
@@ -278,11 +299,32 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
   undone and mostrod may have paid although its answer was lost (it answers an internal
   failure, an LND error included, with nothing). A request of a dispute still waiting for its
   answer is refused. The buyer receives `amount - fee`; the seller gets back `amount + fee`.
-- **"Am I a solver on this node?"** mostrod has no read-only query. The signal is the answer to
+- **Order lookup** (`rust/src/mostro/order_info.rs`, `rust/src/api/order_info.rs`): the Orders
+  tab asks the node for the real state of any of its orders, in dispute or not, with
+  `AdminOrderInfo`: the `order` wrapper, the **order** id in `id`, and no payload (mostrod drops,
+  unanswered, a request that carries one). mostrod answers its admin key and any registered
+  solver, Read or Read-Write. Same router, PoW and wait as a take, but **read only**: it is
+  never refused because a take or a resolution is waited for, never makes one wait, and is the
+  one request that may be sent again. Its answer is shown as soon as it arrives
+  (`replies::answer_or_send`): sending ends only when every relay acknowledged or timed out
+  (ten seconds each in nostr-sdk), long after the node answered through the fastest one, so the
+  answer is not kept behind it. A take and a resolution still send first and wait after. A snapshot is taken only in the `order` wrapper, to the
+  matching request, when both the message and the snapshot name the order asked for. Answers:
+  the snapshot or `NotFound` mean this key is a solver there; `InvalidPubkey` means `NotSolver`,
+  without the ambiguity of a take's; none says anything about the permission. A lookup that got
+  no answer is forgotten, not kept for a late one. mostro-core's `OrderInfo` is mapped to
+  Bosstro's own types in `api/order_info.rs` and nowhere else; a status, kind or state this
+  build does not know is `Unknown` and keeps its wire value, apart from `Unavailable` (the
+  node's Lightning node could not be asked). The screen shows what the node's database
+  recorded and what Lightning reports now side by side and **never merges them into a
+  verdict**: seeing when they disagree is the point, and the call is the solver's. Nothing of
+  an order is stored or logged. The reply has no field for a preimage, an invoice, a payment
+  hash, a Cashu token or an identity pubkey.
+- **"Am I a solver on this node?"** mostrod has no read-only query for it. The signal is the answer to
   `AdminTakeDispute`: `CantDo(InvalidPubkey)` on an `initiated` dispute means `NotSolver` (the
   status is read again when the answer arrives); on an `in-progress` one, `CannotTakeOver`
-  (ambiguous: it changes nothing). `NotAuthorized` on settle or cancel means this key is Read on
-  that node. Status and permission are cached per node **and per key**. A take never sets the
+  (ambiguous: it changes nothing). An order lookup tells it too, without that ambiguity.
+  `NotAuthorized` on settle or cancel means this key is Read on that node. Status and permission are cached per node **and per key**. A take never sets the
   permission: mostrod gives an `in-progress` dispute back to the solver who holds it before it
   looks at permissions, so a take-over and a recovery read the same. **Never probe** another
   solver's dispute by taking it; re-taking your own is safe and is the recovery path for a lost
@@ -324,7 +366,8 @@ One PR per phase; long phases split into phased PRs. Conventional commits, branc
 
 Phases: 0 scaffold · 1 solver key · 2 nodes and relays · 3 pending disputes · 4 take dispute ·
 5 dispute detail and chat · 5c observer · 6 resolution · 7 manual verification on a device ·
-8 release (`docs/RELEASING.md`). Serbero and notifications are post-MVP.
+8 release (`docs/RELEASING.md`). After the MVP: order lookup (issue #51). Serbero and notifications
+are post-MVP.
 
 A PR's title is its line in the release notes and `CHANGELOG.md` (`tool/release_notes.dart`
 groups by its conventional-commit type): write it for the solver who reads the release.

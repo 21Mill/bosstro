@@ -25,7 +25,7 @@ nostr-sdk = { version = "0.45", default-features = false }
 # itself and none are on by default (feature unification applies them to
 # nostr-sdk's copy too).
 nostr = { version = "0.45", default-features = false, features = ["std", "nip44"] }
-mostro-core = "0.17.3"
+mostro-core = "0.17.4"
 # Dispute ids (the kind 38386 `d` tag) are UUIDs. Already in the tree through
 # mostro-core; same declaration as MostroP2P/app.
 uuid = { version = "1", features = ["v4"] }

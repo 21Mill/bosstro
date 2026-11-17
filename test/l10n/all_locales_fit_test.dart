@@ -15,11 +15,14 @@ import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/disputes/widgets/pending_dispute_row.dart';
 import 'package:bosstro/features/observer/screens/observer_screen.dart';
 import 'package:bosstro/features/observer/services/observer_core.dart';
+import 'package:bosstro/features/orders/services/orders_core.dart';
+import 'package:bosstro/features/orders/widgets/order_summary_card.dart';
 import 'package:bosstro/features/resolution/screens/resolution_screen.dart';
 import 'package:bosstro/features/resolution/widgets/resolution_card.dart';
 import 'package:bosstro/features/settings/widgets/language_sheet.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
 import 'package:bosstro/shared/widgets/mostro_modal.dart';
+import 'package:bosstro/shared/widgets/primary_button.dart';
 
 import '../support/screen_harness.dart';
 
@@ -103,6 +106,7 @@ Future<void> _pump(
   String location, {
   bool signedIn = true,
   bool? bonds = true,
+  FakeOrdersCore? orders,
 }) async {
   // A fresh app each time: pumping a new one in its place would keep the
   // previous router and providers.
@@ -119,6 +123,7 @@ Future<void> _pump(
         disputes: _disputes(bonds: bonds),
         chat: _chat(),
         observer: _observer(),
+        orders: orders,
         nodes: FakeNodesCore(active: mostroNodePubkey, info: sampleInfo()),
       ),
     ),
@@ -221,6 +226,12 @@ void main() {
       testWidgets('In progress, Recover and its confirmation', (tester) async {
         await _pump(tester, locale, AppRoute.inProgress);
         await _fitsToTheEnd(tester, 'In progress');
+        // At this size the segments scrolled away with the list: back up.
+        await tester.scrollUntilVisible(
+          find.text(l10n.myDisputesClosedSegment),
+          -200,
+          scrollable: find.byType(Scrollable).first,
+        );
         await _tap(tester, find.text(l10n.myDisputesClosedSegment));
         expect(find.byType(ClosedDisputeRow), findsOneWidget);
         await _fitsToTheEnd(tester, 'Closed');
@@ -277,6 +288,133 @@ void main() {
           );
         });
       }
+
+      testWidgets('Orders: the form, an order, and every other answer', (
+        tester,
+      ) async {
+        Future<void> ask() async {
+          // The field is the top of the list: back to it after a scroll.
+          tester
+              .state<ScrollableState>(find.byType(Scrollable).first)
+              .position
+              .jumpTo(0);
+          await tester.pumpAndSettle();
+          await tester.enterText(find.byType(TextField), sampleOrderId);
+          await tester.pump();
+          // By its type: in some locales the title reads as the button.
+          await _tap(tester, find.byType(PrimaryButton));
+        }
+
+        await _pump(tester, locale, AppRoute.orders);
+        await _fitsToTheEnd(tester, 'Orders');
+        await ask();
+        expect(find.byType(OrderSummaryCard), findsOneWidget);
+        await _fitsToTheEnd(tester, 'Orders, an order');
+
+        // The whole snapshot, both folded cards open, with the parts an
+        // ordinary order lacks: a failed payment, deposits in every state.
+        Future<void> wholeSnapshot(OrderSnapshot order, String where) async {
+          final core = FakeOrdersCore()..order = order;
+          await _pump(tester, locale, AppRoute.orders, orders: core);
+          await ask();
+          for (final title in [
+            l10n.orderPartiesTitle,
+            l10n.orderDepositsTitle(order.bonds.length),
+          ]) {
+            await _tapText(tester, title);
+          }
+          await _fitsToTheEnd(tester, 'Orders, $where');
+        }
+
+        await wholeSnapshot(
+          sampleOrder(
+            payout: const Payout(
+              state: PayoutState.unavailable,
+              failureReason: PayoutFailureReason.insufficientBalance,
+              resolvedAt: 1700000300,
+            ),
+            bonds: [
+              for (final state in BondState.values)
+                OrderBond(
+                  role: BondRole.taker,
+                  amount: 1000,
+                  state: state,
+                  slashReason: BondSlashReason.timeout,
+                  kind: BondKind.bond,
+                ),
+              const OrderBond(
+                role: BondRole.maker,
+                amount: 5000,
+                state: BondState.pendingPayout,
+                slashReason: BondSlashReason.lostDispute,
+                kind: BondKind.sliceSlash,
+              ),
+              const OrderBond(
+                role: BondRole.maker,
+                amount: 5000,
+                state: BondState.released,
+                kind: BondKind.makerRefund,
+              ),
+              const OrderBond(
+                role: BondRole.maker,
+                amount: 5000,
+                state: BondState.locked,
+                kind: BondKind.bond,
+                rootOrderId: '0d4f6a2b-7c1e-4f3a-8b5d-9e0f1a2b3c4d',
+              ),
+            ],
+          ),
+          'the whole snapshot',
+        );
+        await wholeSnapshot(
+          sampleOrder(
+            holdInvoice: const HoldInvoice(state: HoldInvoiceState.unavailable),
+            bonds: const [],
+          ),
+          'Lightning silent, no deposit',
+        );
+        await wholeSnapshot(
+          sampleOrder(
+            holdInvoice: null,
+            cashuEscrow: const CashuEscrow(
+              mintUrl: 'https://mint.example.com/a/long/path',
+              lockedAt: 1700000150,
+            ),
+            minAmount: 10,
+            maxAmount: 100000,
+            rangeParentId: '0d4f6a2b-7c1e-4f3a-8b5d-9e0f1a2b3c4d',
+          ),
+          'a Cashu order',
+        );
+
+        // The longest status of each locale, whichever it is.
+        for (final status in OrderStatus.values) {
+          final core =
+              FakeOrdersCore()
+                ..order = sampleOrder(status: status, statusRaw: 'unknown');
+          await _pump(tester, locale, AppRoute.orders, orders: core);
+          await ask();
+          await _fitsToTheEnd(tester, 'Orders, $status');
+        }
+
+        for (final answer in <Object>[
+          OrderLookupOutcome.notFound,
+          OrderLookupOutcome.notSolver,
+          OrderLookupOutcome.noAnswer,
+          OrderLookupOutcome.refused,
+          OrderLookupError.sendFailed,
+          OrderLookupError.nodeInfoUnavailable,
+          OrderLookupError.protocolUnsupported,
+        ]) {
+          final core =
+              FakeOrdersCore()
+                ..answer = answer
+                ..reason = 'invalid_order_status';
+          await _pump(tester, locale, AppRoute.orders, orders: core);
+          await ask();
+          await _fitsToTheEnd(tester, 'Orders, $answer');
+        }
+      });
 
       testWidgets('Settings and the language sheet', (tester) async {
         await _pump(tester, locale, AppRoute.settings);

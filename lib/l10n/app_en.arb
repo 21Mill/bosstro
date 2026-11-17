@@ -4,13 +4,9 @@
   "@appName": {
     "description": "The app's name. A brand: keep it unchanged in every locale"
   },
-  "navPending": "Pending",
-  "@navPending": {
-    "description": "Bottom bar destination: disputes waiting for a solver to take them"
-  },
-  "navInProgress": "My disputes",
-  "@navInProgress": {
-    "description": "Bottom bar destination: disputes this solver took and is resolving"
+  "navDisputes": "Disputes",
+  "@navDisputes": {
+    "description": "Bottom bar destination: the disputes of the active node, waiting, in progress and closed"
   },
   "navSettings": "Settings",
   "@navSettings": {
@@ -20,29 +16,25 @@
   "@noNodeSelected": {
     "description": "Tab app bar status line, before the solver chooses a Mostro node"
   },
-  "pendingTitle": "Pending disputes",
-  "@pendingTitle": {
-    "description": "Header of the Pending tab"
+  "disputesTitle": "Disputes",
+  "@disputesTitle": {
+    "description": "Header of the Disputes tab"
   },
   "pendingEmptyTitle": "No disputes waiting",
   "@pendingEmptyTitle": {
-    "description": "Empty state title of the Pending tab"
+    "description": "Empty state title of Disputes, Pending"
   },
   "pendingEmptyBody": "No dispute on this node is waiting for a solver. When a trade opens one, it shows up here for you to take.",
   "@pendingEmptyBody": {
-    "description": "Empty state explanation of the Pending tab"
-  },
-  "inProgressTitle": "My disputes",
-  "@inProgressTitle": {
-    "description": "Header of the In progress tab: disputes this solver took"
+    "description": "Empty state explanation of Disputes, Pending"
   },
   "inProgressEmptyTitle": "No disputes in progress",
   "@inProgressEmptyTitle": {
-    "description": "Empty state title of the In progress tab"
+    "description": "Empty state title of Disputes, In progress"
   },
   "inProgressEmptyBody": "Disputes you take show up here. If a take got no answer, recover it.",
   "@inProgressEmptyBody": {
-    "description": "Empty state explanation of the In progress tab"
+    "description": "Empty state explanation of Disputes, In progress"
   },
   "settingsTitle": "Settings",
   "@settingsTitle": {
@@ -895,15 +887,15 @@
   },
   "pendingNoNodeTitle": "Choose your node first",
   "@pendingNoNodeTitle": {
-    "description": "Pending tab empty state before a node is chosen"
+    "description": "Disputes, Pending empty state before a node is chosen"
   },
   "pendingNoNodeBody": "Disputes are read from one Mostro node at a time. Pick the node where you are a solver.",
   "@pendingNoNodeBody": {
-    "description": "Pending tab empty state body before a node is chosen"
+    "description": "Disputes, Pending empty state body before a node is chosen"
   },
   "pendingNoNodeAction": "Choose node",
   "@pendingNoNodeAction": {
-    "description": "Pending tab empty state action: opens the node selector"
+    "description": "Disputes, Pending empty state action: opens the node selector"
   },
   "loadingNodes": "Loading nodes",
   "@loadingNodes": {
@@ -923,7 +915,7 @@
   },
   "pendingLoadErrorTitle": "Disputes could not be read",
   "@pendingLoadErrorTitle": {
-    "description": "Pending tab state when the stored disputes cannot be read"
+    "description": "Disputes, Pending state when the stored disputes cannot be read"
   },
   "pendingLoadErrorBody": "Something went wrong reading this node's disputes on this phone. Close and reopen Bosstro to try again.",
   "@pendingLoadErrorBody": {
@@ -1021,7 +1013,7 @@
   "@takeDisputeTitle": {
     "description": "Title of the confirmation before taking a dispute"
   },
-  "takeDisputeBody": "You become its solver: the node tells the buyer and the seller, and the dispute moves to My disputes. Take only a dispute you can follow to the end.",
+  "takeDisputeBody": "You become its solver: the node tells the buyer and the seller, and the dispute moves to In progress. Take only a dispute you can follow to the end.",
   "@takeDisputeBody": {
     "description": "Body of the take confirmation"
   },
@@ -1029,19 +1021,19 @@
   "@takeDisputeAnswer": {
     "description": "Answer of the take confirmation; repeats the opener's verb (DS-CMP-26, glossary: take a dispute)"
   },
-  "takeTakenSnack": "Dispute taken. It is in My disputes.",
+  "takeTakenSnack": "Dispute taken. It is under In progress.",
   "@takeTakenSnack": {
     "description": "Snackbar once the node gave the solver the dispute"
   },
   "recoverAction": "Recover",
   "@recoverAction": {
-    "description": "Label of the action in the My disputes header that opens Recover a dispute"
+    "description": "Label of the action in the Disputes header that opens Recover a dispute"
   },
   "recoverTitle": "Recover a dispute",
   "@recoverTitle": {
     "description": "Title of the Recover a dispute screen, and the link to it"
   },
-  "recoverNote": "The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not in My disputes on this phone: yours whose answer was lost, and other solvers'. Recover them one at a time.",
+  "recoverNote": "The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not among yours on this phone: yours whose answer was lost, and other solvers'. Recover them one at a time.",
   "@recoverNote": {
     "description": "Note at the top of Recover a dispute"
   },
@@ -1049,7 +1041,7 @@
   "@recoverEmptyTitle": {
     "description": "Recover a dispute with no candidate"
   },
-  "recoverEmptyBody": "No dispute in progress on this node is missing from My disputes.",
+  "recoverEmptyBody": "No dispute in progress on this node is missing from yours.",
   "@recoverEmptyBody": {
     "description": "Explanation under recoverEmptyTitle"
   },
@@ -1069,7 +1061,7 @@
   "@recoverDisputeAnswer": {
     "description": "Answer of the recover confirmation; repeats the opener's verb (DS-CMP-26)"
   },
-  "recoverTakenSnack": "Dispute recovered. It is in My disputes.",
+  "recoverTakenSnack": "Dispute recovered. It is under In progress.",
   "@recoverTakenSnack": {
     "description": "Snackbar once the node gave the dispute back"
   },
@@ -1109,7 +1101,7 @@
   "@noAnswerTitle": {
     "description": "Take outcome when no answer arrived in time"
   },
-  "noAnswerBody": "Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look in My disputes, or ask again from Recover a dispute.",
+  "noAnswerBody": "Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look under In progress, or ask again from Recover a dispute.",
   "@noAnswerBody": {
     "description": "Body under noAnswerTitle"
   },
@@ -1120,6 +1112,14 @@
   "takeFailedBody": "No relay took it. Check your connection and the relays, then try again.",
   "@takeFailedBody": {
     "description": "Body under takeFailedTitle"
+  },
+  "requestNoKeyBody": "No secret key is loaded, so nothing was sent. Close Bosstro and open it again.",
+  "@requestNoKeyBody": {
+    "description": "Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no solver key is loaded"
+  },
+  "requestNoNodeBody": "No node is chosen, so nothing was sent. Choose your node in Settings.",
+  "@requestNoNodeBody": {
+    "description": "Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no node is chosen"
   },
   "takeAlreadyTakingBody": "A request for this dispute is already waiting for the node's answer.",
   "@takeAlreadyTakingBody": {
@@ -1338,7 +1338,7 @@
   "@detailNotYoursTitle": {
     "description": "Shown in the detail when the dispute is no longer held by this solver key"
   },
-  "detailNotYoursBody": "The node reopened it, or it belongs to another key. It is no longer in My disputes.",
+  "detailNotYoursBody": "The node reopened it, or it belongs to another key. It is no longer among your disputes.",
   "@detailNotYoursBody": {
     "description": "Explanation under detailNotYoursTitle"
   },
@@ -1443,7 +1443,7 @@
   },
   "openDisputeHint": "Open the dispute",
   "@openDisputeHint": {
-    "description": "Screen-reader hint of a row in My disputes"
+    "description": "Screen-reader hint of a row of the disputes in progress"
   },
   "chatAttach": "Attach a file",
   "@chatAttach": {
@@ -1883,7 +1883,7 @@
   "@takenOverTitle": {
     "description": "Result: the node said the dispute is not this key's (taken over)"
   },
-  "takenOverBody": "The node gave it to another solver, so nothing was paid or refunded. It has left My disputes.",
+  "takenOverBody": "The node gave it to another solver, so nothing was paid or refunded. It is no longer among your disputes.",
   "@takenOverBody": {
     "description": "Under takenOverTitle"
   },
@@ -1919,7 +1919,7 @@
   "@resolveBackToDispute": {
     "description": "Result: the one action, back to the dispute detail"
   },
-  "resolveGoToDisputes": "Go to My disputes",
+  "resolveGoToDisputes": "Go to Disputes",
   "@resolveGoToDisputes": {
     "description": "Result after a take-over: back to the In progress list"
   },
@@ -2019,25 +2019,29 @@
   "@orderStatusFiatSent": {
     "description": "Order status before the dispute: the buyer had marked the fiat as sent"
   },
+  "disputesPendingSegment": "Pending",
+  "@disputesPendingSegment": {
+    "description": "Disputes tab: the segment of the disputes waiting for a solver"
+  },
   "myDisputesOpenSegment": "In progress",
   "@myDisputesOpenSegment": {
-    "description": "My disputes: the segment of the disputes this key holds"
+    "description": "Disputes tab: the segment of the disputes this key holds"
   },
   "myDisputesClosedSegment": "Closed",
   "@myDisputesClosedSegment": {
-    "description": "My disputes: the segment of the disputes this key held that closed"
+    "description": "Disputes tab: the segment of the disputes this key held that closed"
   },
-  "myDisputesSegmentsLabel": "Open or closed disputes",
-  "@myDisputesSegmentsLabel": {
-    "description": "Screen-reader label of the In progress / Closed control of My disputes"
+  "disputesSegmentsLabel": "Pending, in progress or closed disputes",
+  "@disputesSegmentsLabel": {
+    "description": "Screen-reader label of the Pending / In progress / Closed control of the Disputes tab"
   },
   "closedEmptyTitle": "No closed disputes yet",
   "@closedEmptyTitle": {
-    "description": "My disputes, Closed: empty state title"
+    "description": "Disputes, Closed: empty state title"
   },
   "closedEmptyBody": "The disputes you take show up here once they close, whether you resolved them or the parties ended the trade themselves.",
   "@closedEmptyBody": {
-    "description": "My disputes, Closed: empty state explanation"
+    "description": "Disputes, Closed: empty state explanation"
   },
   "disputeClosedJustNow": "Closed just now",
   "@disputeClosedJustNow": {
@@ -2067,6 +2071,380 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "navOrders": "Orders",
+  "@navOrders": {
+    "description": "Bottom bar destination: look up any order of the active node by its ID"
+  },
+  "ordersTitle": "Look up an order",
+  "@ordersTitle": {
+    "description": "Header of the Orders tab"
+  },
+  "ordersIntro": "See how this node holds any of its orders right now, in dispute or not. Looking changes nothing.",
+  "@ordersIntro": {
+    "description": "Orders tab: what the lookup is for, above the form"
+  },
+  "ordersNoNodeBody": "Orders are looked up on one Mostro node at a time. Pick the node where you are a solver.",
+  "@ordersNoNodeBody": {
+    "description": "Orders tab empty state body before a node is chosen"
+  },
+  "orderIdHint": "Paste the order's ID",
+  "@orderIdHint": {
+    "description": "Orders tab: placeholder of the order ID field"
+  },
+  "orderIdInvalid": "That is not an order ID. One looks like 308e1272-d5f4-47e6-bd97-3504baea9c23.",
+  "@orderIdInvalid": {
+    "description": "Orders tab: the text in the field is not an order ID (a UUID)"
+  },
+  "orderLookupAction": "Look up order",
+  "@orderLookupAction": {
+    "description": "Orders tab: the primary button that asks the node about the order"
+  },
+  "orderNotFoundTitle": "Order not found",
+  "@orderNotFoundTitle": {
+    "description": "Orders tab: the node has no order with that ID"
+  },
+  "orderNotFoundBody": "This node has no order with that ID. Check the ID, and that the order belongs to this node.",
+  "@orderNotFoundBody": {
+    "description": "Orders tab: what to check when the node has no order with that ID"
+  },
+  "orderNoAnswerBody": "The request or its answer may have been lost, or this node does not answer order lookups yet. Nothing was changed: you can ask again.",
+  "@orderNoAnswerBody": {
+    "description": "Orders tab: the node did not answer a lookup in time; older nodes do not know the request"
+  },
+  "orderRefusedBody": "It gave no reason. Try again later, or ask the node's operator.",
+  "@orderRefusedBody": {
+    "description": "Orders tab: the node refused the lookup and gave no reason"
+  },
+  "orderRefusedUnsupportedBody": "This node does not answer order lookups. Its operator may need to update it.",
+  "@orderRefusedUnsupportedBody": {
+    "description": "Orders tab: the node refused the lookup as an action it does not do (invalid_action)"
+  },
+  "orderRefusedBusyBody": "The node is getting too many requests. Wait a moment and ask again.",
+  "@orderRefusedBusyBody": {
+    "description": "Orders tab: the node refused the lookup because it is rate-limiting this key (too_many_requests)"
+  },
+  "orderRefusedUnknownBody": "It gave a reason this version of Bosstro does not know. Try again later, or ask the node's operator.",
+  "@orderRefusedUnknownBody": {
+    "description": "Orders tab: the node refused the lookup with a reason this build has no words for"
+  },
+  "orderStatusPending": "Pending",
+  "@orderStatusPending": {
+    "description": "Order status: published and waiting, nobody took it yet. The protocol's own word for it, as the solver knows it"
+  },
+  "orderStatusWaitingMakerDeposit": "Waiting for the maker's deposit",
+  "@orderStatusWaitingMakerDeposit": {
+    "description": "Order status: the maker has not posted the anti-abuse deposit yet, so the order is not published"
+  },
+  "orderStatusWaitingTakerDeposit": "Waiting for the taker's deposit",
+  "@orderStatusWaitingTakerDeposit": {
+    "description": "Order status: taken, the taker has not posted the anti-abuse deposit yet"
+  },
+  "orderStatusWaitingBuyerInvoice": "Waiting for the buyer's invoice",
+  "@orderStatusWaitingBuyerInvoice": {
+    "description": "Order status: the buyer has not given the invoice to be paid to yet"
+  },
+  "orderStatusWaitingPayment": "Waiting for the seller to lock the sats",
+  "@orderStatusWaitingPayment": {
+    "description": "Order status: the seller has not locked the sats yet"
+  },
+  "orderStatusInProgress": "In progress",
+  "@orderStatusInProgress": {
+    "description": "Order status: taken, under way"
+  },
+  "orderStatusSatsReleased": "Sats released, buyer not paid yet",
+  "@orderStatusSatsReleased": {
+    "description": "Order status: the seller's sats were taken by the node; the payment to the buyer is under way or failed"
+  },
+  "orderStatusSuccess": "Completed",
+  "@orderStatusSuccess": {
+    "description": "Order status: the trade ended, the buyer was paid"
+  },
+  "orderStatusDispute": "In dispute",
+  "@orderStatusDispute": {
+    "description": "Order status: a party opened a dispute"
+  },
+  "orderStatusCanceled": "Cancelled",
+  "@orderStatusCanceled": {
+    "description": "Order status: cancelled"
+  },
+  "orderStatusCooperativelyCanceled": "Cancelled by both parties",
+  "@orderStatusCooperativelyCanceled": {
+    "description": "Order status: both parties agreed to cancel"
+  },
+  "orderStatusRefundedBySolver": "Refunded to the seller by a solver",
+  "@orderStatusRefundedBySolver": {
+    "description": "Order status: a solver closed the dispute by refunding the seller"
+  },
+  "orderStatusSettledBySolver": "Decided for the buyer by a solver, not paid yet",
+  "@orderStatusSettledBySolver": {
+    "description": "Order status: a solver decided for the buyer; the payment to the buyer is under way or failed"
+  },
+  "orderStatusPaidBySolver": "Paid to the buyer by a solver",
+  "@orderStatusPaidBySolver": {
+    "description": "Order status: a solver decided for the buyer and the buyer was paid"
+  },
+  "orderStatusExpired": "Expired",
+  "@orderStatusExpired": {
+    "description": "Order status: nobody took it in time"
+  },
+  "orderFundsTitle": "The seller's sats",
+  "@orderFundsTitle": {
+    "description": "Orders, an order: title of the card about the sats the seller locked for the trade"
+  },
+  "orderOnLightning": "On Lightning now",
+  "@orderOnLightning": {
+    "description": "Orders, an order: label of what the node's Lightning node reports right now, next to what the node's database recorded"
+  },
+  "orderFundsLocked": "Locked sats",
+  "@orderFundsLocked": {
+    "description": "Orders, an order: label of the row that says no sats are locked for this order"
+  },
+  "orderValueNone": "None",
+  "@orderValueNone": {
+    "description": "Orders, an order: value of something the order does not have"
+  },
+  "orderFundsHeldAt": "Locked (node's record)",
+  "@orderFundsHeldAt": {
+    "description": "Orders, an order: when the node's database says the seller's sats were locked"
+  },
+  "orderFundsSettledAt": "Collected (node's record)",
+  "@orderFundsSettledAt": {
+    "description": "Orders, an order: when the node's database says it collected the seller's sats"
+  },
+  "orderHoldOpen": "Not locked yet",
+  "@orderHoldOpen": {
+    "description": "Seller's sats on Lightning: the seller has not locked them yet"
+  },
+  "orderHoldAccepted": "Locked",
+  "@orderHoldAccepted": {
+    "description": "Seller's sats on Lightning: locked, still the seller's"
+  },
+  "orderHoldSettled": "Collected by the node",
+  "@orderHoldSettled": {
+    "description": "Seller's sats on Lightning: the node took them"
+  },
+  "orderHoldCanceled": "Back with the seller",
+  "@orderHoldCanceled": {
+    "description": "Seller's sats on Lightning: the lock was cancelled, they went back to the seller"
+  },
+  "orderLnNotFound": "No record of it",
+  "@orderLnNotFound": {
+    "description": "Orders, an order: the node's Lightning node has no record of this payment"
+  },
+  "orderLnUnavailable": "Lightning did not answer",
+  "@orderLnUnavailable": {
+    "description": "Orders, an order: the node could not ask its Lightning node (an error, or no answer in time)"
+  },
+  "orderValueUnknown": "Not known to this version",
+  "@orderValueUnknown": {
+    "description": "Orders, an order: a value a newer node sent that this version of the app does not know"
+  },
+  "orderCashuMint": "Cashu mint",
+  "@orderCashuMint": {
+    "description": "Orders, an order on a Cashu node: the mint that holds the escrow"
+  },
+  "orderPayoutTitle": "Payment to the buyer",
+  "@orderPayoutTitle": {
+    "description": "Orders, an order: title of the card about the node's payment to the buyer"
+  },
+  "orderPayoutUnderWay": "Payment under way",
+  "@orderPayoutUnderWay": {
+    "description": "Orders, an order: label of the row that says no payment to the buyer is under way"
+  },
+  "orderPayoutInFlight": "Under way",
+  "@orderPayoutInFlight": {
+    "description": "Payment to the buyer on Lightning: sent, not finished"
+  },
+  "orderPayoutSucceeded": "Paid",
+  "@orderPayoutSucceeded": {
+    "description": "Payment to the buyer on Lightning: it arrived"
+  },
+  "orderPayoutFailed": "Failed",
+  "@orderPayoutFailed": {
+    "description": "Payment to the buyer on Lightning: it failed"
+  },
+  "orderPayoutWhyFailed": "Why it failed",
+  "@orderPayoutWhyFailed": {
+    "description": "Orders, an order: label of the reason a payment to the buyer failed"
+  },
+  "orderPayoutReasonTimeout": "Timed out",
+  "@orderPayoutReasonTimeout": {
+    "description": "Why a payment to the buyer failed: it took too long"
+  },
+  "orderPayoutReasonNoRoute": "No route to the buyer",
+  "@orderPayoutReasonNoRoute": {
+    "description": "Why a payment to the buyer failed: Lightning found no path to the buyer"
+  },
+  "orderPayoutReasonError": "Lightning error",
+  "@orderPayoutReasonError": {
+    "description": "Why a payment to the buyer failed: an error of the Lightning node"
+  },
+  "orderPayoutReasonDetails": "Wrong payment details",
+  "@orderPayoutReasonDetails": {
+    "description": "Why a payment to the buyer failed: the buyer's invoice was wrong or expired"
+  },
+  "orderPayoutReasonBalance": "Not enough balance on the node",
+  "@orderPayoutReasonBalance": {
+    "description": "Why a payment to the buyer failed: the node's Lightning node had too little balance"
+  },
+  "orderPayoutReasonCanceled": "Cancelled",
+  "@orderPayoutReasonCanceled": {
+    "description": "Why a payment to the buyer failed: it was cancelled"
+  },
+  "orderPayoutEndedAt": "Ended",
+  "@orderPayoutEndedAt": {
+    "description": "Orders, an order: when a payment to the buyer reached its final state"
+  },
+  "orderPayoutLastFailed": "Last payment failed",
+  "@orderPayoutLastFailed": {
+    "description": "Orders, an order: whether the node's last payment to the buyer failed (Yes / No)"
+  },
+  "orderPayoutAttempts": "Payment attempts",
+  "@orderPayoutAttempts": {
+    "description": "Orders, an order: how many times the node tried to pay the buyer"
+  },
+  "orderRoutingFee": "Routing fee",
+  "@orderRoutingFee": {
+    "description": "Orders, an order: what Lightning charged to route the payment to the buyer"
+  },
+  "orderPartiesTitle": "Parties",
+  "@orderPartiesTitle": {
+    "description": "Orders, an order: title of the card about the buyer and the seller"
+  },
+  "orderDisputeOpenedBy": "Dispute opened by",
+  "@orderDisputeOpenedBy": {
+    "description": "Orders, an order: which party opened a dispute (Buyer, Seller, Both, Nobody)"
+  },
+  "orderCancelAskedBy": "Cancel asked by",
+  "@orderCancelAskedBy": {
+    "description": "Orders, an order: which party asked to cancel the trade by agreement (Buyer, Seller, Both, Nobody)"
+  },
+  "orderPartyBoth": "Both",
+  "@orderPartyBoth": {
+    "description": "Orders, an order: both the buyer and the seller"
+  },
+  "orderPartyNobody": "Nobody",
+  "@orderPartyNobody": {
+    "description": "Orders, an order: neither the buyer nor the seller"
+  },
+  "orderDepositsNone": "No deposit on this order",
+  "@orderDepositsNone": {
+    "description": "Orders, an order: the order has no anti-abuse deposit"
+  },
+  "orderBondMaker": "Maker",
+  "@orderBondMaker": {
+    "description": "Whose anti-abuse deposit: the party who created the order"
+  },
+  "orderBondTaker": "Taker",
+  "@orderBondTaker": {
+    "description": "Whose anti-abuse deposit: the party who took the order"
+  },
+  "orderBondSliceSlash": "Slashed on one slice",
+  "@orderBondSliceSlash": {
+    "description": "A deposit row of a range order: the part of the maker's deposit slashed for one slice"
+  },
+  "orderBondMakerRefund": "Rest returned to the maker",
+  "@orderBondMakerRefund": {
+    "description": "A deposit row of a range order: what was left of the maker's deposit, returned"
+  },
+  "orderBondRequested": "Asked for",
+  "@orderBondRequested": {
+    "description": "Deposit state: asked for, not posted yet"
+  },
+  "orderBondLocked": "Locked",
+  "@orderBondLocked": {
+    "description": "Deposit state: posted and held"
+  },
+  "orderBondReleased": "Returned",
+  "@orderBondReleased": {
+    "description": "Deposit state: given back"
+  },
+  "orderBondPendingPayout": "Slashed, payout owed",
+  "@orderBondPendingPayout": {
+    "description": "Deposit state: slashed, its payout to the other party still owed"
+  },
+  "orderBondSlashed": "Slashed and paid out",
+  "@orderBondSlashed": {
+    "description": "Deposit state: slashed and paid to the other party"
+  },
+  "orderBondForfeited": "Slashed, never claimed",
+  "@orderBondForfeited": {
+    "description": "Deposit state: slashed, and the other party never claimed it"
+  },
+  "orderBondFailed": "Payout failed",
+  "@orderBondFailed": {
+    "description": "Deposit state: its payout failed"
+  },
+  "orderBondLostDispute": "lost the dispute",
+  "@orderBondLostDispute": {
+    "description": "Why a deposit was slashed, after its state: its owner lost the dispute"
+  },
+  "orderBondTimeout": "did not act in time",
+  "@orderBondTimeout": {
+    "description": "Why a deposit was slashed, after its state: its owner did not act in time"
+  },
+  "orderCreatedAt": "Created",
+  "@orderCreatedAt": {
+    "description": "Orders, an order: when the order was created"
+  },
+  "orderTakenAt": "Taken",
+  "@orderTakenAt": {
+    "description": "Orders, an order: when the order was taken"
+  },
+  "orderExpiresAt": "Expires",
+  "@orderExpiresAt": {
+    "description": "Orders, an order: when the order expires"
+  },
+  "orderFiatRange": "Fiat range",
+  "@orderFiatRange": {
+    "description": "Orders, a range order: the smallest and largest fiat amount it accepts"
+  },
+  "orderRangeParent": "Part of range order",
+  "@orderRangeParent": {
+    "description": "Orders, an order: the range order this one is a part of"
+  },
+  "orderDepositsTitle": "Deposits ({count})",
+  "@orderDepositsTitle": {
+    "description": "Orders, an order: title of the card about the anti-abuse deposits, with how many rows it has",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderBondOfRoot": "{role} (root order)",
+  "@orderBondOfRoot": {
+    "description": "A deposit row on a part of a range order: {role} is whose deposit it is (Maker), and it belongs to the whole range order",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "orderFiatRangeValue": "{min} – {max} {code}",
+  "@orderFiatRangeValue": {
+    "description": "A range order's fiat range: smallest, largest and the currency code",
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "orderAskedAt": "Asked at {time}",
+  "@orderAskedAt": {
+    "description": "Orders, under an order: the time of day the node answered, as the locale writes it",
+    "placeholders": {
+      "time": {
+        "type": "String"
       }
     }
   }

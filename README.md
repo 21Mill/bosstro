@@ -25,12 +25,14 @@ protocol, persistence) with a Flutter UI, bridged by
   it uses.
 - **Pending disputes** of the node, live, and **take** one. Bosstro learns from the node's
   answers whether your key is a solver there, and whether it is Read or Read-Write.
-- **My disputes:** in progress and closed. A take that got no answer is recovered by taking
+- **Your disputes:** in progress and closed. A take that got no answer is recovered by taking
   it again.
 - **Chat** with the buyer and the seller of each dispute you hold, end-to-end encrypted, with
   images and PDFs. When a party shares their chat key, read the conversation between the
   buyer and the seller too.
 - **Resolve:** pay the buyer or refund the seller (Read-Write solvers).
+- **Look up any order** of the node by its ID, in dispute or not: its real status, where the
+  seller's sats are, the payment to the buyer and the deposits, as the node sees them now.
 - In English, Spanish, Italian, French, German, Dutch and Brazilian Portuguese.
 
 ## Install

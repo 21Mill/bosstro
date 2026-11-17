@@ -10,7 +10,7 @@ import 'package:bosstro/features/disputes/screens/recover_screen.dart';
 import 'package:bosstro/features/disputes/services/disputes_core.dart';
 import 'package:bosstro/features/disputes/widgets/detail_segments.dart';
 import 'package:bosstro/features/disputes/widgets/in_progress_dispute_row.dart';
-import 'package:bosstro/features/disputes/screens/in_progress_screen.dart';
+import 'package:bosstro/features/disputes/screens/disputes_screen.dart';
 import 'package:bosstro/features/disputes/widgets/not_solver_banner.dart';
 import 'package:bosstro/features/disputes/widgets/pending_dispute_row.dart';
 import 'package:bosstro/features/disputes/widgets/take_dialog.dart';
@@ -64,6 +64,9 @@ void main() {
     testWidgets('the take confirmation fits, $theme', (tester) async {
       setSurface(tester);
       await _pump(tester, _withPending(), brightness: brightness);
+      // At this size the header scrolls with the list: bring the row up.
+      await tester.ensureVisible(find.byType(PendingDisputeRow));
+      await tester.pumpAndSettle();
       await tester.tap(find.byType(PendingDisputeRow));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -182,7 +185,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(TakeDialog), findsNothing);
       expect(
-        find.text('Dispute taken. It is in My disputes.'),
+        find.text('Dispute taken. It is under In progress.'),
         findsOneWidget,
       );
       // Straight to the dispute taken.
@@ -368,15 +371,24 @@ void main() {
       await tester.tap(find.text('Close'));
       await tester.pumpAndSettle();
 
-      core.takeError = TakeError.noRelays;
-      await tester.tap(find.byType(PendingDisputeRow));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Take dispute'));
-      await tester.pumpAndSettle();
-      expect(find.text('The request was not sent'), findsOne);
-      expect(find.textContaining('No relay took it'), findsOne);
-      await tester.tap(find.text('Close'));
-      await tester.pumpAndSettle();
+      // Each reason nothing left has its own words: only a request the
+      // relays refused says so.
+      for (final (error, words) in [
+        (TakeError.sendFailed, 'No relay took it'),
+        (TakeError.noRelays, 'Not connected to any relay'),
+        (TakeError.noNode, 'No node is chosen'),
+        (TakeError.noKey, 'No secret key is loaded'),
+      ]) {
+        core.takeError = error;
+        await tester.tap(find.byType(PendingDisputeRow));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Take dispute'));
+        await tester.pumpAndSettle();
+        expect(find.text('The request was not sent'), findsOne);
+        expect(find.textContaining(words), findsOne, reason: '$error');
+        await tester.tap(find.text('Close'));
+        await tester.pumpAndSettle();
+      }
 
       // The node's settings (its PoW) were never read: nothing was sent.
       core.takeError = TakeError.nodeInfoUnavailable;
@@ -404,7 +416,7 @@ void main() {
       expect(find.text('Closed'), findsOneWidget);
       expect(find.byType(InProgressDisputeRow), findsOneWidget);
       expect(find.text('Recover').hitTestable(), findsOneWidget);
-      final segments = find.byType(DetailSegments<MyDisputesSection>);
+      final segments = find.byType(DetailSegments<DisputesSection>);
       final top = tester.getTopLeft(segments);
 
       await tester.tap(find.text('Closed'));
@@ -515,7 +527,7 @@ void main() {
 
       expect(core.takes, [_a], reason: 'never in bulk');
       expect(
-        find.text('Dispute recovered. It is in My disputes.'),
+        find.text('Dispute recovered. It is under In progress.'),
         findsOneWidget,
       );
       // Straight to the dispute recovered, in place of Recover.

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:bosstro/features/disputes/screens/dispute_detail_screen.dart';
-import 'package:bosstro/features/disputes/screens/in_progress_screen.dart';
-import 'package:bosstro/features/disputes/screens/pending_screen.dart';
+import 'package:bosstro/features/disputes/screens/disputes_screen.dart';
 import 'package:bosstro/features/disputes/screens/recover_screen.dart';
 import 'package:bosstro/features/nodes/screens/choose_node_screen.dart';
 import 'package:bosstro/features/nodes/screens/node_info_screen.dart';
 import 'package:bosstro/features/nodes/screens/relays_screen.dart';
+import 'package:bosstro/features/orders/screens/orders_screen.dart';
 import 'package:bosstro/features/settings/screens/about_screen.dart';
 import 'package:bosstro/features/settings/screens/settings_screen.dart';
 import 'package:bosstro/features/shell/screens/home_shell.dart';
@@ -25,16 +25,22 @@ abstract final class AppRoute {
   static const createAccount = '/create-account';
   static const scanQr = '/scan-qr';
 
-  static const pending = '/pending';
-  static const inProgress = '/in-progress';
+  /// The three parts of the Disputes tab: waiting for a solver, held by
+  /// this key, and held by it until they closed.
+  static const pending = '/disputes/pending';
+  static const inProgress = '/disputes/in-progress';
+  static const closed = '/disputes/closed';
 
-  /// Recover a dispute, from the In progress header.
-  static const recover = '/in-progress/recover';
+  /// Recover a dispute, from the header of the ones in progress.
+  static const recover = '/disputes/in-progress/recover';
 
   /// A dispute this solver holds: its data and its chats (pushed on a
   /// phone; beside the list on a tablet).
   static String disputeDetail(String disputeId) =>
-      '/in-progress/dispute/$disputeId';
+      '/disputes/in-progress/dispute/$disputeId';
+
+  /// Look up any order of the active node by its id.
+  static const orders = '/orders';
   static const settings = '/settings';
   static const backup = '/settings/backup';
 
@@ -57,7 +63,7 @@ abstract final class AppRoute {
   static String home({required bool hasNode}) => hasNode ? pending : chooseNode;
 
   /// The bottom bar's destinations, in order.
-  static const tabs = [pending, inProgress, settings];
+  static const tabs = [pending, orders, settings];
 
   /// Where a solver without a key may be.
   static const _public = {welcome, login, createAccount, scanQr};
@@ -76,8 +82,10 @@ abstract final class AppRoute {
   }
 }
 
-/// The router. The three tabs are branches of one shell, so each keeps its
-/// own stack and scroll position while the solver moves between them.
+/// The router. The tabs are branches of one shell, so each keeps its own
+/// stack and scroll position while the solver moves between them. The parts
+/// of Disputes are locations of one branch, so it comes back to the part it
+/// was left on.
 /// [signedIn] is listened to: logging out moves the solver to Welcome at
 /// once.
 GoRouter buildRouter({
@@ -124,17 +132,9 @@ GoRouter buildRouter({
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: AppRoute.pending,
-                builder: (context, state) => const PendingScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.inProgress,
-                builder: (context, state) => const InProgressScreen(),
+              _disputes(DisputesSection.pending),
+              _disputes(
+                DisputesSection.inProgress,
                 routes: [
                   GoRoute(
                     path: 'recover',
@@ -151,6 +151,15 @@ GoRouter buildRouter({
                         ),
                   ),
                 ],
+              ),
+              _disputes(DisputesSection.closed),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.orders,
+                builder: (context, state) => const OrdersScreen(),
               ),
             ],
           ),
@@ -190,3 +199,19 @@ GoRouter buildRouter({
     ],
   );
 }
+
+/// One part of the Disputes tab. The three share a page (one key, no
+/// transition), so choosing a segment changes the part under the header
+/// instead of sliding a new screen in.
+GoRoute _disputes(
+  DisputesSection section, {
+  List<RouteBase> routes = const [],
+}) => GoRoute(
+  path: section.location,
+  pageBuilder:
+      (context, state) => NoTransitionPage(
+        key: const ValueKey('disputes'),
+        child: DisputesScreen(section: section),
+      ),
+  routes: routes,
+);

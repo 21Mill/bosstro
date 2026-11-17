@@ -8,6 +8,7 @@ import 'package:bosstro/features/resolution/screens/resolution_screen.dart'
     show bondChoiceLabel, closedResultLabel;
 import 'package:bosstro/features/resolution/widgets/resolution_card.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
+import 'package:bosstro/shared/utils/date_time_format.dart';
 import 'package:bosstro/shared/widgets/order_data_card.dart';
 import 'package:bosstro/shared/widgets/redesign_app_bar.dart';
 
@@ -190,11 +191,8 @@ class DisputeInfoPane extends StatelessWidget {
 }
 
 /// A Unix time as the locale writes a date and a time; null when unknown.
-String? _dateTime(int? seconds, String locale) {
-  if (seconds == null) return null;
-  final at = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
-  return DateFormat.yMMMd(locale).add_Hm().format(at);
-}
+String? _dateTime(int? seconds, String locale) =>
+    seconds == null ? null : formatDateTime(seconds, locale);
 
 /// The order's status when the dispute opened, in words: whether the buyer
 /// had marked the fiat as sent. A word the node may add later reads as it

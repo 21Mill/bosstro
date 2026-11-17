@@ -114,17 +114,11 @@ abstract class AppLocalizations {
   /// **'Bosstro'**
   String get appName;
 
-  /// Bottom bar destination: disputes waiting for a solver to take them
+  /// Bottom bar destination: the disputes of the active node, waiting, in progress and closed
   ///
   /// In en, this message translates to:
-  /// **'Pending'**
-  String get navPending;
-
-  /// Bottom bar destination: disputes this solver took and is resolving
-  ///
-  /// In en, this message translates to:
-  /// **'My disputes'**
-  String get navInProgress;
+  /// **'Disputes'**
+  String get navDisputes;
 
   /// Bottom bar destination: settings
   ///
@@ -138,37 +132,31 @@ abstract class AppLocalizations {
   /// **'No node selected'**
   String get noNodeSelected;
 
-  /// Header of the Pending tab
+  /// Header of the Disputes tab
   ///
   /// In en, this message translates to:
-  /// **'Pending disputes'**
-  String get pendingTitle;
+  /// **'Disputes'**
+  String get disputesTitle;
 
-  /// Empty state title of the Pending tab
+  /// Empty state title of Disputes, Pending
   ///
   /// In en, this message translates to:
   /// **'No disputes waiting'**
   String get pendingEmptyTitle;
 
-  /// Empty state explanation of the Pending tab
+  /// Empty state explanation of Disputes, Pending
   ///
   /// In en, this message translates to:
   /// **'No dispute on this node is waiting for a solver. When a trade opens one, it shows up here for you to take.'**
   String get pendingEmptyBody;
 
-  /// Header of the In progress tab: disputes this solver took
-  ///
-  /// In en, this message translates to:
-  /// **'My disputes'**
-  String get inProgressTitle;
-
-  /// Empty state title of the In progress tab
+  /// Empty state title of Disputes, In progress
   ///
   /// In en, this message translates to:
   /// **'No disputes in progress'**
   String get inProgressEmptyTitle;
 
-  /// Empty state explanation of the In progress tab
+  /// Empty state explanation of Disputes, In progress
   ///
   /// In en, this message translates to:
   /// **'Disputes you take show up here. If a take got no answer, recover it.'**
@@ -1332,19 +1320,19 @@ abstract class AppLocalizations {
   /// **'{connected}/{total}'**
   String settingsRelaysValue(int connected, int total);
 
-  /// Pending tab empty state before a node is chosen
+  /// Disputes, Pending empty state before a node is chosen
   ///
   /// In en, this message translates to:
   /// **'Choose your node first'**
   String get pendingNoNodeTitle;
 
-  /// Pending tab empty state body before a node is chosen
+  /// Disputes, Pending empty state body before a node is chosen
   ///
   /// In en, this message translates to:
   /// **'Disputes are read from one Mostro node at a time. Pick the node where you are a solver.'**
   String get pendingNoNodeBody;
 
-  /// Pending tab empty state action: opens the node selector
+  /// Disputes, Pending empty state action: opens the node selector
   ///
   /// In en, this message translates to:
   /// **'Choose node'**
@@ -1374,7 +1362,7 @@ abstract class AppLocalizations {
   /// **'Loading disputes'**
   String get loadingDisputes;
 
-  /// Pending tab state when the stored disputes cannot be read
+  /// Disputes, Pending state when the stored disputes cannot be read
   ///
   /// In en, this message translates to:
   /// **'Disputes could not be read'**
@@ -1497,7 +1485,7 @@ abstract class AppLocalizations {
   /// Body of the take confirmation
   ///
   /// In en, this message translates to:
-  /// **'You become its solver: the node tells the buyer and the seller, and the dispute moves to My disputes. Take only a dispute you can follow to the end.'**
+  /// **'You become its solver: the node tells the buyer and the seller, and the dispute moves to In progress. Take only a dispute you can follow to the end.'**
   String get takeDisputeBody;
 
   /// Answer of the take confirmation; repeats the opener's verb (DS-CMP-26, glossary: take a dispute)
@@ -1509,10 +1497,10 @@ abstract class AppLocalizations {
   /// Snackbar once the node gave the solver the dispute
   ///
   /// In en, this message translates to:
-  /// **'Dispute taken. It is in My disputes.'**
+  /// **'Dispute taken. It is under In progress.'**
   String get takeTakenSnack;
 
-  /// Label of the action in the My disputes header that opens Recover a dispute
+  /// Label of the action in the Disputes header that opens Recover a dispute
   ///
   /// In en, this message translates to:
   /// **'Recover'**
@@ -1527,7 +1515,7 @@ abstract class AppLocalizations {
   /// Note at the top of Recover a dispute
   ///
   /// In en, this message translates to:
-  /// **'The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not in My disputes on this phone: yours whose answer was lost, and other solvers\'. Recover them one at a time.'**
+  /// **'The node does not publish who holds a dispute. So this list shows every dispute in progress on this node that is not among yours on this phone: yours whose answer was lost, and other solvers\'. Recover them one at a time.'**
   String get recoverNote;
 
   /// Recover a dispute with no candidate
@@ -1539,7 +1527,7 @@ abstract class AppLocalizations {
   /// Explanation under recoverEmptyTitle
   ///
   /// In en, this message translates to:
-  /// **'No dispute in progress on this node is missing from My disputes.'**
+  /// **'No dispute in progress on this node is missing from yours.'**
   String get recoverEmptyBody;
 
   /// Screen-reader hint of a Recover row: tapping it opens the recover confirmation
@@ -1569,7 +1557,7 @@ abstract class AppLocalizations {
   /// Snackbar once the node gave the dispute back
   ///
   /// In en, this message translates to:
-  /// **'Dispute recovered. It is in My disputes.'**
+  /// **'Dispute recovered. It is under In progress.'**
   String get recoverTakenSnack;
 
   /// Banner on Pending and take outcome when the node refused a dispute waiting for a solver
@@ -1629,7 +1617,7 @@ abstract class AppLocalizations {
   /// Body under noAnswerTitle
   ///
   /// In en, this message translates to:
-  /// **'Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look in My disputes, or ask again from Recover a dispute.'**
+  /// **'Your request may have reached it all the same, so Bosstro did not send it again. In a moment, look under In progress, or ask again from Recover a dispute.'**
   String get noAnswerBody;
 
   /// Take outcome when the request could not leave
@@ -1643,6 +1631,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No relay took it. Check your connection and the relays, then try again.'**
   String get takeFailedBody;
+
+  /// Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no solver key is loaded
+  ///
+  /// In en, this message translates to:
+  /// **'No secret key is loaded, so nothing was sent. Close Bosstro and open it again.'**
+  String get requestNoKeyBody;
+
+  /// Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no node is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'No node is chosen, so nothing was sent. Choose your node in Settings.'**
+  String get requestNoNodeBody;
 
   /// Body under takeFailedTitle when a take of this dispute is pending
   ///
@@ -1923,7 +1923,7 @@ abstract class AppLocalizations {
   /// Explanation under detailNotYoursTitle
   ///
   /// In en, this message translates to:
-  /// **'The node reopened it, or it belongs to another key. It is no longer in My disputes.'**
+  /// **'The node reopened it, or it belongs to another key. It is no longer among your disputes.'**
   String get detailNotYoursBody;
 
   /// Sender label of the solver's own chat message
@@ -2058,7 +2058,7 @@ abstract class AppLocalizations {
   /// **'{sender}, {time}: {text}'**
   String chatMessageLabel(String sender, String time, String text);
 
-  /// Screen-reader hint of a row in My disputes
+  /// Screen-reader hint of a row of the disputes in progress
   ///
   /// In en, this message translates to:
   /// **'Open the dispute'**
@@ -2619,7 +2619,7 @@ abstract class AppLocalizations {
   /// Under takenOverTitle
   ///
   /// In en, this message translates to:
-  /// **'The node gave it to another solver, so nothing was paid or refunded. It has left My disputes.'**
+  /// **'The node gave it to another solver, so nothing was paid or refunded. It is no longer among your disputes.'**
   String get takenOverBody;
 
   /// Result: refused by the order's status
@@ -2673,7 +2673,7 @@ abstract class AppLocalizations {
   /// Result after a take-over: back to the In progress list
   ///
   /// In en, this message translates to:
-  /// **'Go to My disputes'**
+  /// **'Go to Disputes'**
   String get resolveGoToDisputes;
 
   /// A closed dispute this key resolved by paying the buyer
@@ -2820,31 +2820,37 @@ abstract class AppLocalizations {
   /// **'Fiat sent'**
   String get orderStatusFiatSent;
 
-  /// My disputes: the segment of the disputes this key holds
+  /// Disputes tab: the segment of the disputes waiting for a solver
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get disputesPendingSegment;
+
+  /// Disputes tab: the segment of the disputes this key holds
   ///
   /// In en, this message translates to:
   /// **'In progress'**
   String get myDisputesOpenSegment;
 
-  /// My disputes: the segment of the disputes this key held that closed
+  /// Disputes tab: the segment of the disputes this key held that closed
   ///
   /// In en, this message translates to:
   /// **'Closed'**
   String get myDisputesClosedSegment;
 
-  /// Screen-reader label of the In progress / Closed control of My disputes
+  /// Screen-reader label of the Pending / In progress / Closed control of the Disputes tab
   ///
   /// In en, this message translates to:
-  /// **'Open or closed disputes'**
-  String get myDisputesSegmentsLabel;
+  /// **'Pending, in progress or closed disputes'**
+  String get disputesSegmentsLabel;
 
-  /// My disputes, Closed: empty state title
+  /// Disputes, Closed: empty state title
   ///
   /// In en, this message translates to:
   /// **'No closed disputes yet'**
   String get closedEmptyTitle;
 
-  /// My disputes, Closed: empty state explanation
+  /// Disputes, Closed: empty state explanation
   ///
   /// In en, this message translates to:
   /// **'The disputes you take show up here once they close, whether you resolved them or the parties ended the trade themselves.'**
@@ -2873,6 +2879,528 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{Closed 1 day ago} other{Closed {count} days ago}}'**
   String disputeClosedDaysAgo(int count);
+
+  /// Bottom bar destination: look up any order of the active node by its ID
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get navOrders;
+
+  /// Header of the Orders tab
+  ///
+  /// In en, this message translates to:
+  /// **'Look up an order'**
+  String get ordersTitle;
+
+  /// Orders tab: what the lookup is for, above the form
+  ///
+  /// In en, this message translates to:
+  /// **'See how this node holds any of its orders right now, in dispute or not. Looking changes nothing.'**
+  String get ordersIntro;
+
+  /// Orders tab empty state body before a node is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'Orders are looked up on one Mostro node at a time. Pick the node where you are a solver.'**
+  String get ordersNoNodeBody;
+
+  /// Orders tab: placeholder of the order ID field
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the order\'s ID'**
+  String get orderIdHint;
+
+  /// Orders tab: the text in the field is not an order ID (a UUID)
+  ///
+  /// In en, this message translates to:
+  /// **'That is not an order ID. One looks like 308e1272-d5f4-47e6-bd97-3504baea9c23.'**
+  String get orderIdInvalid;
+
+  /// Orders tab: the primary button that asks the node about the order
+  ///
+  /// In en, this message translates to:
+  /// **'Look up order'**
+  String get orderLookupAction;
+
+  /// Orders tab: the node has no order with that ID
+  ///
+  /// In en, this message translates to:
+  /// **'Order not found'**
+  String get orderNotFoundTitle;
+
+  /// Orders tab: what to check when the node has no order with that ID
+  ///
+  /// In en, this message translates to:
+  /// **'This node has no order with that ID. Check the ID, and that the order belongs to this node.'**
+  String get orderNotFoundBody;
+
+  /// Orders tab: the node did not answer a lookup in time; older nodes do not know the request
+  ///
+  /// In en, this message translates to:
+  /// **'The request or its answer may have been lost, or this node does not answer order lookups yet. Nothing was changed: you can ask again.'**
+  String get orderNoAnswerBody;
+
+  /// Orders tab: the node refused the lookup and gave no reason
+  ///
+  /// In en, this message translates to:
+  /// **'It gave no reason. Try again later, or ask the node\'s operator.'**
+  String get orderRefusedBody;
+
+  /// Orders tab: the node refused the lookup as an action it does not do (invalid_action)
+  ///
+  /// In en, this message translates to:
+  /// **'This node does not answer order lookups. Its operator may need to update it.'**
+  String get orderRefusedUnsupportedBody;
+
+  /// Orders tab: the node refused the lookup because it is rate-limiting this key (too_many_requests)
+  ///
+  /// In en, this message translates to:
+  /// **'The node is getting too many requests. Wait a moment and ask again.'**
+  String get orderRefusedBusyBody;
+
+  /// Orders tab: the node refused the lookup with a reason this build has no words for
+  ///
+  /// In en, this message translates to:
+  /// **'It gave a reason this version of Bosstro does not know. Try again later, or ask the node\'s operator.'**
+  String get orderRefusedUnknownBody;
+
+  /// Order status: published and waiting, nobody took it yet. The protocol's own word for it, as the solver knows it
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get orderStatusPending;
+
+  /// Order status: the maker has not posted the anti-abuse deposit yet, so the order is not published
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the maker\'s deposit'**
+  String get orderStatusWaitingMakerDeposit;
+
+  /// Order status: taken, the taker has not posted the anti-abuse deposit yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the taker\'s deposit'**
+  String get orderStatusWaitingTakerDeposit;
+
+  /// Order status: the buyer has not given the invoice to be paid to yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the buyer\'s invoice'**
+  String get orderStatusWaitingBuyerInvoice;
+
+  /// Order status: the seller has not locked the sats yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the seller to lock the sats'**
+  String get orderStatusWaitingPayment;
+
+  /// Order status: taken, under way
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get orderStatusInProgress;
+
+  /// Order status: the seller's sats were taken by the node; the payment to the buyer is under way or failed
+  ///
+  /// In en, this message translates to:
+  /// **'Sats released, buyer not paid yet'**
+  String get orderStatusSatsReleased;
+
+  /// Order status: the trade ended, the buyer was paid
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get orderStatusSuccess;
+
+  /// Order status: a party opened a dispute
+  ///
+  /// In en, this message translates to:
+  /// **'In dispute'**
+  String get orderStatusDispute;
+
+  /// Order status: cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderStatusCanceled;
+
+  /// Order status: both parties agreed to cancel
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by both parties'**
+  String get orderStatusCooperativelyCanceled;
+
+  /// Order status: a solver closed the dispute by refunding the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded to the seller by a solver'**
+  String get orderStatusRefundedBySolver;
+
+  /// Order status: a solver decided for the buyer; the payment to the buyer is under way or failed
+  ///
+  /// In en, this message translates to:
+  /// **'Decided for the buyer by a solver, not paid yet'**
+  String get orderStatusSettledBySolver;
+
+  /// Order status: a solver decided for the buyer and the buyer was paid
+  ///
+  /// In en, this message translates to:
+  /// **'Paid to the buyer by a solver'**
+  String get orderStatusPaidBySolver;
+
+  /// Order status: nobody took it in time
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get orderStatusExpired;
+
+  /// Orders, an order: title of the card about the sats the seller locked for the trade
+  ///
+  /// In en, this message translates to:
+  /// **'The seller\'s sats'**
+  String get orderFundsTitle;
+
+  /// Orders, an order: label of what the node's Lightning node reports right now, next to what the node's database recorded
+  ///
+  /// In en, this message translates to:
+  /// **'On Lightning now'**
+  String get orderOnLightning;
+
+  /// Orders, an order: label of the row that says no sats are locked for this order
+  ///
+  /// In en, this message translates to:
+  /// **'Locked sats'**
+  String get orderFundsLocked;
+
+  /// Orders, an order: value of something the order does not have
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get orderValueNone;
+
+  /// Orders, an order: when the node's database says the seller's sats were locked
+  ///
+  /// In en, this message translates to:
+  /// **'Locked (node\'s record)'**
+  String get orderFundsHeldAt;
+
+  /// Orders, an order: when the node's database says it collected the seller's sats
+  ///
+  /// In en, this message translates to:
+  /// **'Collected (node\'s record)'**
+  String get orderFundsSettledAt;
+
+  /// Seller's sats on Lightning: the seller has not locked them yet
+  ///
+  /// In en, this message translates to:
+  /// **'Not locked yet'**
+  String get orderHoldOpen;
+
+  /// Seller's sats on Lightning: locked, still the seller's
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get orderHoldAccepted;
+
+  /// Seller's sats on Lightning: the node took them
+  ///
+  /// In en, this message translates to:
+  /// **'Collected by the node'**
+  String get orderHoldSettled;
+
+  /// Seller's sats on Lightning: the lock was cancelled, they went back to the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Back with the seller'**
+  String get orderHoldCanceled;
+
+  /// Orders, an order: the node's Lightning node has no record of this payment
+  ///
+  /// In en, this message translates to:
+  /// **'No record of it'**
+  String get orderLnNotFound;
+
+  /// Orders, an order: the node could not ask its Lightning node (an error, or no answer in time)
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning did not answer'**
+  String get orderLnUnavailable;
+
+  /// Orders, an order: a value a newer node sent that this version of the app does not know
+  ///
+  /// In en, this message translates to:
+  /// **'Not known to this version'**
+  String get orderValueUnknown;
+
+  /// Orders, an order on a Cashu node: the mint that holds the escrow
+  ///
+  /// In en, this message translates to:
+  /// **'Cashu mint'**
+  String get orderCashuMint;
+
+  /// Orders, an order: title of the card about the node's payment to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Payment to the buyer'**
+  String get orderPayoutTitle;
+
+  /// Orders, an order: label of the row that says no payment to the buyer is under way
+  ///
+  /// In en, this message translates to:
+  /// **'Payment under way'**
+  String get orderPayoutUnderWay;
+
+  /// Payment to the buyer on Lightning: sent, not finished
+  ///
+  /// In en, this message translates to:
+  /// **'Under way'**
+  String get orderPayoutInFlight;
+
+  /// Payment to the buyer on Lightning: it arrived
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get orderPayoutSucceeded;
+
+  /// Payment to the buyer on Lightning: it failed
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get orderPayoutFailed;
+
+  /// Orders, an order: label of the reason a payment to the buyer failed
+  ///
+  /// In en, this message translates to:
+  /// **'Why it failed'**
+  String get orderPayoutWhyFailed;
+
+  /// Why a payment to the buyer failed: it took too long
+  ///
+  /// In en, this message translates to:
+  /// **'Timed out'**
+  String get orderPayoutReasonTimeout;
+
+  /// Why a payment to the buyer failed: Lightning found no path to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'No route to the buyer'**
+  String get orderPayoutReasonNoRoute;
+
+  /// Why a payment to the buyer failed: an error of the Lightning node
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning error'**
+  String get orderPayoutReasonError;
+
+  /// Why a payment to the buyer failed: the buyer's invoice was wrong or expired
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong payment details'**
+  String get orderPayoutReasonDetails;
+
+  /// Why a payment to the buyer failed: the node's Lightning node had too little balance
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough balance on the node'**
+  String get orderPayoutReasonBalance;
+
+  /// Why a payment to the buyer failed: it was cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderPayoutReasonCanceled;
+
+  /// Orders, an order: when a payment to the buyer reached its final state
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get orderPayoutEndedAt;
+
+  /// Orders, an order: whether the node's last payment to the buyer failed (Yes / No)
+  ///
+  /// In en, this message translates to:
+  /// **'Last payment failed'**
+  String get orderPayoutLastFailed;
+
+  /// Orders, an order: how many times the node tried to pay the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Payment attempts'**
+  String get orderPayoutAttempts;
+
+  /// Orders, an order: what Lightning charged to route the payment to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Routing fee'**
+  String get orderRoutingFee;
+
+  /// Orders, an order: title of the card about the buyer and the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Parties'**
+  String get orderPartiesTitle;
+
+  /// Orders, an order: which party opened a dispute (Buyer, Seller, Both, Nobody)
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute opened by'**
+  String get orderDisputeOpenedBy;
+
+  /// Orders, an order: which party asked to cancel the trade by agreement (Buyer, Seller, Both, Nobody)
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel asked by'**
+  String get orderCancelAskedBy;
+
+  /// Orders, an order: both the buyer and the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get orderPartyBoth;
+
+  /// Orders, an order: neither the buyer nor the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody'**
+  String get orderPartyNobody;
+
+  /// Orders, an order: the order has no anti-abuse deposit
+  ///
+  /// In en, this message translates to:
+  /// **'No deposit on this order'**
+  String get orderDepositsNone;
+
+  /// Whose anti-abuse deposit: the party who created the order
+  ///
+  /// In en, this message translates to:
+  /// **'Maker'**
+  String get orderBondMaker;
+
+  /// Whose anti-abuse deposit: the party who took the order
+  ///
+  /// In en, this message translates to:
+  /// **'Taker'**
+  String get orderBondTaker;
+
+  /// A deposit row of a range order: the part of the maker's deposit slashed for one slice
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed on one slice'**
+  String get orderBondSliceSlash;
+
+  /// A deposit row of a range order: what was left of the maker's deposit, returned
+  ///
+  /// In en, this message translates to:
+  /// **'Rest returned to the maker'**
+  String get orderBondMakerRefund;
+
+  /// Deposit state: asked for, not posted yet
+  ///
+  /// In en, this message translates to:
+  /// **'Asked for'**
+  String get orderBondRequested;
+
+  /// Deposit state: posted and held
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get orderBondLocked;
+
+  /// Deposit state: given back
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get orderBondReleased;
+
+  /// Deposit state: slashed, its payout to the other party still owed
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed, payout owed'**
+  String get orderBondPendingPayout;
+
+  /// Deposit state: slashed and paid to the other party
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed and paid out'**
+  String get orderBondSlashed;
+
+  /// Deposit state: slashed, and the other party never claimed it
+  ///
+  /// In en, this message translates to:
+  /// **'Slashed, never claimed'**
+  String get orderBondForfeited;
+
+  /// Deposit state: its payout failed
+  ///
+  /// In en, this message translates to:
+  /// **'Payout failed'**
+  String get orderBondFailed;
+
+  /// Why a deposit was slashed, after its state: its owner lost the dispute
+  ///
+  /// In en, this message translates to:
+  /// **'lost the dispute'**
+  String get orderBondLostDispute;
+
+  /// Why a deposit was slashed, after its state: its owner did not act in time
+  ///
+  /// In en, this message translates to:
+  /// **'did not act in time'**
+  String get orderBondTimeout;
+
+  /// Orders, an order: when the order was created
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get orderCreatedAt;
+
+  /// Orders, an order: when the order was taken
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get orderTakenAt;
+
+  /// Orders, an order: when the order expires
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get orderExpiresAt;
+
+  /// Orders, a range order: the smallest and largest fiat amount it accepts
+  ///
+  /// In en, this message translates to:
+  /// **'Fiat range'**
+  String get orderFiatRange;
+
+  /// Orders, an order: the range order this one is a part of
+  ///
+  /// In en, this message translates to:
+  /// **'Part of range order'**
+  String get orderRangeParent;
+
+  /// Orders, an order: title of the card about the anti-abuse deposits, with how many rows it has
+  ///
+  /// In en, this message translates to:
+  /// **'Deposits ({count})'**
+  String orderDepositsTitle(int count);
+
+  /// A deposit row on a part of a range order: {role} is whose deposit it is (Maker), and it belongs to the whole range order
+  ///
+  /// In en, this message translates to:
+  /// **'{role} (root order)'**
+  String orderBondOfRoot(String role);
+
+  /// A range order's fiat range: smallest, largest and the currency code
+  ///
+  /// In en, this message translates to:
+  /// **'{min} – {max} {code}'**
+  String orderFiatRangeValue(String min, String max, String code);
+
+  /// Orders, under an order: the time of day the node answered, as the locale writes it
+  ///
+  /// In en, this message translates to:
+  /// **'Asked at {time}'**
+  String orderAskedAt(String time);
 }
 
 class _AppLocalizationsDelegate

@@ -11,6 +11,7 @@ import 'package:bosstro/features/disputes/services/disputes_core.dart';
 import 'package:bosstro/features/disputes/widgets/in_progress_dispute_row.dart';
 import 'package:bosstro/features/resolution/screens/resolution_screen.dart';
 import 'package:bosstro/features/resolution/widgets/resolution_card.dart';
+import 'package:bosstro/l10n/app_localizations.dart';
 
 import '../../support/screen_harness.dart';
 
@@ -272,7 +273,7 @@ void main() {
         }
         final next =
             outcome == ResolveOutcome.takenOver
-                ? 'Ir a Mis disputas'
+                ? 'Ir a Disputas'
                 : 'Volver a la disputa';
         // One way on, no second action.
         expect(find.text(next), findsOneWidget);
@@ -282,7 +283,7 @@ void main() {
         expect(core.resolutions, hasLength(1), reason: 'never retried');
         if (outcome == ResolveOutcome.takenOver) {
           // The tab and its title read the same.
-          expect(find.text('Mis disputas'), findsNWidgets(2));
+          expect(find.text('Disputas'), findsNWidgets(2));
         }
       });
     }
@@ -370,8 +371,11 @@ void main() {
       expect(find.text('En curso'), findsOneWidget);
       expect(find.text('No hay disputas en curso'), findsOneWidget);
       expect(find.byType(ClosedDisputeRow), findsNothing);
-      await tester.tap(find.text('Cerradas'));
-      await tester.pumpAndSettle();
+      // The part reads the clock when it appears.
+      await withClock(Clock.fixed(_now), () async {
+        await tester.tap(find.text('Cerradas'));
+        await tester.pumpAndSettle();
+      });
       expect(tester.takeException(), isNull);
       // Lighter: how it ended and when, no opener; Recover is not offered.
       expect(find.text('PAGADO AL COMPRADOR'), findsOneWidget);
@@ -481,5 +485,15 @@ void main() {
     await tester.tap(button, warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(find.byType(ResolutionScreen), findsOneWidget);
+  });
+
+  test('each reason nothing left has its own words: only a request the '
+      'relays refused says so', () {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    String body(ResolveError error) => resolveNotSentBody(l10n, error);
+    expect(body(ResolveError.sendFailed), contains('No relay took it'));
+    expect(body(ResolveError.noRelays), contains('Not connected to any relay'));
+    expect(body(ResolveError.noNode), contains('No node is chosen'));
+    expect(body(ResolveError.noKey), contains('No secret key is loaded'));
   });
 }

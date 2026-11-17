@@ -12,10 +12,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appName => 'Bosstro';
 
   @override
-  String get navPending => 'In attesa';
-
-  @override
-  String get navInProgress => 'Le mie dispute';
+  String get navDisputes => 'Dispute';
 
   @override
   String get navSettings => 'Impostazioni';
@@ -24,7 +21,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noNodeSelected => 'Nessun nodo selezionato';
 
   @override
-  String get pendingTitle => 'Dispute in attesa';
+  String get disputesTitle => 'Dispute';
 
   @override
   String get pendingEmptyTitle => 'Nessuna disputa in attesa';
@@ -32,9 +29,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get pendingEmptyBody =>
       'Nessuna disputa di questo nodo è in attesa di un solver. Quando un\'operazione ne apre una, compare qui perché tu la prenda in carico.';
-
-  @override
-  String get inProgressTitle => 'Le mie dispute';
 
   @override
   String get inProgressEmptyTitle => 'Nessuna disputa in corso';
@@ -824,14 +818,13 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get takeDisputeBody =>
-      'Diventi il suo solver: il nodo avvisa l\'acquirente e il venditore, e la disputa passa in «Le mie dispute». Prendi in carico solo una disputa che puoi seguire fino alla fine.';
+      'Diventi il suo solver: il nodo avvisa l\'acquirente e il venditore, e la disputa passa in «In corso». Prendi in carico solo una disputa che puoi seguire fino alla fine.';
 
   @override
   String get takeDisputeAnswer => 'Prendi in carico';
 
   @override
-  String get takeTakenSnack =>
-      'Disputa presa in carico. È in «Le mie dispute».';
+  String get takeTakenSnack => 'Disputa presa in carico. È in «In corso».';
 
   @override
   String get recoverAction => 'Recupera';
@@ -841,14 +834,14 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get recoverNote =>
-      'Il nodo non pubblica chi ha in carico una disputa. Per questo la lista mostra tutte le dispute in corso su questo nodo che non sono in «Le mie dispute» su questo telefono: le tue la cui risposta è andata persa e quelle di altri solver. Recuperale una alla volta.';
+      'Il nodo non pubblica chi ha in carico una disputa. Per questo la lista mostra tutte le dispute in corso su questo nodo che non sono tra le tue su questo telefono: le tue la cui risposta è andata persa e quelle di altri solver. Recuperale una alla volta.';
 
   @override
   String get recoverEmptyTitle => 'Niente da recuperare';
 
   @override
   String get recoverEmptyBody =>
-      'Nessuna disputa in corso su questo nodo manca da «Le mie dispute».';
+      'Nessuna disputa in corso su questo nodo manca tra le tue.';
 
   @override
   String get recoverDisputeHint => 'Recupera la disputa';
@@ -864,7 +857,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get recoverDisputeAnswer => 'Recupera la disputa';
 
   @override
-  String get recoverTakenSnack => 'Disputa recuperata. È in «Le mie dispute».';
+  String get recoverTakenSnack => 'Disputa recuperata. È in «In corso».';
 
   @override
   String get notSolverTitle => 'Non sei solver su questo nodo';
@@ -900,7 +893,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noAnswerBody =>
-      'La tua richiesta potrebbe essergli arrivata comunque, quindi Bosstro non l\'ha inviata di nuovo. Tra un momento guarda in «Le mie dispute», o richiedila da «Recupera una disputa».';
+      'La tua richiesta potrebbe essergli arrivata comunque, quindi Bosstro non l\'ha inviata di nuovo. Tra un momento guarda in «In corso», o richiedila da «Recupera una disputa».';
 
   @override
   String get takeFailedTitle => 'La richiesta non è stata inviata';
@@ -908,6 +901,14 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get takeFailedBody =>
       'Nessun relay l\'ha accettata. Controlla la connessione e i relay, poi riprova.';
+
+  @override
+  String get requestNoKeyBody =>
+      'Nessuna chiave segreta è caricata, quindi non è stato inviato nulla. Chiudi Bosstro e riaprilo.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Nessun nodo è stato scelto, quindi non è stato inviato nulla. Scegli il tuo nodo in Impostazioni.';
 
   @override
   String get takeAlreadyTakingBody =>
@@ -1084,7 +1085,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get detailNotYoursBody =>
-      'Il nodo l\'ha riaperta, oppure appartiene a un\'altra chiave. Non è più in «Le mie dispute».';
+      'Il nodo l\'ha riaperta, oppure appartiene a un\'altra chiave. Non è più tra le tue dispute.';
 
   @override
   String get chatSenderYou => 'Tu';
@@ -1496,7 +1497,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get takenOverBody =>
-      'Il nodo l\'ha data a un altro solver, quindi non è stato pagato né rimborsato nulla. È uscita da «Le mie dispute».';
+      'Il nodo l\'ha data a un altro solver, quindi non è stato pagato né rimborsato nulla. Non è più tra le tue dispute.';
 
   @override
   String get notInDisputeTitle => 'Questo ordine non è più in disputa';
@@ -1528,7 +1529,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get resolveBackToDispute => 'Torna alla disputa';
 
   @override
-  String get resolveGoToDisputes => 'Vai a «Le mie dispute»';
+  String get resolveGoToDisputes => 'Vai a «Dispute»';
 
   @override
   String get closedPaidBuyer => 'Hai pagato l\'acquirente';
@@ -1611,13 +1612,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get orderStatusFiatSent => 'Fiat inviato';
 
   @override
+  String get disputesPendingSegment => 'In attesa';
+
+  @override
   String get myDisputesOpenSegment => 'In corso';
 
   @override
   String get myDisputesClosedSegment => 'Chiuse';
 
   @override
-  String get myDisputesSegmentsLabel => 'Dispute aperte o chiuse';
+  String get disputesSegmentsLabel => 'Dispute in attesa, in corso o chiuse';
 
   @override
   String get closedEmptyTitle => 'Nessuna disputa chiusa per ora';
@@ -1660,5 +1664,291 @@ class AppLocalizationsIt extends AppLocalizations {
       one: 'Chiusa 1 giorno fa',
     );
     return '$_temp0';
+  }
+
+  @override
+  String get navOrders => 'Ordini';
+
+  @override
+  String get ordersTitle => 'Consulta un ordine';
+
+  @override
+  String get ordersIntro =>
+      'Guarda com\'è in questo momento qualsiasi ordine di questo nodo, in disputa o no. Consultare non cambia nulla.';
+
+  @override
+  String get ordersNoNodeBody =>
+      'Gli ordini si consultano su un nodo Mostro alla volta. Scegli il nodo in cui sei solver.';
+
+  @override
+  String get orderIdHint => 'Incolla l\'ID dell\'ordine';
+
+  @override
+  String get orderIdInvalid =>
+      'Questo non è un ID di ordine. Ha questa forma: 308e1272-d5f4-47e6-bd97-3504baea9c23.';
+
+  @override
+  String get orderLookupAction => 'Consulta ordine';
+
+  @override
+  String get orderNotFoundTitle => 'Ordine non trovato';
+
+  @override
+  String get orderNotFoundBody =>
+      'Questo nodo non ha nessun ordine con quell\'ID. Controlla l\'ID e che l\'ordine sia di questo nodo.';
+
+  @override
+  String get orderNoAnswerBody =>
+      'La richiesta o la risposta potrebbero essersi perse, oppure questo nodo non risponde ancora alle consultazioni degli ordini. Non è cambiato nulla: puoi chiedere di nuovo.';
+
+  @override
+  String get orderRefusedBody =>
+      'Non ha dato alcun motivo. Riprova più tardi o chiedi all\'operatore del nodo.';
+
+  @override
+  String get orderRefusedUnsupportedBody =>
+      'Questo nodo non risponde alle consultazioni degli ordini. Il suo operatore potrebbe doverlo aggiornare.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'Il nodo sta ricevendo troppe richieste. Aspetta un momento e chiedi di nuovo.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'Ha dato un motivo che questa versione di Bosstro non conosce. Riprova più tardi o chiedi all\'operatore del nodo.';
+
+  @override
+  String get orderStatusPending => 'In attesa';
+
+  @override
+  String get orderStatusWaitingMakerDeposit =>
+      'In attesa del deposito del creatore';
+
+  @override
+  String get orderStatusWaitingTakerDeposit =>
+      'In attesa del deposito della controparte';
+
+  @override
+  String get orderStatusWaitingBuyerInvoice =>
+      'In attesa della fattura dell\'acquirente';
+
+  @override
+  String get orderStatusWaitingPayment =>
+      'In attesa che il venditore blocchi i sats';
+
+  @override
+  String get orderStatusInProgress => 'In corso';
+
+  @override
+  String get orderStatusSatsReleased =>
+      'Sats rilasciati, acquirente non ancora pagato';
+
+  @override
+  String get orderStatusSuccess => 'Completato';
+
+  @override
+  String get orderStatusDispute => 'In disputa';
+
+  @override
+  String get orderStatusCanceled => 'Annullato';
+
+  @override
+  String get orderStatusCooperativelyCanceled =>
+      'Annullato da entrambe le parti';
+
+  @override
+  String get orderStatusRefundedBySolver =>
+      'Rimborsato al venditore da un solver';
+
+  @override
+  String get orderStatusSettledBySolver =>
+      'Decisa a favore dell\'acquirente da un solver, non ancora pagato';
+
+  @override
+  String get orderStatusPaidBySolver => 'Pagato all\'acquirente da un solver';
+
+  @override
+  String get orderStatusExpired => 'Scaduto';
+
+  @override
+  String get orderFundsTitle => 'I sats del venditore';
+
+  @override
+  String get orderOnLightning => 'Su Lightning ora';
+
+  @override
+  String get orderFundsLocked => 'Sats bloccati';
+
+  @override
+  String get orderValueNone => 'Nessuno';
+
+  @override
+  String get orderFundsHeldAt => 'Bloccati (registro del nodo)';
+
+  @override
+  String get orderFundsSettledAt => 'Incassati (registro del nodo)';
+
+  @override
+  String get orderHoldOpen => 'Non ancora bloccati';
+
+  @override
+  String get orderHoldAccepted => 'Bloccati';
+
+  @override
+  String get orderHoldSettled => 'Incassati dal nodo';
+
+  @override
+  String get orderHoldCanceled => 'Restituiti al venditore';
+
+  @override
+  String get orderLnNotFound => 'Nessuna traccia';
+
+  @override
+  String get orderLnUnavailable => 'Lightning non ha risposto';
+
+  @override
+  String get orderValueUnknown => 'Sconosciuto a questa versione';
+
+  @override
+  String get orderCashuMint => 'Mint Cashu';
+
+  @override
+  String get orderPayoutTitle => 'Pagamento all\'acquirente';
+
+  @override
+  String get orderPayoutUnderWay => 'Pagamento in corso';
+
+  @override
+  String get orderPayoutInFlight => 'In corso';
+
+  @override
+  String get orderPayoutSucceeded => 'Pagato';
+
+  @override
+  String get orderPayoutFailed => 'Fallito';
+
+  @override
+  String get orderPayoutWhyFailed => 'Perché è fallito';
+
+  @override
+  String get orderPayoutReasonTimeout => 'Tempo scaduto';
+
+  @override
+  String get orderPayoutReasonNoRoute => 'Nessun percorso verso l\'acquirente';
+
+  @override
+  String get orderPayoutReasonError => 'Errore di Lightning';
+
+  @override
+  String get orderPayoutReasonDetails => 'Dati di pagamento errati';
+
+  @override
+  String get orderPayoutReasonBalance => 'Saldo insufficiente sul nodo';
+
+  @override
+  String get orderPayoutReasonCanceled => 'Annullato';
+
+  @override
+  String get orderPayoutEndedAt => 'Terminato';
+
+  @override
+  String get orderPayoutLastFailed => 'Ultimo pagamento fallito';
+
+  @override
+  String get orderPayoutAttempts => 'Tentativi di pagamento';
+
+  @override
+  String get orderRoutingFee => 'Commissione di instradamento';
+
+  @override
+  String get orderPartiesTitle => 'Parti';
+
+  @override
+  String get orderDisputeOpenedBy => 'Disputa aperta da';
+
+  @override
+  String get orderCancelAskedBy => 'Annullamento chiesto da';
+
+  @override
+  String get orderPartyBoth => 'Entrambi';
+
+  @override
+  String get orderPartyNobody => 'Nessuno';
+
+  @override
+  String get orderDepositsNone => 'Nessun deposito su questo ordine';
+
+  @override
+  String get orderBondMaker => 'Creatore';
+
+  @override
+  String get orderBondTaker => 'Controparte';
+
+  @override
+  String get orderBondSliceSlash => 'Confiscato su una parte';
+
+  @override
+  String get orderBondMakerRefund => 'Resto restituito al creatore';
+
+  @override
+  String get orderBondRequested => 'Richiesto';
+
+  @override
+  String get orderBondLocked => 'Bloccato';
+
+  @override
+  String get orderBondReleased => 'Restituito';
+
+  @override
+  String get orderBondPendingPayout => 'Confiscato, pagamento in attesa';
+
+  @override
+  String get orderBondSlashed => 'Confiscato e pagato';
+
+  @override
+  String get orderBondForfeited => 'Confiscato, mai reclamato';
+
+  @override
+  String get orderBondFailed => 'Pagamento fallito';
+
+  @override
+  String get orderBondLostDispute => 'ha perso la disputa';
+
+  @override
+  String get orderBondTimeout => 'non ha agito in tempo';
+
+  @override
+  String get orderCreatedAt => 'Creato';
+
+  @override
+  String get orderTakenAt => 'Preso';
+
+  @override
+  String get orderExpiresAt => 'Scade';
+
+  @override
+  String get orderFiatRange => 'Intervallo in fiat';
+
+  @override
+  String get orderRangeParent => 'Parte dell\'ordine a intervallo';
+
+  @override
+  String orderDepositsTitle(int count) {
+    return 'Depositi ($count)';
+  }
+
+  @override
+  String orderBondOfRoot(String role) {
+    return '$role (ordine principale)';
+  }
+
+  @override
+  String orderFiatRangeValue(String min, String max, String code) {
+    return '$min – $max $code';
+  }
+
+  @override
+  String orderAskedAt(String time) {
+    return 'Consultato alle $time';
   }
 }
