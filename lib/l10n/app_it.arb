@@ -254,6 +254,8 @@
   "noAnswerBody": "La tua richiesta potrebbe essergli arrivata comunque, quindi Bosstro non l'ha inviata di nuovo. Tra un momento guarda in «In corso», o richiedila da «Recupera una disputa».",
   "takeFailedTitle": "La richiesta non è stata inviata",
   "takeFailedBody": "Nessun relay l'ha accettata. Controlla la connessione e i relay, poi riprova.",
+  "requestNoKeyBody": "Nessuna chiave segreta è caricata, quindi non è stato inviato nulla. Chiudi Bosstro e riaprilo.",
+  "requestNoNodeBody": "Nessun nodo è stato scelto, quindi non è stato inviato nulla. Scegli il tuo nodo in Impostazioni.",
   "takeAlreadyTakingBody": "Una richiesta per questa disputa è già in attesa della risposta del nodo.",
   "takeClosedBody": "Questa disputa è chiusa: non c'è nulla da prendere in carico.",
   "takeUnknownBody": "Questa disputa non è tra le dispute di questo nodo su questo telefono.",

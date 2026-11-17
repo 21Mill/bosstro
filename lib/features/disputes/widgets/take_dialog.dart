@@ -231,8 +231,9 @@ String notSentBody(AppLocalizations l10n, TakeError error) => switch (error) {
   TakeError.unknownDispute => l10n.takeUnknownBody,
   TakeError.protocolUnsupported => l10n.takeProtocolBody,
   TakeError.nodeInfoUnavailable => l10n.takeNodeInfoBody,
-  TakeError.noKey ||
-  TakeError.noNode ||
-  TakeError.noRelays ||
+  // Nothing was tried: no relay refused it.
+  TakeError.noKey => l10n.requestNoKeyBody,
+  TakeError.noNode => l10n.requestNoNodeBody,
+  TakeError.noRelays => l10n.chatErrorNoRelays,
   TakeError.sendFailed => l10n.takeFailedBody,
 };

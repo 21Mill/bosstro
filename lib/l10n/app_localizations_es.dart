@@ -903,6 +903,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ningún relay la aceptó. Revisa tu conexión y los relays, y vuelve a intentarlo.';
 
   @override
+  String get requestNoKeyBody =>
+      'No hay ninguna clave secreta cargada, así que no se envió nada. Cierra Bosstro y vuelve a abrirlo.';
+
+  @override
+  String get requestNoNodeBody =>
+      'No hay ningún nodo elegido, así que no se envió nada. Elige tu nodo en Configuración.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'Ya hay una petición de esta disputa esperando la respuesta del nodo.';
 

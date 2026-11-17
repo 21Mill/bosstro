@@ -254,6 +254,8 @@
   "noAnswerBody": "Je verzoek kan de node toch hebben bereikt, dus Bosstro heeft het niet opnieuw verstuurd. Kijk zo meteen bij Lopend, of vraag het opnieuw aan via Dispuut terughalen.",
   "takeFailedTitle": "Het verzoek is niet verstuurd",
   "takeFailedBody": "Geen enkele relay heeft het geaccepteerd. Controleer je verbinding en de relays en probeer het opnieuw.",
+  "requestNoKeyBody": "Er is geen geheime sleutel geladen, dus er is niets verstuurd. Sluit Bosstro en open het opnieuw.",
+  "requestNoNodeBody": "Er is geen node gekozen, dus er is niets verstuurd. Kies je node in Instellingen.",
   "takeAlreadyTakingBody": "Er wacht al een verzoek voor dit dispuut op het antwoord van de node.",
   "takeClosedBody": "Dit dispuut is gesloten: er valt niets op te pakken.",
   "takeUnknownBody": "Dit dispuut staat op deze telefoon niet tussen de disputen van deze node.",

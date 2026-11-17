@@ -904,6 +904,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun relais ne l\'a acceptée. Vérifiez votre connexion et les relais, puis réessayez.';
 
   @override
+  String get requestNoKeyBody =>
+      'Aucune clé secrète n\'est chargée, donc rien n\'a été envoyé. Fermez Bosstro et rouvrez-le.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Aucun nœud n\'est choisi, donc rien n\'a été envoyé. Choisissez votre nœud dans Paramètres.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'Une demande pour ce litige attend déjà la réponse du nœud.';
 

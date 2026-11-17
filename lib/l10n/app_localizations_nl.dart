@@ -905,6 +905,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Geen enkele relay heeft het geaccepteerd. Controleer je verbinding en de relays en probeer het opnieuw.';
 
   @override
+  String get requestNoKeyBody =>
+      'Er is geen geheime sleutel geladen, dus er is niets verstuurd. Sluit Bosstro en open het opnieuw.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Er is geen node gekozen, dus er is niets verstuurd. Kies je node in Instellingen.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'Er wacht al een verzoek voor dit dispuut op het antwoord van de node.';
 

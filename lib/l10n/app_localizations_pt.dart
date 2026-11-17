@@ -906,6 +906,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'Nenhum relay a aceitou. Verifique sua conexão e os relays e tente novamente.';
 
   @override
+  String get requestNoKeyBody =>
+      'Nenhuma chave secreta está carregada, então nada foi enviado. Feche o Bosstro e abra-o novamente.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Nenhum nó foi escolhido, então nada foi enviado. Escolha seu nó em Configurações.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'Já há uma solicitação para esta disputa aguardando a resposta do nó.';
 

@@ -1113,6 +1113,14 @@
   "@takeFailedBody": {
     "description": "Body under takeFailedTitle"
   },
+  "requestNoKeyBody": "No secret key is loaded, so nothing was sent. Close Bosstro and open it again.",
+  "@requestNoKeyBody": {
+    "description": "Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no solver key is loaded"
+  },
+  "requestNoNodeBody": "No node is chosen, so nothing was sent. Choose your node in Settings.",
+  "@requestNoNodeBody": {
+    "description": "Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no node is chosen"
+  },
   "takeAlreadyTakingBody": "A request for this dispute is already waiting for the node's answer.",
   "@takeAlreadyTakingBody": {
     "description": "Body under takeFailedTitle when a take of this dispute is pending"

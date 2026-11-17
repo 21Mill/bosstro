@@ -903,6 +903,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Nessun relay l\'ha accettata. Controlla la connessione e i relay, poi riprova.';
 
   @override
+  String get requestNoKeyBody =>
+      'Nessuna chiave segreta è caricata, quindi non è stato inviato nulla. Chiudi Bosstro e riaprilo.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Nessun nodo è stato scelto, quindi non è stato inviato nulla. Scegli il tuo nodo in Impostazioni.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'Una richiesta per questa disputa è già in attesa della risposta del nodo.';
 

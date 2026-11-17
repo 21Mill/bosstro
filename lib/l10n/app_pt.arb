@@ -254,6 +254,8 @@
   "noAnswerBody": "Sua solicitação pode ter chegado mesmo assim, então o Bosstro não a enviou de novo. Daqui a pouco, veja em Em andamento ou peça de novo em Recuperar uma disputa.",
   "takeFailedTitle": "A solicitação não foi enviada",
   "takeFailedBody": "Nenhum relay a aceitou. Verifique sua conexão e os relays e tente novamente.",
+  "requestNoKeyBody": "Nenhuma chave secreta está carregada, então nada foi enviado. Feche o Bosstro e abra-o novamente.",
+  "requestNoNodeBody": "Nenhum nó foi escolhido, então nada foi enviado. Escolha seu nó em Configurações.",
   "takeAlreadyTakingBody": "Já há uma solicitação para esta disputa aguardando a resposta do nó.",
   "takeClosedBody": "Esta disputa está encerrada: não há nada para assumir.",
   "takeUnknownBody": "Esta disputa não está entre as disputas deste nó neste celular.",

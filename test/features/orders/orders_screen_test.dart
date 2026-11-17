@@ -435,6 +435,19 @@ void main() {
       expect(find.text('The request was not sent'), findsOneWidget);
       expect(find.textContaining('No relay took it'), findsOneWidget);
 
+      // Nothing was tried: the relays are not blamed for it.
+      for (final (error, words) in [
+        (OrderLookupError.noRelays, 'Not connected to any relay'),
+        (OrderLookupError.noNode, 'No node is chosen'),
+        (OrderLookupError.noKey, 'No secret key is loaded'),
+      ]) {
+        core.answer = error;
+        await tester.tap(find.byType(PrimaryButton));
+        await tester.pumpAndSettle();
+        expect(find.textContaining(words), findsOneWidget, reason: '$error');
+        expect(find.textContaining('No relay took it'), findsNothing);
+      }
+
       core.answer = OrderLookupError.nodeInfoUnavailable;
       await tester.tap(find.byType(PrimaryButton));
       await tester.pumpAndSettle();

@@ -186,9 +186,10 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
           OrderLookupError.invalidOrderId => l10n.orderIdInvalid,
           OrderLookupError.protocolUnsupported => l10n.takeProtocolBody,
           OrderLookupError.nodeInfoUnavailable => l10n.takeNodeInfoBody,
-          OrderLookupError.noKey ||
-          OrderLookupError.noNode ||
-          OrderLookupError.noRelays ||
+          // Nothing was tried: no relay refused it.
+          OrderLookupError.noKey => l10n.requestNoKeyBody,
+          OrderLookupError.noNode => l10n.requestNoNodeBody,
+          OrderLookupError.noRelays => l10n.chatErrorNoRelays,
           OrderLookupError.sendFailed => l10n.takeFailedBody,
         },
       );

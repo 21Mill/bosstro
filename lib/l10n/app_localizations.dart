@@ -1632,6 +1632,18 @@ abstract class AppLocalizations {
   /// **'No relay took it. Check your connection and the relays, then try again.'**
   String get takeFailedBody;
 
+  /// Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no solver key is loaded
+  ///
+  /// In en, this message translates to:
+  /// **'No secret key is loaded, so nothing was sent. Close Bosstro and open it again.'**
+  String get requestNoKeyBody;
+
+  /// Body under takeFailedTitle when a take, a resolution or an order lookup was not sent because no node is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'No node is chosen, so nothing was sent. Choose your node in Settings.'**
+  String get requestNoNodeBody;
+
   /// Body under takeFailedTitle when a take of this dispute is pending
   ///
   /// In en, this message translates to:

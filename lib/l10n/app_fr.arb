@@ -254,6 +254,8 @@
   "noAnswerBody": "Votre demande lui est peut-être parvenue malgré tout : Bosstro ne l'a donc pas renvoyée. Dans un moment, regardez dans En cours, ou redemandez le litige depuis Récupérer un litige.",
   "takeFailedTitle": "La demande n'a pas été envoyée",
   "takeFailedBody": "Aucun relais ne l'a acceptée. Vérifiez votre connexion et les relais, puis réessayez.",
+  "requestNoKeyBody": "Aucune clé secrète n'est chargée, donc rien n'a été envoyé. Fermez Bosstro et rouvrez-le.",
+  "requestNoNodeBody": "Aucun nœud n'est choisi, donc rien n'a été envoyé. Choisissez votre nœud dans Paramètres.",
   "takeAlreadyTakingBody": "Une demande pour ce litige attend déjà la réponse du nœud.",
   "takeClosedBody": "Ce litige est clos : il n'y a rien à prendre en charge.",
   "takeUnknownBody": "Ce litige ne fait pas partie des litiges de ce nœud sur ce téléphone.",

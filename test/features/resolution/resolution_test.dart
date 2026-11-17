@@ -11,6 +11,7 @@ import 'package:bosstro/features/disputes/services/disputes_core.dart';
 import 'package:bosstro/features/disputes/widgets/in_progress_dispute_row.dart';
 import 'package:bosstro/features/resolution/screens/resolution_screen.dart';
 import 'package:bosstro/features/resolution/widgets/resolution_card.dart';
+import 'package:bosstro/l10n/app_localizations.dart';
 
 import '../../support/screen_harness.dart';
 
@@ -484,5 +485,15 @@ void main() {
     await tester.tap(button, warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(find.byType(ResolutionScreen), findsOneWidget);
+  });
+
+  test('each reason nothing left has its own words: only a request the '
+      'relays refused says so', () {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    String body(ResolveError error) => resolveNotSentBody(l10n, error);
+    expect(body(ResolveError.sendFailed), contains('No relay took it'));
+    expect(body(ResolveError.noRelays), contains('Not connected to any relay'));
+    expect(body(ResolveError.noNode), contains('No node is chosen'));
+    expect(body(ResolveError.noKey), contains('No secret key is loaded'));
   });
 }

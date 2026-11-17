@@ -909,6 +909,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Kein Relay hat sie angenommen. Prüfe deine Verbindung und die Relays und versuche es dann erneut.';
 
   @override
+  String get requestNoKeyBody =>
+      'Es ist kein geheimer Schlüssel geladen, also wurde nichts gesendet. Schließe Bosstro und öffne es erneut.';
+
+  @override
+  String get requestNoNodeBody =>
+      'Es ist kein Node gewählt, also wurde nichts gesendet. Wähle deinen Node in den Einstellungen.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'Eine Anfrage für diesen Streitfall wartet bereits auf die Antwort des Nodes.';
 

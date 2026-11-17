@@ -254,6 +254,8 @@
   "noAnswerBody": "Deine Anfrage hat ihn vielleicht trotzdem erreicht, daher hat Bosstro sie nicht erneut gesendet. Sieh gleich unter „In Bearbeitung“ nach oder fordere den Streitfall über „Streitfall zurückholen“ erneut an.",
   "takeFailedTitle": "Die Anfrage wurde nicht gesendet",
   "takeFailedBody": "Kein Relay hat sie angenommen. Prüfe deine Verbindung und die Relays und versuche es dann erneut.",
+  "requestNoKeyBody": "Es ist kein geheimer Schlüssel geladen, also wurde nichts gesendet. Schließe Bosstro und öffne es erneut.",
+  "requestNoNodeBody": "Es ist kein Node gewählt, also wurde nichts gesendet. Wähle deinen Node in den Einstellungen.",
   "takeAlreadyTakingBody": "Eine Anfrage für diesen Streitfall wartet bereits auf die Antwort des Nodes.",
   "takeClosedBody": "Dieser Streitfall ist geschlossen: Es gibt nichts zu übernehmen.",
   "takeUnknownBody": "Dieser Streitfall ist auf diesem Telefon nicht unter den Streitfällen dieses Nodes.",

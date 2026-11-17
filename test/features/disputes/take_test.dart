@@ -371,15 +371,24 @@ void main() {
       await tester.tap(find.text('Close'));
       await tester.pumpAndSettle();
 
-      core.takeError = TakeError.noRelays;
-      await tester.tap(find.byType(PendingDisputeRow));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Take dispute'));
-      await tester.pumpAndSettle();
-      expect(find.text('The request was not sent'), findsOne);
-      expect(find.textContaining('No relay took it'), findsOne);
-      await tester.tap(find.text('Close'));
-      await tester.pumpAndSettle();
+      // Each reason nothing left has its own words: only a request the
+      // relays refused says so.
+      for (final (error, words) in [
+        (TakeError.sendFailed, 'No relay took it'),
+        (TakeError.noRelays, 'Not connected to any relay'),
+        (TakeError.noNode, 'No node is chosen'),
+        (TakeError.noKey, 'No secret key is loaded'),
+      ]) {
+        core.takeError = error;
+        await tester.tap(find.byType(PendingDisputeRow));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Take dispute'));
+        await tester.pumpAndSettle();
+        expect(find.text('The request was not sent'), findsOne);
+        expect(find.textContaining(words), findsOne, reason: '$error');
+        await tester.tap(find.text('Close'));
+        await tester.pumpAndSettle();
+      }
 
       // The node's settings (its PoW) were never read: nothing was sent.
       core.takeError = TakeError.nodeInfoUnavailable;

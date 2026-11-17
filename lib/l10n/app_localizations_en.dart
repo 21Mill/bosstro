@@ -900,6 +900,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'No relay took it. Check your connection and the relays, then try again.';
 
   @override
+  String get requestNoKeyBody =>
+      'No secret key is loaded, so nothing was sent. Close Bosstro and open it again.';
+
+  @override
+  String get requestNoNodeBody =>
+      'No node is chosen, so nothing was sent. Choose your node in Settings.';
+
+  @override
   String get takeAlreadyTakingBody =>
       'A request for this dispute is already waiting for the node\'s answer.';
 
