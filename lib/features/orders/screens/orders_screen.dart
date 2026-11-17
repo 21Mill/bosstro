@@ -230,13 +230,20 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
         icon: Icons.error_outline_rounded,
         error: true,
         title: l10n.resolveRefusedTitle,
-        body: switch (result.reason) {
-          final reason? when reason.isNotEmpty => l10n.orderRefusedReasonBody(
-            reason,
-          ),
-          _ => l10n.orderRefusedBody,
-        },
+        body: orderRefusedBody(l10n, result.reason),
       ),
     };
   }
 }
+
+/// Why the node refused a lookup, in words. [reason] is the protocol's own
+/// marker (mostro-core's `CantDoReason`), never shown as it came. A lookup's
+/// "not found" and "not a solver" are outcomes of their own; what is left is
+/// what a node of another version or in another state may answer.
+String orderRefusedBody(AppLocalizations l10n, String? reason) =>
+    switch (reason) {
+      null || '' => l10n.orderRefusedBody,
+      'invalid_action' => l10n.orderRefusedUnsupportedBody,
+      'too_many_requests' => l10n.orderRefusedBusyBody,
+      _ => l10n.orderRefusedUnknownBody,
+    };

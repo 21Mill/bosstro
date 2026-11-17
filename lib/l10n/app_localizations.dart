@@ -2946,11 +2946,23 @@ abstract class AppLocalizations {
   /// **'It gave no reason. Try again later, or ask the node\'s operator.'**
   String get orderRefusedBody;
 
-  /// Orders tab: the node refused the lookup; {reason} is the protocol's own word for why (e.g. invalid_action), shown as it came
+  /// Orders tab: the node refused the lookup as an action it does not do (invalid_action)
   ///
   /// In en, this message translates to:
-  /// **'Its reason: {reason}. Try again later, or ask the node\'s operator.'**
-  String orderRefusedReasonBody(String reason);
+  /// **'This node does not answer order lookups. Its operator may need to update it.'**
+  String get orderRefusedUnsupportedBody;
+
+  /// Orders tab: the node refused the lookup because it is rate-limiting this key (too_many_requests)
+  ///
+  /// In en, this message translates to:
+  /// **'The node is getting too many requests. Wait a moment and ask again.'**
+  String get orderRefusedBusyBody;
+
+  /// Orders tab: the node refused the lookup with a reason this build has no words for
+  ///
+  /// In en, this message translates to:
+  /// **'It gave a reason this version of Bosstro does not know. Try again later, or ask the node\'s operator.'**
+  String get orderRefusedUnknownBody;
 
   /// Order status: published and waiting, nobody took it yet. The protocol's own word for it, as the solver knows it
   ///

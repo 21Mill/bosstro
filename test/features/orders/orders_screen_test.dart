@@ -403,7 +403,7 @@ void main() {
       expect(find.text('The node did not answer'), findsNothing);
     });
 
-    testWidgets('a refusal shows the node\'s reason when it gave one', (
+    testWidgets('a refusal says why in words, never in the protocol\'s', (
       tester,
     ) async {
       setSurface(tester, width: 400, height: 800);
@@ -415,16 +415,30 @@ void main() {
       await _ask(tester);
 
       expect(find.text('The node refused the request'), findsOneWidget);
-      expect(find.textContaining('invalid_action'), findsOneWidget);
+      expect(
+        find.textContaining('does not answer order lookups'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('invalid_action'), findsNothing);
       expect(
         tester.widget<LookupNotice>(find.byType(LookupNotice)).error,
         isTrue,
       );
 
-      core.reason = null;
-      await tester.tap(find.byType(PrimaryButton));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('It gave no reason'), findsOneWidget);
+      for (final (reason, words) in [
+        ('too_many_requests', 'too many requests'),
+        // A reason this build has no words for is not shown as it came.
+        ('price_too_stale', 'a reason this version of Bosstro does not know'),
+        (null, 'It gave no reason'),
+      ]) {
+        core.reason = reason;
+        await tester.tap(find.byType(PrimaryButton));
+        await tester.pumpAndSettle();
+        expect(find.textContaining(words), findsOneWidget, reason: '$reason');
+        if (reason != null) {
+          expect(find.textContaining(reason), findsNothing);
+        }
+      }
     });
 
     testWidgets('a request that did not leave says why', (tester) async {

@@ -1720,9 +1720,16 @@ class AppLocalizationsDe extends AppLocalizations {
       'Er hat keinen Grund genannt. Versuche es später erneut oder frag den Betreiber des Nodes.';
 
   @override
-  String orderRefusedReasonBody(String reason) {
-    return 'Sein Grund: $reason. Versuche es später erneut oder frag den Betreiber des Nodes.';
-  }
+  String get orderRefusedUnsupportedBody =>
+      'Dieser Node beantwortet das Nachschlagen von Orders nicht. Sein Betreiber muss ihn vielleicht aktualisieren.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'Der Node erhält zu viele Anfragen. Warte einen Moment und frag erneut.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'Er hat einen Grund genannt, den diese Version von Bosstro nicht kennt. Versuche es später erneut oder frag den Betreiber des Nodes.';
 
   @override
   String get orderStatusPending => 'Offen';

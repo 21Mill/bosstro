@@ -1706,9 +1706,16 @@ class AppLocalizationsIt extends AppLocalizations {
       'Non ha dato alcun motivo. Riprova più tardi o chiedi all\'operatore del nodo.';
 
   @override
-  String orderRefusedReasonBody(String reason) {
-    return 'Il suo motivo: $reason. Riprova più tardi o chiedi all\'operatore del nodo.';
-  }
+  String get orderRefusedUnsupportedBody =>
+      'Questo nodo non risponde alle consultazioni degli ordini. Il suo operatore potrebbe doverlo aggiornare.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'Il nodo sta ricevendo troppe richieste. Aspetta un momento e chiedi di nuovo.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'Ha dato un motivo che questa versione di Bosstro non conosce. Riprova più tardi o chiedi all\'operatore del nodo.';
 
   @override
   String get orderStatusPending => 'In attesa';

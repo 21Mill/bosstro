@@ -1704,9 +1704,16 @@ class AppLocalizationsPt extends AppLocalizations {
       'Ele não deu nenhum motivo. Tente novamente mais tarde ou pergunte ao operador do nó.';
 
   @override
-  String orderRefusedReasonBody(String reason) {
-    return 'O motivo: $reason. Tente novamente mais tarde ou pergunte ao operador do nó.';
-  }
+  String get orderRefusedUnsupportedBody =>
+      'Este nó não responde a consultas de ordens. Talvez o operador precise atualizá-lo.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'O nó está recebendo solicitações demais. Aguarde um momento e pergunte de novo.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'Ele deu um motivo que esta versão do Bosstro não conhece. Tente novamente mais tarde ou pergunte ao operador do nó.';
 
   @override
   String get orderStatusPending => 'Pendente';

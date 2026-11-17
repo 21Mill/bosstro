@@ -1710,9 +1710,16 @@ class AppLocalizationsNl extends AppLocalizations {
       'De node gaf geen reden. Probeer het later opnieuw, of vraag het de beheerder van de node.';
 
   @override
-  String orderRefusedReasonBody(String reason) {
-    return 'De reden: $reason. Probeer het later opnieuw, of vraag het de beheerder van de node.';
-  }
+  String get orderRefusedUnsupportedBody =>
+      'Deze node beantwoordt het opzoeken van orders niet. De beheerder moet de node misschien bijwerken.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'De node krijgt te veel verzoeken. Wacht even en vraag het opnieuw.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'De node gaf een reden die deze versie van Bosstro niet kent. Probeer het later opnieuw, of vraag het de beheerder van de node.';
 
   @override
   String get orderStatusPending => 'Openstaand';

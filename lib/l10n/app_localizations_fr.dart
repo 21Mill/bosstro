@@ -1705,9 +1705,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Il n\'a donné aucune raison. Réessayez plus tard ou adressez-vous à l\'opérateur du nœud.';
 
   @override
-  String orderRefusedReasonBody(String reason) {
-    return 'Sa raison : $reason. Réessayez plus tard ou adressez-vous à l\'opérateur du nœud.';
-  }
+  String get orderRefusedUnsupportedBody =>
+      'Ce nœud ne répond pas aux consultations d\'ordres. Son opérateur doit peut-être le mettre à jour.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'Le nœud reçoit trop de demandes. Patientez un instant et redemandez.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'Il a donné une raison que cette version de Bosstro ne connaît pas. Réessayez plus tard ou adressez-vous à l\'opérateur du nœud.';
 
   @override
   String get orderStatusPending => 'En attente';

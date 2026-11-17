@@ -2118,14 +2118,17 @@
   "@orderRefusedBody": {
     "description": "Orders tab: the node refused the lookup and gave no reason"
   },
-  "orderRefusedReasonBody": "Its reason: {reason}. Try again later, or ask the node's operator.",
-  "@orderRefusedReasonBody": {
-    "description": "Orders tab: the node refused the lookup; {reason} is the protocol's own word for why (e.g. invalid_action), shown as it came",
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      }
-    }
+  "orderRefusedUnsupportedBody": "This node does not answer order lookups. Its operator may need to update it.",
+  "@orderRefusedUnsupportedBody": {
+    "description": "Orders tab: the node refused the lookup as an action it does not do (invalid_action)"
+  },
+  "orderRefusedBusyBody": "The node is getting too many requests. Wait a moment and ask again.",
+  "@orderRefusedBusyBody": {
+    "description": "Orders tab: the node refused the lookup because it is rate-limiting this key (too_many_requests)"
+  },
+  "orderRefusedUnknownBody": "It gave a reason this version of Bosstro does not know. Try again later, or ask the node's operator.",
+  "@orderRefusedUnknownBody": {
+    "description": "Orders tab: the node refused the lookup with a reason this build has no words for"
   },
   "orderStatusPending": "Pending",
   "@orderStatusPending": {

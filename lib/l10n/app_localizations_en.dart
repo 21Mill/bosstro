@@ -1694,9 +1694,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'It gave no reason. Try again later, or ask the node\'s operator.';
 
   @override
-  String orderRefusedReasonBody(String reason) {
-    return 'Its reason: $reason. Try again later, or ask the node\'s operator.';
-  }
+  String get orderRefusedUnsupportedBody =>
+      'This node does not answer order lookups. Its operator may need to update it.';
+
+  @override
+  String get orderRefusedBusyBody =>
+      'The node is getting too many requests. Wait a moment and ask again.';
+
+  @override
+  String get orderRefusedUnknownBody =>
+      'It gave a reason this version of Bosstro does not know. Try again later, or ask the node\'s operator.';
 
   @override
   String get orderStatusPending => 'Pending';
