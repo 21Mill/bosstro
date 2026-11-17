@@ -159,7 +159,10 @@ void main() {
 
   group('routing', () {
     test('a solver without a key goes to Welcome', () {
-      for (final location in [...AppRoute.tabs, ...AppRoute.disputeSections]) {
+      for (final location in [
+        ...AppRoute.tabs,
+        for (final section in DisputesSection.values) section.location,
+      ]) {
         expect(AppRoute.redirect(location, signedIn: false), AppRoute.welcome);
       }
       expect(

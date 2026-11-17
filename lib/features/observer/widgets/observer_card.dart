@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import 'package:bosstro/core/app_theme.dart';
 import 'package:bosstro/features/chat/services/chat_core.dart';
@@ -8,6 +7,7 @@ import 'package:bosstro/features/observer/providers/observer_providers.dart';
 import 'package:bosstro/features/observer/screens/observer_screen.dart';
 import 'package:bosstro/features/observer/widgets/paste_key_dialog.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
+import 'package:bosstro/shared/utils/date_time_format.dart';
 import 'package:bosstro/shared/widgets/labeled_icon_action.dart';
 import 'package:bosstro/shared/widgets/order_data_card.dart';
 
@@ -33,9 +33,7 @@ class ObserverCard extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final chat = view.chat;
 
-    String when(int seconds) => DateFormat.yMMMd(
-      locale,
-    ).add_Hm().format(DateTime.fromMillisecondsSinceEpoch(seconds * 1000));
+    String when(int seconds) => formatDateTime(seconds, locale);
     final lines = [
       for (final shared in chat.disclosures)
         switch (shared.party) {

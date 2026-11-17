@@ -65,9 +65,6 @@ abstract final class AppRoute {
   /// The bottom bar's destinations, in order.
   static const tabs = [pending, orders, settings];
 
-  /// The parts of the Disputes tab, in the order of its segments.
-  static const disputeSections = [pending, inProgress, closed];
-
   /// Where a solver without a key may be.
   static const _public = {welcome, login, createAccount, scanQr};
 

@@ -12,7 +12,10 @@ import '../support/screen_harness.dart';
 /// DS-A11Y-4: every screen at 2× text, 320 dp wide, in the longest locale
 /// (Spanish), in both themes, without overflow.
 void main() {
-  for (final location in [...AppRoute.disputeSections, AppRoute.settings]) {
+  for (final location in [
+    for (final section in DisputesSection.values) section.location,
+    AppRoute.settings,
+  ]) {
     for (final brightness in Brightness.values) {
       testWidgets('$location fits at 320 dp, 2× text, es, ${brightness.name}', (
         tester,

@@ -5,6 +5,7 @@ import 'package:bosstro/core/app_theme.dart';
 import 'package:bosstro/features/orders/services/orders_core.dart';
 import 'package:bosstro/features/orders/widgets/order_summary_card.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
+import 'package:bosstro/shared/utils/date_time_format.dart';
 import 'package:bosstro/shared/widgets/labeled_icon_action.dart';
 import 'package:bosstro/shared/widgets/order_data_card.dart';
 
@@ -45,11 +46,7 @@ class OrderSnapshotView extends StatelessWidget {
     final number = NumberFormat.decimalPattern(locale);
     String sats(int value) => l10n.disputeAmountSats(number.format(value));
     String? dateTime(int? seconds) =>
-        seconds == null
-            ? null
-            : DateFormat.yMMMd(locale).add_Hm().format(
-              DateTime.fromMillisecondsSinceEpoch(seconds * 1000),
-            );
+        seconds == null ? null : formatDateTime(seconds, locale);
 
     // A row whose value is a phrase or a date: it wraps rather than being cut.
     Widget row(IconData icon, String label, String? value) => OrderDataRow(

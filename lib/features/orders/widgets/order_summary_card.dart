@@ -5,6 +5,7 @@ import 'package:bosstro/core/app_theme.dart';
 import 'package:bosstro/features/orders/services/orders_core.dart';
 import 'package:bosstro/features/orders/widgets/order_labels.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
+import 'package:bosstro/shared/utils/date_time_format.dart';
 import 'package:bosstro/shared/widgets/order_data_card.dart';
 
 /// The top of a looked-up order, always open: its real status first, in
@@ -34,9 +35,7 @@ class OrderSummaryCard extends StatelessWidget {
       value: OrderDataValue(
         seconds == null
             ? l10n.detailPartyUnknown
-            : DateFormat.yMMMd(locale).add_Hm().format(
-              DateTime.fromMillisecondsSinceEpoch(seconds * 1000),
-            ),
+            : formatDateTime(seconds, locale),
         wrap: true,
       ),
     );
