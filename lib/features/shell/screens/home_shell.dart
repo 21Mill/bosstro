@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/core/app_theme.dart';
+import 'package:bosstro/features/disputes/screens/disputes_screen.dart';
 import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/nodes/providers/node_providers.dart';
 import 'package:bosstro/features/nodes/providers/relay_providers.dart';
@@ -85,11 +86,24 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: shell.currentIndex,
         onSelect: (index) {
-          shell.goBranch(
-            index,
-            // A tap on the active tab returns it to its root.
-            initialLocation: index == shell.currentIndex,
-          );
+          if (index != shell.currentIndex) {
+            shell.goBranch(index);
+            return;
+          }
+          // A tap on the active tab returns it to its root. Disputes has
+          // one per part: the solver stays on the part on screen, not sent
+          // back to Pending.
+          final router = GoRouter.of(context);
+          final path = router.routerDelegate.currentConfiguration.uri.path;
+          final section =
+              DisputesSection.values
+                  .where((s) => path.startsWith(s.location))
+                  .firstOrNull;
+          if (section != null) {
+            router.go(section.location);
+          } else {
+            shell.goBranch(index, initialLocation: true);
+          }
         },
       ),
     );

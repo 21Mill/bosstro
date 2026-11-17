@@ -87,9 +87,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(section(), DisputesSection.closed);
 
-    // A tap on the active tab returns it to its root.
-    await tester.tap(find.text('Disputes').last);
-    await tester.pumpAndSettle();
+    // A tap on the active tab keeps the part on screen: each part is a root
+    // of the tab, and Pending is not the way back from the others.
+    for (final part in ['Closed', 'In progress', 'Pending']) {
+      await tester.tap(find.text(part));
+      await tester.pumpAndSettle();
+      final shown = section();
+      await tester.tap(find.text('Disputes').last);
+      await tester.pumpAndSettle();
+      expect(section(), shown, reason: part);
+    }
     expect(section(), DisputesSection.pending);
   });
 
