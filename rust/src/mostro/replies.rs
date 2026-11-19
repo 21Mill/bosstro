@@ -628,6 +628,14 @@ pub(crate) mod tests {
             }
         }
 
+        /// Add a relay that never acknowledges an event to the solver's
+        /// list. It must be kept alive for the test.
+        pub(crate) async fn add_silent_relay(&self) -> nostr_sdk::local_relay::LocalRelay {
+            let relay = crate::nostr::publish::tests::silent_relay().await;
+            crate::nostr::publish::tests::connect(&self.client, &relay.url().await).await;
+            relay
+        }
+
         pub(crate) fn node_hex(&self) -> String {
             self.node.public_key().to_hex()
         }
@@ -692,6 +700,36 @@ pub(crate) mod tests {
         assert_eq!(taken.amount, Some(75_000));
         assert_eq!(rig.standing().await, SolverStatus::Yes);
         assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    // ── A slow relay ─────────────────────────────────────────────────────
+
+    #[tokio::test]
+    async fn a_take_is_answered_without_waiting_for_a_relay_that_never_acknowledges() {
+        let rig = Rig::new("initiated", answer_with(|rid| took(rid, DISPUTE))).await;
+        let _silent = rig.add_silent_relay().await;
+        let started = std::time::Instant::now();
+
+        // The silent relay would hold the send for ten seconds.
+        let result = rig.take(Duration::from_secs(30)).await.unwrap();
+
+        assert_eq!(result.outcome, TakeOutcome::Taken);
+        assert!(
+            started.elapsed() < Duration::from_secs(3),
+            "shown when the node answered, not when the slowest relay gave up"
+        );
+        assert_eq!(rig.row().await.status, DisputeStatus::InProgress);
+        assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    #[tokio::test]
+    async fn a_take_no_relay_took_is_not_sent_and_not_waited_for() {
+        let rig = Rig::new("initiated", silent()).await;
+        rig.client.disconnect().await;
+
+        assert_eq!(rig.take(WAIT).await.unwrap_err(), TakeError::SendFailed);
+        assert_eq!(rig.router.waiting_len(), 0, "forgotten: it never left");
+        assert_eq!(rig.row().await.status, DisputeStatus::Initiated);
     }
 
     #[tokio::test]
