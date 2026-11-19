@@ -234,13 +234,14 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
 - **Long-lived subscriptions** go through `nostr::live_subs` (`open` / `replace` /
   `close`), never a bare `client.subscribe` with an id or `client.unsubscribe`: it re-issues
   them on every relay that reconnects (a test enforces it).
-- **Requests to the node** (a take, a resolution, an order lookup) are sent with
-  `nostr::publish`, never a bare `client.send_event`: that one returns only when every relay
-  acknowledged, refused or timed out (ten seconds each in nostr-sdk), so one slow relay made
-  every request as slow as it is. `publish` sends to every connected relay and ends at the
-  first that takes the event; the others are still sent to in the background. The node may
-  answer even before that, so the answer is waited for together with the send and taken as
-  soon as it arrives (`replies::answer_or_send`).
+- **Every event the app sends** (a take, a resolution, an order lookup, a chat message) goes
+  through `nostr::publish`, never a bare `client.send_event` (a test enforces it): that one
+  returns only when every relay acknowledged, refused or timed out (ten seconds each in
+  nostr-sdk), so one slow relay made every send as slow as it is. `publish` sends to every
+  connected relay and ends at the first that takes the event; the others are still sent to in
+  the background. For a request to the node, the node may answer even before that, so the
+  answer is waited for together with the send and taken as soon as it arrives
+  (`replies::answer_or_send`).
   With no relay connected nothing is sent (`NoRelays`). A request that was sent and that no
   relay confirmed (each refused it, timed out or dropped the connection) is **never** read as
   "not sent": a relay that did not answer may have passed it on, and a settle cannot be
@@ -262,7 +263,8 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
   newest `min(created_at, received_at)` of its stored messages, never past the local clock; no
   `limit`, so one long conversation cannot crowd out another. The inner
   event id is the message's identity (copies, own echoes and replays are one row). A message is
-  sent only when a relay took it; a failed one is retried by hand, as a new message. A
+  sent only when a relay took it, as soon as the first one did; a failed one is retried by
+  hand, as a new message. A
   message's content is never logged.
 - **Attachments** (`rust/src/attachments/`, `crypto/file_enc.rs`, `nostr/blossom.rs`), ported
   from `app` so either app opens the other's files. The file key is the **raw** ECDH x between

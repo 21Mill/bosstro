@@ -155,6 +155,62 @@ pub(crate) mod tests {
             .unwrap()
     }
 
+    /// Every event the app sends goes through [`publish`]: a bare
+    /// `send_event` waits for the slowest relay. Read from the source, up to
+    /// each file's tests.
+    #[test]
+    fn nothing_sends_an_event_but_publish() {
+        fn rust_files(dir: &std::path::Path, out: &mut Vec<std::path::PathBuf>) {
+            for entry in std::fs::read_dir(dir).expect("read src") {
+                let path = entry.expect("dir entry").path();
+                if path.is_dir() {
+                    rust_files(&path, out);
+                } else if path.extension().is_some_and(|ext| ext == "rs") {
+                    out.push(path);
+                }
+            }
+        }
+        let src = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
+        let mut files = Vec::new();
+        rust_files(&src, &mut files);
+
+        let offenders: Vec<String> = files
+            .iter()
+            .filter(|path| !path.ends_with("nostr/publish.rs"))
+            // A file of tests only (`chat/observer/tests.rs`).
+            .filter(|path| !path.ends_with("tests.rs"))
+            .flat_map(|path| {
+                let text = std::fs::read_to_string(path).expect("read source");
+                let lines: Vec<&str> = text.lines().collect();
+                // Where the file's tests begin: a `#[cfg(… test …)]` on a
+                // module, not on a single item.
+                let tests = (0..lines.len())
+                    .find(|&n| {
+                        let attr = lines[n].trim_start();
+                        let next = lines.get(n + 1).map_or("", |l| l.trim_start());
+                        attr.starts_with("#[cfg(")
+                            && attr.contains("test")
+                            && next.split("mod ").next().is_some_and(|before| {
+                                next.contains("mod ") && before.trim_end_matches("pub(crate) ").is_empty()
+                            })
+                    })
+                    .unwrap_or(lines.len());
+                lines[..tests]
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, line)| !line.trim_start().starts_with("//"))
+                    .filter(|(_, line)| line.contains(".send_event("))
+                    .map(|(n, _)| format!("{}:{}", path.display(), n + 1))
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+
+        assert!(
+            offenders.is_empty(),
+            "send with nostr::publish::publish instead of the bare SDK call: {offenders:?}"
+        );
+    }
+
     // ── The race ─────────────────────────────────────────────────────────
 
     type Sending = Pin<Box<dyn Future<Output = bool> + Send>>;
