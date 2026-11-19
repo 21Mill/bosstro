@@ -345,10 +345,14 @@ pub(crate) async fn send_resolution(
             })?;
         match publish(client, &event).await {
             Published::Taken => Ok(()),
-            Published::Unconfirmed | Published::NoRelay => {
-                log::warn!("[resolve] no relay took the request");
-                Err(ResolveError::SendFailed)
+            // Sent, and no relay confirmed it: a relay that did not answer
+            // may have passed it on, and the node may act on it. It is
+            // waited for as any request that left, never read as "not sent".
+            Published::Unconfirmed => {
+                log::warn!("[resolve] no relay confirmed the request");
+                Ok(())
             }
+            Published::NoRelay => Err(ResolveError::NoRelays),
         }
     };
 
@@ -897,15 +901,30 @@ mod rig_tests {
     }
 
     #[tokio::test]
-    async fn a_resolution_no_relay_took_is_not_sent_and_not_waited_for() {
+    async fn a_resolution_with_no_relay_connected_is_not_sent_and_not_waited_for() {
         let rig = taken_rig(silent()).await;
         rig.client.disconnect().await;
 
         assert_eq!(
             resolve(&rig, PayBuyer, WAIT).await.unwrap_err(),
-            ResolveError::SendFailed
+            ResolveError::NoRelays
         );
         assert_eq!(rig.router.waiting_len(), 0, "forgotten: it never left");
+    }
+
+    #[tokio::test]
+    async fn a_resolution_no_relay_confirmed_reads_no_answer_and_stays_waited_for() {
+        let rig = taken_rig(silent()).await;
+        let _refusing = rig.leave_only_a_refusing_relay().await;
+
+        let result = resolve(&rig, PayBuyer, Duration::from_millis(300))
+            .await
+            .unwrap();
+
+        // Never "not sent": the node may have paid on a request no relay
+        // confirmed, and a settle cannot be undone.
+        assert_eq!(result.outcome, ResolveOutcome::NoAnswer);
+        assert_eq!(rig.router.waiting_len(), 1, "kept for a late answer");
     }
 
     #[tokio::test]

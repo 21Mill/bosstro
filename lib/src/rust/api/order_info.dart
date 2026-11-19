@@ -195,7 +195,8 @@ enum OrderLookupError {
   /// No node is chosen.
   noNode,
 
-  /// The relay pool is not running.
+  /// The relay pool is not running, or no relay is connected: nothing was
+  /// sent.
   noRelays,
 
   /// The text is not an order id (a UUID).
@@ -208,7 +209,9 @@ enum OrderLookupError {
   /// proof of work it asks for is not known; the request is not sent.
   nodeInfoUnavailable,
 
-  /// No relay took the request.
+  /// The request could not be built: nothing was sent. (A request that was
+  /// sent and that no relay confirmed is not an error: it may have left,
+  /// and reads as no answer.)
   sendFailed,
 }
 

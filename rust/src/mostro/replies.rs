@@ -636,6 +636,15 @@ pub(crate) mod tests {
             relay
         }
 
+        /// Leave the solver connected only to a relay that refuses every
+        /// request: the node is out of reach, and no relay confirms a send.
+        pub(crate) async fn leave_only_a_refusing_relay(&self) -> nostr_sdk::local_relay::LocalRelay {
+            self.client.disconnect().await;
+            let relay = crate::nostr::publish::tests::refusing_relay().await;
+            crate::nostr::publish::tests::connect(&self.client, &relay.url().await).await;
+            relay
+        }
+
         pub(crate) fn node_hex(&self) -> String {
             self.node.public_key().to_hex()
         }
@@ -723,13 +732,25 @@ pub(crate) mod tests {
     }
 
     #[tokio::test]
-    async fn a_take_no_relay_took_is_not_sent_and_not_waited_for() {
+    async fn a_take_with_no_relay_connected_is_not_sent_and_not_waited_for() {
         let rig = Rig::new("initiated", silent()).await;
         rig.client.disconnect().await;
 
-        assert_eq!(rig.take(WAIT).await.unwrap_err(), TakeError::SendFailed);
+        assert_eq!(rig.take(WAIT).await.unwrap_err(), TakeError::NoRelays);
         assert_eq!(rig.router.waiting_len(), 0, "forgotten: it never left");
         assert_eq!(rig.row().await.status, DisputeStatus::Initiated);
+    }
+
+    #[tokio::test]
+    async fn a_take_no_relay_confirmed_reads_no_answer_and_stays_waited_for() {
+        let rig = Rig::new("initiated", silent()).await;
+        let _refusing = rig.leave_only_a_refusing_relay().await;
+
+        let result = rig.take(Duration::from_millis(300)).await.unwrap();
+
+        // Never "not sent": a relay that did not confirm may have passed it on.
+        assert_eq!(result.outcome, TakeOutcome::NoAnswer);
+        assert_eq!(rig.router.waiting_len(), 1, "kept for a late answer");
     }
 
     #[tokio::test]

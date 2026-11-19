@@ -131,6 +131,15 @@ pub(crate) mod tests {
         relay
     }
 
+    /// A relay that answers every direct message with a refusal.
+    pub(crate) async fn refusing_relay() -> LocalRelay {
+        let relay = LocalRelay::builder()
+            .blacklist_kinds(&[Kind::PrivateDirectMessage])
+            .build();
+        relay.run().await.unwrap();
+        relay
+    }
+
     /// Add `url` to `client` and connect to it.
     pub(crate) async fn connect(client: &Client, url: &RelayUrl) {
         client.add_relay(url).await.unwrap();

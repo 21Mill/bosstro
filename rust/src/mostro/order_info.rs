@@ -258,10 +258,13 @@ pub(crate) async fn send_lookup(
                 log::info!("[order-info] +{} ms: a relay took the request", ms());
                 Ok(())
             }
-            Published::Unconfirmed | Published::NoRelay => {
-                log::warn!("[order-info] no relay took the request");
-                Err(OrderLookupError::SendFailed)
+            // Sent, and no relay confirmed it: it may have left all the
+            // same, so the answer is waited for as after any send.
+            Published::Unconfirmed => {
+                log::warn!("[order-info] no relay confirmed the request");
+                Ok(())
             }
+            Published::NoRelay => Err(OrderLookupError::NoRelays),
         }
     };
 
@@ -577,11 +580,23 @@ pub(crate) mod tests {
     }
 
     #[tokio::test]
-    async fn a_request_no_relay_took_is_not_waited_for() {
+    async fn a_request_with_no_relay_connected_is_not_sent_and_not_waited_for() {
         let rig = Rig::new("initiated", silent()).await;
         rig.client.disconnect().await;
 
-        assert_eq!(ask(&rig, WAIT).await, Err(OrderLookupError::SendFailed));
+        assert_eq!(ask(&rig, WAIT).await, Err(OrderLookupError::NoRelays));
+        assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    #[tokio::test]
+    async fn a_request_no_relay_confirmed_reads_no_answer() {
+        let rig = Rig::new("initiated", silent()).await;
+        let _refusing = rig.leave_only_a_refusing_relay().await;
+
+        let lookup = ask(&rig, Duration::from_millis(300)).await;
+
+        assert_eq!(lookup, Ok(Lookup::NoAnswer));
+        // A lookup is never kept for a late answer.
         assert_eq!(rig.router.waiting_len(), 0);
     }
 

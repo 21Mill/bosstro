@@ -337,10 +337,14 @@ pub(crate) async fn send_take(
             })?;
         match publish(client, &event).await {
             Published::Taken => Ok(()),
-            Published::Unconfirmed | Published::NoRelay => {
-                log::warn!("[take] no relay took the request");
-                Err(TakeError::SendFailed)
+            // Sent, and no relay confirmed it: a relay that did not answer
+            // may have passed it on, and the node may act on it. It is
+            // waited for as any request that left, never read as "not sent".
+            Published::Unconfirmed => {
+                log::warn!("[take] no relay confirmed the request");
+                Ok(())
             }
+            Published::NoRelay => Err(TakeError::NoRelays),
         }
     };
 

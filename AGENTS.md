@@ -241,6 +241,11 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
   first that takes the event; the others are still sent to in the background. The node may
   answer even before that, so the answer is waited for together with the send and taken as
   soon as it arrives (`replies::answer_or_send`).
+  With no relay connected nothing is sent (`NoRelays`). A request that was sent and that no
+  relay confirmed (each refused it, timed out or dropped the connection) is **never** read as
+  "not sent": a relay that did not answer may have passed it on, and a settle cannot be
+  undone. It is waited for as any request that left, and reads as no answer; a take and a
+  resolution stay registered for a late one.
 - **Admin actions** (`mostro-core`, same version as `app`): `AdminTakeDispute` →
   `AdminTookDispute`, `AdminSettle` → `AdminSettled`, `AdminCancel` → `AdminCanceled`,
   `AdminOrderInfo` → `AdminOrderInfo` with an `order_info` payload.
