@@ -234,6 +234,13 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
 - **Long-lived subscriptions** go through `nostr::live_subs` (`open` / `replace` /
   `close`), never a bare `client.subscribe` with an id or `client.unsubscribe`: it re-issues
   them on every relay that reconnects (a test enforces it).
+- **Requests to the node** (a take, a resolution, an order lookup) are sent with
+  `nostr::publish`, never a bare `client.send_event`: that one returns only when every relay
+  acknowledged, refused or timed out (ten seconds each in nostr-sdk), so one slow relay made
+  every request as slow as it is. `publish` sends to every connected relay and ends at the
+  first that takes the event; the others are still sent to in the background. The node may
+  answer even before that, so the answer is waited for together with the send and taken as
+  soon as it arrives (`replies::answer_or_send`).
 - **Admin actions** (`mostro-core`, same version as `app`): `AdminTakeDispute` →
   `AdminTookDispute`, `AdminSettle` → `AdminSettled`, `AdminCancel` → `AdminCanceled`,
   `AdminOrderInfo` → `AdminOrderInfo` with an `order_info` payload.
@@ -305,10 +312,7 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
   unanswered, a request that carries one). mostrod answers its admin key and any registered
   solver, Read or Read-Write. Same router, PoW and wait as a take, but **read only**: it is
   never refused because a take or a resolution is waited for, never makes one wait, and is the
-  one request that may be sent again. Its answer is shown as soon as it arrives
-  (`replies::answer_or_send`): sending ends only when every relay acknowledged or timed out
-  (ten seconds each in nostr-sdk), long after the node answered through the fastest one, so the
-  answer is not kept behind it. A take and a resolution still send first and wait after. A snapshot is taken only in the `order` wrapper, to the
+  one request that may be sent again. A snapshot is taken only in the `order` wrapper, to the
   matching request, when both the message and the snapshot name the order asked for. Answers:
   the snapshot or `NotFound` mean this key is a solver there; `InvalidPubkey` means `NotSolver`,
   without the ambiguity of a take's; none says anything about the permission. A lookup that got

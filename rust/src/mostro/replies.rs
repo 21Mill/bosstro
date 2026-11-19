@@ -21,8 +21,8 @@
 //! **A slow relay.** A request is published with `nostr::publish`, which ends
 //! at the first relay that takes it, not at the slowest. The node may answer
 //! even before that: [`answer_or_send`] waits for both and returns the answer
-//! as soon as it is there. The order lookup uses it; a take and a resolution
-//! still send first and wait after.
+//! as soon as it is there. Every request is sent this way: a take, a
+//! resolution and an order lookup.
 //!
 //! **Since.** The subscription starts a minute before it is opened, so a
 //! reconnect never replays the node's older answers; requests exist only in

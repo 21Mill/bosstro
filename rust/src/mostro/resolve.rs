@@ -50,6 +50,7 @@ use crate::api::resolve::{
 };
 use crate::api::take::{SolverPermission, TakeError};
 use crate::disputes::feed::Feed;
+use crate::nostr::publish::{publish, Published};
 
 /// What the node's message says about one resolution.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -335,31 +336,33 @@ pub(crate) async fn send_resolution(
         .register(request_id, request)
         .map_err(|_| ResolveError::AlreadyResolving)?;
     let message = request_message(resolution, order_id, request_id, bond);
-    let sent = async {
+    let send = async {
         let event = wrap_mined(keys, &node_key, &message, pow)
             .await
             .map_err(|e| {
                 log::warn!("[resolve] request not built: {e}");
                 ResolveError::SendFailed
             })?;
-        let output = client.send_event(&event).await.map_err(|e| {
-            log::warn!("[resolve] request not sent: {e}");
-            ResolveError::SendFailed
-        })?;
-        if output.success.is_empty() {
-            log::warn!("[resolve] no relay took the request");
-            return Err(ResolveError::SendFailed);
+        match publish(client, &event).await {
+            Published::Taken => Ok(()),
+            Published::Unconfirmed | Published::NoRelay => {
+                log::warn!("[resolve] no relay took the request");
+                Err(ResolveError::SendFailed)
+            }
         }
-        Ok(())
-    }
-    .await;
-    if let Err(e) = sent {
-        router.forget(request_id);
-        return Err(e);
-    }
+    };
 
-    match crate::rt::time::timeout(wait, answer).await {
-        Ok(Ok(Reply::Resolve(result))) => Ok(result),
+    // The node may answer before the relays have all acknowledged the
+    // request, or any of them: the answer is taken as soon as it is there.
+    let answered = match replies::answer_or_send(send, answer, wait).await {
+        Ok(answered) => answered,
+        Err(e) => {
+            router.forget(request_id);
+            return Err(e);
+        }
+    };
+    match answered {
+        Some(Reply::Resolve(result)) => Ok(result),
         // Timed out, or the router dropped the request (the node or the key
         // changed). It stays registered for a late answer; nothing is resent.
         _ => Ok(ResolveResult {
@@ -872,6 +875,37 @@ mod rig_tests {
         tokio::time::sleep(Duration::from_millis(300)).await;
         assert_eq!(received.count.load(Ordering::SeqCst), 0);
         assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    // ── A slow relay ─────────────────────────────────────────────────────
+
+    #[tokio::test]
+    async fn a_resolution_is_answered_without_waiting_for_a_relay_that_never_acknowledges() {
+        let rig = taken_rig(answer_with(|rid| confirmed(rid, PayBuyer))).await;
+        let _silent = rig.add_silent_relay().await;
+        let started = std::time::Instant::now();
+
+        // The silent relay would hold the send for ten seconds.
+        let result = resolve(&rig, PayBuyer, Duration::from_secs(30)).await.unwrap();
+
+        assert_eq!(result.outcome, ResolveOutcome::PaidBuyer);
+        assert!(
+            started.elapsed() < Duration::from_secs(3),
+            "shown when the node answered, not when the slowest relay gave up"
+        );
+        assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    #[tokio::test]
+    async fn a_resolution_no_relay_took_is_not_sent_and_not_waited_for() {
+        let rig = taken_rig(silent()).await;
+        rig.client.disconnect().await;
+
+        assert_eq!(
+            resolve(&rig, PayBuyer, WAIT).await.unwrap_err(),
+            ResolveError::SendFailed
+        );
+        assert_eq!(rig.router.waiting_len(), 0, "forgotten: it never left");
     }
 
     #[tokio::test]
