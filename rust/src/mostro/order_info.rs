@@ -3,9 +3,10 @@
 //!
 //! **The request** travels in the `order` wrapper with the order id in `id`
 //! and no payload: mostrod drops, unanswered, one that carries a payload.
-//! Same transport, router and proof of work as a take. The answer is shown as
-//! soon as it arrives, without waiting for the slowest relay to acknowledge
-//! the request (`replies::answer_or_send`).
+//! Same transport, router and proof of work as a take. The request is
+//! published as every one is (`nostr::publish`: sent when the first relay
+//! takes it), and the answer is shown as soon as it arrives, even before any
+//! relay acknowledged the request (`replies::answer_or_send`).
 //!
 //! **Read only.** Nothing is stored and no dispute row changes: the answer is
 //! a snapshot of that moment, it carries the parties' trade pubkeys and the
@@ -36,10 +37,9 @@
 //! **Timings.** Each step logs how long after the lookup began it ended
 //! (`[order-info] +120 ms: …`): the subscription, the node's PoW, the request
 //! built, the answer read off the relay, and the answer handed to the caller;
-//! and, when no answer came before it, the send ending (which relays took the
-//! request, which did not). They tell
-//! where a slow lookup spends its time. Only times, relay addresses and the
-//! head of the order id are logged, never the order.
+//! and, when no answer came before it, a relay taking the request. They tell
+//! where a slow lookup spends its time. Only times are logged, never the
+//! order nor its id.
 
 use mostro_core::error::CantDoReason;
 use mostro_core::message::{Action, Message, Payload};
@@ -50,6 +50,7 @@ use super::replies::{self, Purpose, Reply, Request};
 use super::take::{new_request_id, reason_marker, take_pow_on, wrap_mined, ANSWER_WAIT};
 use crate::api::order_info::OrderLookupError;
 use crate::api::take::{SolverStatus, TakeError};
+use crate::nostr::publish::{publish, Published};
 use crate::rt::time::Instant;
 
 /// What the node said about one lookup.
@@ -251,38 +252,21 @@ pub(crate) async fn send_lookup(
                 OrderLookupError::SendFailed
             })?;
         log::info!("[order-info] +{} ms: request built and mined", ms());
-        let output = client.send_event(&event).await.map_err(|e| {
-            log::warn!("[order-info] request not sent: {e}");
-            OrderLookupError::SendFailed
-        })?;
-        // Every relay has acknowledged, refused or timed out by now: the
-        // send returns only then (not reached when the answer came first).
-        log::info!(
-            "[order-info] +{} ms: send returned; took it: [{}]; did not: [{}]",
-            ms(),
-            output
-                .success
-                .keys()
-                .map(|url| url.to_string())
-                .collect::<Vec<_>>()
-                .join(", "),
-            output
-                .failed
-                .iter()
-                .map(|(url, why)| format!("{url} ({why})"))
-                .collect::<Vec<_>>()
-                .join(", "),
-        );
-        if output.success.is_empty() {
-            log::warn!("[order-info] no relay took the request");
-            return Err(OrderLookupError::SendFailed);
+        match publish(client, &event).await {
+            // Not reached when the answer came first.
+            Published::Taken => {
+                log::info!("[order-info] +{} ms: a relay took the request", ms());
+                Ok(())
+            }
+            Published::Unconfirmed | Published::NoRelay => {
+                log::warn!("[order-info] no relay took the request");
+                Err(OrderLookupError::SendFailed)
+            }
         }
-        Ok(())
     };
 
-    // The node answers through the first relay that took the request, long
-    // before the slowest one acknowledges it: the answer is shown as soon as
-    // it is there, not when the send ends.
+    // The node may answer before any relay acknowledges the request: the
+    // answer is shown as soon as it is there, not when the send ends.
     match replies::answer_or_send(send, answer, wait).await {
         Ok(Some(Reply::OrderInfo(lookup))) => {
             log::info!("[order-info] +{} ms: answer handed to the screen", ms());

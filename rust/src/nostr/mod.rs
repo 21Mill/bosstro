@@ -5,6 +5,7 @@
 pub mod blossom;
 pub mod first_answer;
 pub mod live_subs;
+pub mod publish;
 pub mod relay_list;
 pub mod relay_pool;
 pub mod relay_probe;

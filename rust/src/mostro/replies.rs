@@ -18,11 +18,11 @@
 //! never refused because a request of a dispute is waited for, and it never
 //! makes one wait.
 //!
-//! **A slow relay.** Sending ends only when every relay acknowledged, refused
-//! or timed out, long after the node answered through the fastest one.
-//! [`answer_or_send`] waits for both and returns the answer as soon as it is
-//! there. The order lookup uses it; a take and a resolution still send first
-//! and wait after.
+//! **A slow relay.** A request is published with `nostr::publish`, which ends
+//! at the first relay that takes it, not at the slowest. The node may answer
+//! even before that: [`answer_or_send`] waits for both and returns the answer
+//! as soon as it is there. The order lookup uses it; a take and a resolution
+//! still send first and wait after.
 //!
 //! **Since.** The subscription starts a minute before it is opened, so a
 //! reconnect never replays the node's older answers; requests exist only in
@@ -441,11 +441,12 @@ static ROUTER: OnceLock<Arc<Router>> = OnceLock::new();
 
 /// Send a request and wait for its answer, whichever comes first.
 ///
-/// `send` ends only when every relay has acknowledged the request, refused
-/// it or timed out (nostr-sdk waits ten seconds for each), while the node
-/// answers through the first relay that took it. So the answer is not kept
-/// behind the send: when it arrives first, it is returned at once and the
-/// send is dropped (the request has left: the node answered it).
+/// `send` ends when a relay acknowledged the request, or when every relay
+/// refused it or timed out (nostr-sdk waits ten seconds for each), while the
+/// node answers through the first relay the request reached. So the answer is
+/// not kept behind the send: when it arrives first, it is returned at once
+/// and the send is no longer waited for (the request has left: the node
+/// answered it).
 ///
 /// - `Ok(Some(reply))`: the answer.
 /// - `Ok(None)`: the request left and nothing answered within `wait` of the
