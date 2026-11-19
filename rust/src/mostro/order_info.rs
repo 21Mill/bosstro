@@ -643,6 +643,20 @@ pub(crate) mod tests {
     }
 
     #[tokio::test]
+    async fn an_answer_that_arrived_wins_over_a_send_that_failed() {
+        // Both are ready at once: the answer is already in its channel when
+        // the send reports that no relay confirmed the request.
+        let (tx, rx) = oneshot::channel();
+        tx.send(found_reply()).unwrap();
+        let send = async { Err::<(), _>(OrderLookupError::SendFailed) };
+
+        assert_eq!(
+            answer_or_send(send, rx, WAIT).await,
+            Ok(Some(found_reply()))
+        );
+    }
+
+    #[tokio::test]
     async fn a_request_that_left_and_got_no_answer_is_none_after_the_wait() {
         let send = async { Ok::<(), OrderLookupError>(()) };
         let (_tx, rx) = oneshot::channel::<Reply>();

@@ -451,7 +451,7 @@ static ROUTER: OnceLock<Arc<Router>> = OnceLock::new();
 /// - `Ok(Some(reply))`: the answer.
 /// - `Ok(None)`: the request left and nothing answered within `wait` of the
 ///   send ending, or the router dropped the request (another node or key).
-/// - `Err(e)`: the send failed before any answer: nothing left.
+/// - `Err(e)`: the send failed and no answer had arrived: nothing left.
 pub(crate) async fn answer_or_send<S, E>(
     send: S,
     mut answer: oneshot::Receiver<Reply>,
@@ -466,7 +466,16 @@ where
     // which flutter_rust_bridge's codegen cannot parse in the expanded crate.
     match select(Box::pin(send), &mut answer).await {
         Either::Right((reply, _send)) => return Ok(reply.ok()),
-        Either::Left((sent, _answer)) => sent?,
+        Either::Left((Ok(()), _answer)) => {}
+        // The send failed, but the node answered meanwhile: the request
+        // left, whatever the relays said of it. The router has already
+        // applied that answer, so the caller must not read "not sent".
+        Either::Left((Err(e), _answer)) => {
+            return match answer.try_recv() {
+                Ok(reply) => Ok(Some(reply)),
+                Err(_) => Err(e),
+            };
+        }
     }
     Ok(crate::rt::time::timeout(wait, answer)
         .await
