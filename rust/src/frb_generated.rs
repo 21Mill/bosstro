@@ -41,7 +41,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2093097086;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2144809293;
 
 // Section: executor
 
@@ -2135,38 +2135,6 @@ fn wire__crate__api__serbero__serbero_mediation_impl(
                     .await,
                 )
             }
-        },
-    )
-}
-fn wire__crate__api__serbero__serbero_mediation_is_empty_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "serbero_mediation_is_empty",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <crate::api::serbero::SerberoMediation>::sse_decode(&mut deserializer);
-            deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let output_ok = Result::<_, ()>::Ok(
-                    crate::api::serbero::SerberoMediation::is_empty(&api_that),
-                )?;
-                Ok(output_ok)
-            })())
         },
     )
 }
@@ -4676,25 +4644,25 @@ fn pde_ffi_dispatcher_primary_impl(
         53 => wire__crate__api__chat__send_chat_attachment_impl(port, ptr, rust_vec_len, data_len),
         54 => wire__crate__api__chat__send_chat_message_impl(port, ptr, rust_vec_len, data_len),
         55 => wire__crate__api__serbero__serbero_mediation_impl(port, ptr, rust_vec_len, data_len),
-        57 => wire__crate__api__settings__set_language_impl(port, ptr, rust_vec_len, data_len),
-        58 => wire__crate__api__serbero__set_serbero_pubkey_impl(port, ptr, rust_vec_len, data_len),
-        59 => wire__crate__api__take__solver_permission_default_impl(
+        56 => wire__crate__api__settings__set_language_impl(port, ptr, rust_vec_len, data_len),
+        57 => wire__crate__api__serbero__set_serbero_pubkey_impl(port, ptr, rust_vec_len, data_len),
+        58 => wire__crate__api__take__solver_permission_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        60 => wire__crate__api__solver__solver_pubkey_impl(port, ptr, rust_vec_len, data_len),
-        61 => wire__crate__api__take__solver_standing_impl(port, ptr, rust_vec_len, data_len),
-        62 => wire__crate__api__take__solver_status_default_impl(port, ptr, rust_vec_len, data_len),
-        63 => wire__crate__api__nodes__sync_mostro_node_pictures_impl(
+        59 => wire__crate__api__solver__solver_pubkey_impl(port, ptr, rust_vec_len, data_len),
+        60 => wire__crate__api__take__solver_standing_impl(port, ptr, rust_vec_len, data_len),
+        61 => wire__crate__api__take__solver_status_default_impl(port, ptr, rust_vec_len, data_len),
+        62 => wire__crate__api__nodes__sync_mostro_node_pictures_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        64 => wire__crate__api__take__take_dispute_impl(port, ptr, rust_vec_len, data_len),
-        65 => wire__crate__api__solver__unload_solver_key_impl(port, ptr, rust_vec_len, data_len),
+        63 => wire__crate__api__take__take_dispute_impl(port, ptr, rust_vec_len, data_len),
+        64 => wire__crate__api__solver__unload_solver_key_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -4712,9 +4680,6 @@ fn pde_ffi_dispatcher_sync_impl(
         14 => wire__crate__api__solver__create_solver_account_impl(ptr, rust_vec_len, data_len),
         27 => wire__crate__api__order_info__is_order_id_impl(ptr, rust_vec_len, data_len),
         42 => wire__crate__api__solver__preview_npub_impl(ptr, rust_vec_len, data_len),
-        56 => {
-            wire__crate__api__serbero__serbero_mediation_is_empty_impl(ptr, rust_vec_len, data_len)
-        }
         _ => unreachable!(),
     }
 }

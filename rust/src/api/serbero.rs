@@ -135,17 +135,6 @@ pub struct SerberoMediation {
     pub final_report: Option<SerberoNote>,
 }
 
-impl SerberoMediation {
-    /// Whether Serbero sent anything about this dispute.
-    #[flutter_rust_bridge::frb(sync)]
-    pub fn is_empty(&self) -> bool {
-        self.brief.is_none()
-            && self.transcript_total == 0
-            && self.updates.is_empty()
-            && self.final_report.is_none()
-    }
-}
-
 /// What Serbero sent the loaded key about `dispute_id` on the active node, as
 /// stored. `None` without an active node, a loaded key or storage.
 pub async fn serbero_mediation(dispute_id: String) -> Result<Option<SerberoMediation>> {

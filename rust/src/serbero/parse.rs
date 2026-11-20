@@ -4,6 +4,9 @@
 //! read and may change, so only the transcript lines are split further, and a
 //! line that does not read as one is kept as text, never dropped.
 
+/// The most parts a transcript of Serbero's has (`part 999/999`).
+pub(crate) const MAX_PARTS: u32 = 999;
+
 /// What one Serbero message is, from its subject.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ReportKind {
@@ -91,6 +94,11 @@ fn kind_of(subject: &str) -> Option<ReportKind> {
     };
     let (part, total) = part.split_once('/')?;
     let (part, total) = (part.parse::<u32>().ok()?, total.parse::<u32>().ok()?);
+    // Serbero sizes its part header for at most 999 parts; more is no
+    // transcript of its, and would only make the reader reserve room.
+    if total > MAX_PARTS {
+        return None;
+    }
     (1..=total)
         .contains(&part)
         .then_some(ReportKind::Transcript { part, total })
@@ -208,6 +216,8 @@ mod tests {
             format!("Dispute {ID} transcript (2 messages)"),
             format!("Dispute {ID} · transcript (2 messages, part 0/3)"),
             format!("Dispute {ID} · transcript (2 messages, part 4/3)"),
+            format!("Dispute {ID} · transcript (2 messages, part 1/1000)"),
+            format!("Dispute {ID} · transcript (2 messages, part 1/4294967295)"),
         ] {
             assert_eq!(report(&text), None, "{text}");
         }

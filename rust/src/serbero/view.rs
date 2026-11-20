@@ -126,6 +126,10 @@ mod tests {
         }
     }
 
+    fn is_empty(m: &SerberoMediation) -> bool {
+        m.brief.is_none() && m.transcript_total == 0 && m.updates.is_empty() && m.final_report.is_none()
+    }
+
     fn part(event: &str, sent_at: i64, i: u32, n: u32, body: &str) -> SerberoRecord {
         record(
             event,
@@ -137,7 +141,7 @@ mod tests {
     #[test]
     fn nothing_stored_is_an_empty_mediation() {
         let mediation = assemble(ID, &[]);
-        assert!(mediation.is_empty());
+        assert!(is_empty(&mediation));
         assert_eq!(mediation.dispute_id, ID);
     }
 
@@ -234,6 +238,6 @@ mod tests {
             record("x", 10, "Dispute 11111111-2222-3333-4444-555555555555 · handed off: a\nb"),
             record("y", 10, "garbage"),
         ];
-        assert!(assemble(ID, &records).is_empty());
+        assert!(is_empty(&assemble(ID, &records)));
     }
 }

@@ -100,10 +100,6 @@ class SerberoMediation {
     this.finalReport,
   });
 
-  /// Whether Serbero sent anything about this dispute.
-  bool isEmpty() =>
-      RustLib.instance.api.crateApiSerberoSerberoMediationIsEmpty(that: this);
-
   @override
   int get hashCode =>
       disputeId.hashCode ^

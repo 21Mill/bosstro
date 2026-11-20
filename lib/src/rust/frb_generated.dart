@@ -78,7 +78,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -2093097086;
+  int get rustContentHash => 2144809293;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -253,8 +253,6 @@ abstract class RustLibApi extends BaseApi {
   Future<SerberoMediation?> crateApiSerberoSerberoMediation({
     required String disputeId,
   });
-
-  bool crateApiSerberoSerberoMediationIsEmpty({required SerberoMediation that});
 
   Future<void> crateApiSettingsSetLanguage({String? code});
 
@@ -1994,34 +1992,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  bool crateApiSerberoSerberoMediationIsEmpty({
-    required SerberoMediation that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_box_autoadd_serbero_mediation(that, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 56)!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSerberoSerberoMediationIsEmptyConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSerberoSerberoMediationIsEmptyConstMeta =>
-      const TaskConstMeta(
-        debugName: "serbero_mediation_is_empty",
-        argNames: ["that"],
-      );
-
-  @override
   Future<void> crateApiSettingsSetLanguage({String? code}) {
     return handler.executeNormal(
       NormalTask(
@@ -2031,7 +2001,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 57,
+            funcId: 56,
             port: port_,
           );
         },
@@ -2063,7 +2033,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 58,
+            funcId: 57,
             port: port_,
           );
         },
@@ -2093,7 +2063,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 59,
+            funcId: 58,
             port: port_,
           );
         },
@@ -2120,7 +2090,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 60,
+            funcId: 59,
             port: port_,
           );
         },
@@ -2147,7 +2117,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 61,
+            funcId: 60,
             port: port_,
           );
         },
@@ -2174,7 +2144,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 62,
+            funcId: 61,
             port: port_,
           );
         },
@@ -2201,7 +2171,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 63,
+            funcId: 62,
             port: port_,
           );
         },
@@ -2229,7 +2199,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 64,
+            funcId: 63,
             port: port_,
           );
         },
@@ -2256,7 +2226,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 65,
+            funcId: 64,
             port: port_,
           );
         },
