@@ -71,6 +71,7 @@ use crate::db::Storage;
 use crate::disputes::feed::Feed;
 use crate::disputes::DisputeRecord;
 use crate::nostr::live_subs::LiveSubs;
+use crate::nostr::publish::{publish, Published};
 
 /// Capacity of the update channel toward Dart.
 const UPDATE_CAPACITY: usize = 256;
@@ -923,17 +924,11 @@ impl Router {
         Ok(record.view(true))
     }
 
-    /// Publish one of this key's messages and store how it went: sent when
-    /// at least one relay took it (`send_event` is `Ok` even when every relay
-    /// refused), failed otherwise unless a relay echoed it meanwhile.
+    /// Publish one of this key's messages and store how it went: sent as
+    /// soon as one relay took it (`nostr::publish`: the slowest relay is not
+    /// waited for), failed when none did, unless a relay echoed it meanwhile.
     async fn publish(&self, channel: &ChannelRef, id: &str, event: &Event) {
-        let delivered = match self.client.send_event(event).await {
-            Ok(output) => !output.success.is_empty(),
-            Err(e) => {
-                log::warn!("[chat] message not sent: {e}");
-                false
-            }
-        };
+        let delivered = publish(&self.client, event).await == Published::Taken;
         {
             let _guard = self.ingest_lock.lock().await;
             let current = self.store.get(channel, id).await.ok().flatten();
@@ -1649,6 +1644,39 @@ pub(crate) mod tests {
             ChatError::UnknownDispute
         );
         assert!(b.messages(DISPUTE_A, ChatParty::Seller).await.is_empty());
+    }
+
+    /// A relay that never acknowledges does not keep a message "sending":
+    /// it is sent at the first relay that takes it.
+    #[tokio::test]
+    async fn a_message_is_sent_at_the_first_relay_that_takes_it() {
+        let b = bench().await;
+        let silent = crate::nostr::publish::tests::silent_relay().await;
+        crate::nostr::publish::tests::connect(&b.router.client, &silent.url().await).await;
+        let started = std::time::Instant::now();
+
+        let sent = b
+            .router
+            .send(DISPUTE_A, ChatParty::Seller, "one moment")
+            .await
+            .unwrap();
+
+        // The send itself ended (not only the echo coming back): the silent
+        // relay would hold it for ten seconds.
+        eventually("the send ends", || async {
+            lock(&b.router.in_flight).is_empty()
+        })
+        .await;
+        assert!(
+            started.elapsed() < Duration::from_secs(3),
+            "ended at the first OK, not at the silent relay's timeout"
+        );
+        let all = b.messages(DISPUTE_A, ChatParty::Seller).await;
+        assert_eq!(all.len(), 1);
+        assert_eq!(
+            (all[0].id.as_str(), all[0].delivery),
+            (sent.id.as_str(), ChatDelivery::Sent)
+        );
     }
 
     /// No relay takes it: failed, and not sent again by itself. A retry is

@@ -42,6 +42,7 @@ use crate::api::take::{
     DisputeDetail, InProgressDisputes, SolverStatus, TakeError, TakeOutcome, TakeResult, TakenDisputeSummary,
 };
 use crate::disputes::feed::Feed;
+use crate::nostr::publish::{publish, Published};
 use crate::db::Storage;
 use crate::disputes::{oldest_first, DisputeRecord, TakenDispute};
 
@@ -327,31 +328,37 @@ pub(crate) async fn send_take(
         Action::AdminTakeDispute,
         None,
     );
-    let sent = async {
+    let send = async {
         let event = wrap_mined(keys, &node_key, &message, pow)
             .await
             .map_err(|e| {
                 log::warn!("[take] request not built: {e}");
                 TakeError::SendFailed
             })?;
-        let output = client.send_event(&event).await.map_err(|e| {
-            log::warn!("[take] request not sent: {e}");
-            TakeError::SendFailed
-        })?;
-        if output.success.is_empty() {
-            log::warn!("[take] no relay took the request");
-            return Err(TakeError::SendFailed);
+        match publish(client, &event).await {
+            Published::Taken => Ok(()),
+            // Sent, and no relay confirmed it: a relay that did not answer
+            // may have passed it on, and the node may act on it. It is
+            // waited for as any request that left, never read as "not sent".
+            Published::Unconfirmed => {
+                log::warn!("[take] no relay confirmed the request");
+                Ok(())
+            }
+            Published::NoRelay => Err(TakeError::NoRelays),
         }
-        Ok(())
-    }
-    .await;
-    if let Err(e) = sent {
-        router.forget(request_id);
-        return Err(e);
-    }
+    };
 
-    match crate::rt::time::timeout(wait, answer).await {
-        Ok(Ok(Reply::Take(result))) => Ok(result),
+    // The node may answer before the relays have all acknowledged the
+    // request, or any of them: the answer is taken as soon as it is there.
+    let answered = match replies::answer_or_send(send, answer, wait).await {
+        Ok(answered) => answered,
+        Err(e) => {
+            router.forget(request_id);
+            return Err(e);
+        }
+    };
+    match answered {
+        Some(Reply::Take(result)) => Ok(result),
         // Timed out, or the router dropped the request (the node or the
         // key changed). The request stays registered for a late answer.
         _ => Ok(TakeResult {

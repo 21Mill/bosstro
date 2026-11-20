@@ -115,9 +115,12 @@ pub enum ResolveError {
     NoKey,
     /// No node is chosen.
     NoNode,
-    /// The relay pool is not running.
+    /// The relay pool is not running, or no relay is connected: nothing was
+    /// sent.
     NoRelays,
-    /// No relay took the request.
+    /// The request could not be built: nothing was sent. (A request that was
+    /// sent and that no relay confirmed is not an error: it may have left,
+    /// and reads as no answer.)
     SendFailed,
     /// The dispute is not one of the active node's stored disputes.
     UnknownDispute,

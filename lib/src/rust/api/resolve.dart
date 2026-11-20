@@ -67,10 +67,13 @@ enum ResolveError {
   /// No node is chosen.
   noNode,
 
-  /// The relay pool is not running.
+  /// The relay pool is not running, or no relay is connected: nothing was
+  /// sent.
   noRelays,
 
-  /// No relay took the request.
+  /// The request could not be built: nothing was sent. (A request that was
+  /// sent and that no relay confirmed is not an error: it may have left,
+  /// and reads as no answer.)
   sendFailed,
 
   /// The dispute is not one of the active node's stored disputes.

@@ -300,7 +300,8 @@ pub enum OrderLookupError {
     NoKey,
     /// No node is chosen.
     NoNode,
-    /// The relay pool is not running.
+    /// The relay pool is not running, or no relay is connected: nothing was
+    /// sent.
     NoRelays,
     /// The text is not an order id (a UUID).
     InvalidOrderId,
@@ -309,7 +310,9 @@ pub enum OrderLookupError {
     /// The node's kind 38385 was never read and could not be read now, so the
     /// proof of work it asks for is not known; the request is not sent.
     NodeInfoUnavailable,
-    /// No relay took the request.
+    /// The request could not be built: nothing was sent. (A request that was
+    /// sent and that no relay confirmed is not an error: it may have left,
+    /// and reads as no answer.)
     SendFailed,
 }
 

@@ -18,11 +18,11 @@
 //! never refused because a request of a dispute is waited for, and it never
 //! makes one wait.
 //!
-//! **A slow relay.** Sending ends only when every relay acknowledged, refused
-//! or timed out, long after the node answered through the fastest one.
-//! [`answer_or_send`] waits for both and returns the answer as soon as it is
-//! there. The order lookup uses it; a take and a resolution still send first
-//! and wait after.
+//! **A slow relay.** A request is published with `nostr::publish`, which ends
+//! at the first relay that takes it, not at the slowest. The node may answer
+//! even before that: [`answer_or_send`] waits for both and returns the answer
+//! as soon as it is there. Every request is sent this way: a take, a
+//! resolution and an order lookup.
 //!
 //! **Since.** The subscription starts a minute before it is opened, so a
 //! reconnect never replays the node's older answers; requests exist only in
@@ -441,16 +441,17 @@ static ROUTER: OnceLock<Arc<Router>> = OnceLock::new();
 
 /// Send a request and wait for its answer, whichever comes first.
 ///
-/// `send` ends only when every relay has acknowledged the request, refused
-/// it or timed out (nostr-sdk waits ten seconds for each), while the node
-/// answers through the first relay that took it. So the answer is not kept
-/// behind the send: when it arrives first, it is returned at once and the
-/// send is dropped (the request has left: the node answered it).
+/// `send` ends when a relay acknowledged the request, or when every relay
+/// refused it or timed out (nostr-sdk waits ten seconds for each), while the
+/// node answers through the first relay the request reached. So the answer is
+/// not kept behind the send: when it arrives first, it is returned at once
+/// and the send is no longer waited for (the request has left: the node
+/// answered it).
 ///
 /// - `Ok(Some(reply))`: the answer.
 /// - `Ok(None)`: the request left and nothing answered within `wait` of the
 ///   send ending, or the router dropped the request (another node or key).
-/// - `Err(e)`: the send failed before any answer: nothing left.
+/// - `Err(e)`: the send failed and no answer had arrived: nothing left.
 pub(crate) async fn answer_or_send<S, E>(
     send: S,
     mut answer: oneshot::Receiver<Reply>,
@@ -465,7 +466,16 @@ where
     // which flutter_rust_bridge's codegen cannot parse in the expanded crate.
     match select(Box::pin(send), &mut answer).await {
         Either::Right((reply, _send)) => return Ok(reply.ok()),
-        Either::Left((sent, _answer)) => sent?,
+        Either::Left((Ok(()), _answer)) => {}
+        // The send failed, but the node answered meanwhile: the request
+        // left, whatever the relays said of it. The router has already
+        // applied that answer, so the caller must not read "not sent".
+        Either::Left((Err(e), _answer)) => {
+            return match answer.try_recv() {
+                Ok(reply) => Ok(Some(reply)),
+                Err(_) => Err(e),
+            };
+        }
     }
     Ok(crate::rt::time::timeout(wait, answer)
         .await
@@ -618,6 +628,23 @@ pub(crate) mod tests {
             }
         }
 
+        /// Add a relay that never acknowledges an event to the solver's
+        /// list. It must be kept alive for the test.
+        pub(crate) async fn add_silent_relay(&self) -> nostr_sdk::local_relay::LocalRelay {
+            let relay = crate::nostr::publish::tests::silent_relay().await;
+            crate::nostr::publish::tests::connect(&self.client, &relay.url().await).await;
+            relay
+        }
+
+        /// Leave the solver connected only to a relay that refuses every
+        /// request: the node is out of reach, and no relay confirms a send.
+        pub(crate) async fn leave_only_a_refusing_relay(&self) -> nostr_sdk::local_relay::LocalRelay {
+            self.client.disconnect().await;
+            let relay = crate::nostr::publish::tests::refusing_relay().await;
+            crate::nostr::publish::tests::connect(&self.client, &relay.url().await).await;
+            relay
+        }
+
         pub(crate) fn node_hex(&self) -> String {
             self.node.public_key().to_hex()
         }
@@ -682,6 +709,48 @@ pub(crate) mod tests {
         assert_eq!(taken.amount, Some(75_000));
         assert_eq!(rig.standing().await, SolverStatus::Yes);
         assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    // ── A slow relay ─────────────────────────────────────────────────────
+
+    #[tokio::test]
+    async fn a_take_is_answered_without_waiting_for_a_relay_that_never_acknowledges() {
+        let rig = Rig::new("initiated", answer_with(|rid| took(rid, DISPUTE))).await;
+        let _silent = rig.add_silent_relay().await;
+        let started = std::time::Instant::now();
+
+        // The silent relay would hold the send for ten seconds.
+        let result = rig.take(Duration::from_secs(30)).await.unwrap();
+
+        assert_eq!(result.outcome, TakeOutcome::Taken);
+        assert!(
+            started.elapsed() < Duration::from_secs(3),
+            "shown when the node answered, not when the slowest relay gave up"
+        );
+        assert_eq!(rig.row().await.status, DisputeStatus::InProgress);
+        assert_eq!(rig.router.waiting_len(), 0);
+    }
+
+    #[tokio::test]
+    async fn a_take_with_no_relay_connected_is_not_sent_and_not_waited_for() {
+        let rig = Rig::new("initiated", silent()).await;
+        rig.client.disconnect().await;
+
+        assert_eq!(rig.take(WAIT).await.unwrap_err(), TakeError::NoRelays);
+        assert_eq!(rig.router.waiting_len(), 0, "forgotten: it never left");
+        assert_eq!(rig.row().await.status, DisputeStatus::Initiated);
+    }
+
+    #[tokio::test]
+    async fn a_take_no_relay_confirmed_reads_no_answer_and_stays_waited_for() {
+        let rig = Rig::new("initiated", silent()).await;
+        let _refusing = rig.leave_only_a_refusing_relay().await;
+
+        let result = rig.take(Duration::from_millis(300)).await.unwrap();
+
+        // Never "not sent": a relay that did not confirm may have passed it on.
+        assert_eq!(result.outcome, TakeOutcome::NoAnswer);
+        assert_eq!(rig.router.waiting_len(), 1, "kept for a late answer");
     }
 
     #[tokio::test]
