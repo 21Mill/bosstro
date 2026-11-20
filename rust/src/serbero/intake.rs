@@ -1,7 +1,7 @@
 //! The trust boundary for Serbero's messages: which kind 14 events are
 //! Serbero's reports to this solver key, and which are dropped.
 
-use mostro_core::message::{Action, Payload};
+use mostro_core::message::{Action, Message, Payload};
 use nostr_sdk::prelude::{Event, Filter, Keys, Kind, PublicKey, Timestamp};
 
 use super::parse::{parse_report, Report};
@@ -46,6 +46,11 @@ pub(crate) async fn accept(solver: &Keys, serbero: &PublicKey, event: &Event) ->
     if opened.sender != *serbero || opened.identity != *serbero {
         return None;
     }
+    // Serbero writes `send-dm` as a direct message, never inside an order or
+    // a dispute message.
+    if !matches!(opened.message, Message::Dm(_)) {
+        return None;
+    }
     let inner = opened.message.get_inner_message_kind();
     if inner.action != Action::SendDm {
         return None;
@@ -66,7 +71,6 @@ pub(crate) async fn accept(solver: &Keys, serbero: &PublicKey, event: &Event) ->
 pub(crate) mod tests {
     use super::*;
     use crate::serbero::parse::ReportKind;
-    use mostro_core::message::Message;
     use mostro_core::transport::{wrap_message_nip44, WrapOptions};
     use uuid::Uuid;
 
@@ -133,6 +137,21 @@ pub(crate) mod tests {
                 Some(Payload::TextMessage(transcript_text())),
             ),
             Message::new_dm(id, None, Action::SendDm, None),
+            // Found by the independent verifier: send-dm outside a Dm.
+            Message::new_dispute(
+                id,
+                None,
+                None,
+                Action::SendDm,
+                Some(Payload::TextMessage(transcript_text())),
+            ),
+            Message::new_order(
+                id,
+                None,
+                None,
+                Action::SendDm,
+                Some(Payload::TextMessage(transcript_text())),
+            ),
         ] {
             let event = wrap(&serbero, &solver.public_key(), &message);
             assert_eq!(

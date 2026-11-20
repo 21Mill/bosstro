@@ -44,9 +44,10 @@ pub(crate) struct TranscriptLine {
     /// `hh:mm`, UTC, as Serbero wrote it.
     pub time: String,
     pub speaker: Speaker,
+    /// As Serbero wrote it, with its `[n attachments]` note when there is
+    /// one: the note is not split off, because a party can type the same
+    /// text and only Serbero's whole line says which it is.
     pub text: String,
-    /// How many files came with it (only the count reaches the solver).
-    pub attachments: u32,
 }
 
 /// A piece of a transcript body: a message, or text that reads as none.
@@ -113,13 +114,6 @@ pub(crate) fn parse_lines(body: &str) -> Vec<Entry> {
             None => entries.push(Entry::Text(line.to_owned())),
         }
     }
-    for entry in &mut entries {
-        if let Entry::Line(message) = entry {
-            let (text, attachments) = attachments_of(&message.text);
-            message.text = text;
-            message.attachments = attachments;
-        }
-    }
     entries
 }
 
@@ -145,23 +139,7 @@ fn message_line(line: &str) -> Option<TranscriptLine> {
         time: time.to_owned(),
         speaker,
         text: text.to_owned(),
-        attachments: 0,
     })
-}
-
-/// The `  [n attachment(s)]` note Serbero appends to a message, split off.
-fn attachments_of(text: &str) -> (String, u32) {
-    let Some((head, note)) = text.rsplit_once("  [") else {
-        return (text.to_owned(), 0);
-    };
-    let count = note
-        .strip_suffix(" attachment]")
-        .or_else(|| note.strip_suffix(" attachments]"))
-        .and_then(|n| n.parse::<u32>().ok());
-    match count {
-        Some(n) if n > 0 => (head.to_owned(), n),
-        _ => (text.to_owned(), 0),
-    }
 }
 
 #[cfg(test)]
@@ -245,7 +223,7 @@ mod tests {
     }
 
     #[test]
-    fn transcript_lines_with_speakers_continuations_and_attachments() {
+    fn transcript_lines_with_speakers_and_continuations() {
         let body = "[14:10] buyer: ya envié el pago\n  desde Mercado Pago  [1 attachment]\n\
                     [14:11] serbero → seller: ¿lo recibiste?\n\
                     [14:20] seller: no  [2 attachments]\n\
@@ -257,26 +235,22 @@ mod tests {
                 Entry::Line(TranscriptLine {
                     time: "14:10".into(),
                     speaker: Speaker::Buyer,
-                    text: "ya envié el pago\ndesde Mercado Pago".into(),
-                    attachments: 1,
+                    text: "ya envié el pago\ndesde Mercado Pago  [1 attachment]".into(),
                 }),
                 Entry::Line(TranscriptLine {
                     time: "14:11".into(),
                     speaker: Speaker::SerberoToSeller,
                     text: "¿lo recibiste?".into(),
-                    attachments: 0,
                 }),
                 Entry::Line(TranscriptLine {
                     time: "14:20".into(),
                     speaker: Speaker::Seller,
-                    text: "no".into(),
-                    attachments: 2,
+                    text: "no  [2 attachments]".into(),
                 }),
                 Entry::Line(TranscriptLine {
                     time: "14:21".into(),
                     speaker: Speaker::SerberoToBuyer,
                     text: "gracias".into(),
-                    attachments: 0,
                 }),
                 Entry::Text("something else".into()),
             ]
@@ -294,7 +268,6 @@ mod tests {
                 time: "14:10".into(),
                 speaker: Speaker::Buyer,
                 text: "hola\n[14:11] seller: lo recibí".into(),
-                attachments: 0,
             })]
         );
     }
