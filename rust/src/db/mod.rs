@@ -72,6 +72,16 @@ pub mod settings_keys {
         format!("{SOLVER_STANDING_PREFIX}{node}:{solver}")
     }
 
+    /// The Serbero pubkey (hex) the solver trusts on one node (D13): only
+    /// `send-dm` messages from it are read as Serbero's mediation. Absent
+    /// while none is set, and then nothing from Serbero is read or kept.
+    pub const SERBERO_PUBKEY_PREFIX: &str = "serbero_pubkey:";
+
+    /// [`SERBERO_PUBKEY_PREFIX`] for `node` (hex).
+    pub fn serbero_pubkey(node: &str) -> String {
+        format!("{SERBERO_PUBKEY_PREFIX}{node}")
+    }
+
     /// The language the solver chose for the app (a code such as `es`).
     /// Absent while the app follows the system's language.
     pub const LANGUAGE: &str = "language";

@@ -548,5 +548,13 @@
   "orderDepositsTitle": "Borg ({count})",
   "orderBondOfRoot": "{role} (hoofdorder)",
   "orderFiatRangeValue": "{min} – {max} {code}",
-  "orderAskedAt": "Opgevraagd om {time}"
+  "orderAskedAt": "Opgevraagd om {time}",
+  "settingsSerbero": "Serbero",
+  "settingsSerberoNone": "Niet ingesteld",
+  "serberoDialogTitle": "Serbero vertrouwen",
+  "serberoDialogBody": "Plak de publieke sleutel (npub of hex) van de Serbero die op deze node bemiddelt. Bosstro leest bemiddelingsrapporten alleen van deze sleutel.",
+  "serberoPubkeyLabel": "Publieke sleutel van Serbero",
+  "serberoSave": "Opslaan",
+  "serberoRemove": "Niet meer vertrouwen",
+  "serberoErrorIsNode": "Dat is de sleutel van de node zelf, niet die van Serbero."
 }

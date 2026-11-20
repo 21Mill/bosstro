@@ -548,5 +548,13 @@
   "orderDepositsTitle": "Depósitos ({count})",
   "orderBondOfRoot": "{role} (orden raíz)",
   "orderFiatRangeValue": "{min} – {max} {code}",
-  "orderAskedAt": "Consultado a las {time}"
+  "orderAskedAt": "Consultado a las {time}",
+  "settingsSerbero": "Serbero",
+  "settingsSerberoNone": "Sin configurar",
+  "serberoDialogTitle": "Confiar en Serbero",
+  "serberoDialogBody": "Pega la clave pública (npub o hex) del Serbero que media en este nodo. Bosstro solo lee informes de mediación de esta clave.",
+  "serberoPubkeyLabel": "Clave pública de Serbero",
+  "serberoSave": "Guardar",
+  "serberoRemove": "Dejar de confiar",
+  "serberoErrorIsNode": "Esa es la clave del propio nodo, no la de Serbero."
 }

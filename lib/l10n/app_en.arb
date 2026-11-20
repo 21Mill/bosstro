@@ -2447,5 +2447,37 @@
         "type": "String"
       }
     }
+  },
+  "settingsSerbero": "Serbero",
+  "@settingsSerbero": {
+    "description": "Settings row: the Serbero pubkey trusted on the active node; opens a dialog to set it"
+  },
+  "settingsSerberoNone": "Not set",
+  "@settingsSerberoNone": {
+    "description": "Value of the Serbero row when no Serbero pubkey is set"
+  },
+  "serberoDialogTitle": "Trust Serbero",
+  "@serberoDialogTitle": {
+    "description": "Title of the dialog that sets the trusted Serbero pubkey"
+  },
+  "serberoDialogBody": "Paste the public key (npub or hex) of the Serbero that mediates on this node. Bosstro reads mediation reports only from this key.",
+  "@serberoDialogBody": {
+    "description": "Body of the Serbero pubkey dialog"
+  },
+  "serberoPubkeyLabel": "Serbero's public key",
+  "@serberoPubkeyLabel": {
+    "description": "Label of the Serbero pubkey field"
+  },
+  "serberoSave": "Save",
+  "@serberoSave": {
+    "description": "Primary action of the Serbero pubkey dialog"
+  },
+  "serberoRemove": "Stop trusting",
+  "@serberoRemove": {
+    "description": "Secondary action of the Serbero pubkey dialog: forget the trusted key"
+  },
+  "serberoErrorIsNode": "That is the node's own key, not Serbero's.",
+  "@serberoErrorIsNode": {
+    "description": "Error under the field when the pasted key is the node's own key"
   }
 }

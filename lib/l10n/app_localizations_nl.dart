@@ -1954,4 +1954,30 @@ class AppLocalizationsNl extends AppLocalizations {
   String orderAskedAt(String time) {
     return 'Opgevraagd om $time';
   }
+
+  @override
+  String get settingsSerbero => 'Serbero';
+
+  @override
+  String get settingsSerberoNone => 'Niet ingesteld';
+
+  @override
+  String get serberoDialogTitle => 'Serbero vertrouwen';
+
+  @override
+  String get serberoDialogBody =>
+      'Plak de publieke sleutel (npub of hex) van de Serbero die op deze node bemiddelt. Bosstro leest bemiddelingsrapporten alleen van deze sleutel.';
+
+  @override
+  String get serberoPubkeyLabel => 'Publieke sleutel van Serbero';
+
+  @override
+  String get serberoSave => 'Opslaan';
+
+  @override
+  String get serberoRemove => 'Niet meer vertrouwen';
+
+  @override
+  String get serberoErrorIsNode =>
+      'Dat is de sleutel van de node zelf, niet die van Serbero.';
 }

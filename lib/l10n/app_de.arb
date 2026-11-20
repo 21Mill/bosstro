@@ -548,5 +548,13 @@
   "orderDepositsTitle": "Einlagen ({count})",
   "orderBondOfRoot": "{role} (Haupt-Order)",
   "orderFiatRangeValue": "{min} – {max} {code}",
-  "orderAskedAt": "Abgefragt um {time}"
+  "orderAskedAt": "Abgefragt um {time}",
+  "settingsSerbero": "Serbero",
+  "settingsSerberoNone": "Nicht festgelegt",
+  "serberoDialogTitle": "Serbero vertrauen",
+  "serberoDialogBody": "Füge den öffentlichen Schlüssel (npub oder hex) des Serbero ein, der auf diesem Knoten vermittelt. Bosstro liest Vermittlungsberichte nur von diesem Schlüssel.",
+  "serberoPubkeyLabel": "Öffentlicher Schlüssel von Serbero",
+  "serberoSave": "Speichern",
+  "serberoRemove": "Nicht mehr vertrauen",
+  "serberoErrorIsNode": "Das ist der Schlüssel des Knotens selbst, nicht der von Serbero."
 }

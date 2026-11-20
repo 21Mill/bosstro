@@ -1946,4 +1946,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String orderAskedAt(String time) {
     return 'Consultado a las $time';
   }
+
+  @override
+  String get settingsSerbero => 'Serbero';
+
+  @override
+  String get settingsSerberoNone => 'Sin configurar';
+
+  @override
+  String get serberoDialogTitle => 'Confiar en Serbero';
+
+  @override
+  String get serberoDialogBody =>
+      'Pega la clave pública (npub o hex) del Serbero que media en este nodo. Bosstro solo lee informes de mediación de esta clave.';
+
+  @override
+  String get serberoPubkeyLabel => 'Clave pública de Serbero';
+
+  @override
+  String get serberoSave => 'Guardar';
+
+  @override
+  String get serberoRemove => 'Dejar de confiar';
+
+  @override
+  String get serberoErrorIsNode =>
+      'Esa es la clave del propio nodo, no la de Serbero.';
 }

@@ -1948,4 +1948,30 @@ class AppLocalizationsFr extends AppLocalizations {
   String orderAskedAt(String time) {
     return 'Consulté à $time';
   }
+
+  @override
+  String get settingsSerbero => 'Serbero';
+
+  @override
+  String get settingsSerberoNone => 'Non défini';
+
+  @override
+  String get serberoDialogTitle => 'Faire confiance à Serbero';
+
+  @override
+  String get serberoDialogBody =>
+      'Collez la clé publique (npub ou hex) du Serbero qui assure la médiation sur ce nœud. Bosstro ne lit les rapports de médiation que de cette clé.';
+
+  @override
+  String get serberoPubkeyLabel => 'Clé publique de Serbero';
+
+  @override
+  String get serberoSave => 'Enregistrer';
+
+  @override
+  String get serberoRemove => 'Ne plus faire confiance';
+
+  @override
+  String get serberoErrorIsNode =>
+      'C\'est la clé du nœud lui-même, pas celle de Serbero.';
 }

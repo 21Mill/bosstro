@@ -3401,6 +3401,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Asked at {time}'**
   String orderAskedAt(String time);
+
+  /// Settings row: the Serbero pubkey trusted on the active node; opens a dialog to set it
+  ///
+  /// In en, this message translates to:
+  /// **'Serbero'**
+  String get settingsSerbero;
+
+  /// Value of the Serbero row when no Serbero pubkey is set
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get settingsSerberoNone;
+
+  /// Title of the dialog that sets the trusted Serbero pubkey
+  ///
+  /// In en, this message translates to:
+  /// **'Trust Serbero'**
+  String get serberoDialogTitle;
+
+  /// Body of the Serbero pubkey dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the public key (npub or hex) of the Serbero that mediates on this node. Bosstro reads mediation reports only from this key.'**
+  String get serberoDialogBody;
+
+  /// Label of the Serbero pubkey field
+  ///
+  /// In en, this message translates to:
+  /// **'Serbero\'s public key'**
+  String get serberoPubkeyLabel;
+
+  /// Primary action of the Serbero pubkey dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get serberoSave;
+
+  /// Secondary action of the Serbero pubkey dialog: forget the trusted key
+  ///
+  /// In en, this message translates to:
+  /// **'Stop trusting'**
+  String get serberoRemove;
+
+  /// Error under the field when the pasted key is the node's own key
+  ///
+  /// In en, this message translates to:
+  /// **'That is the node\'s own key, not Serbero\'s.'**
+  String get serberoErrorIsNode;
 }
 
 class _AppLocalizationsDelegate

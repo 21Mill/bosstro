@@ -1966,4 +1966,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String orderAskedAt(String time) {
     return 'Abgefragt um $time';
   }
+
+  @override
+  String get settingsSerbero => 'Serbero';
+
+  @override
+  String get settingsSerberoNone => 'Nicht festgelegt';
+
+  @override
+  String get serberoDialogTitle => 'Serbero vertrauen';
+
+  @override
+  String get serberoDialogBody =>
+      'Füge den öffentlichen Schlüssel (npub oder hex) des Serbero ein, der auf diesem Knoten vermittelt. Bosstro liest Vermittlungsberichte nur von diesem Schlüssel.';
+
+  @override
+  String get serberoPubkeyLabel => 'Öffentlicher Schlüssel von Serbero';
+
+  @override
+  String get serberoSave => 'Speichern';
+
+  @override
+  String get serberoRemove => 'Nicht mehr vertrauen';
+
+  @override
+  String get serberoErrorIsNode =>
+      'Das ist der Schlüssel des Knotens selbst, nicht der von Serbero.';
 }

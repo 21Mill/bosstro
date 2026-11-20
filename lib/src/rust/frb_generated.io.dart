@@ -12,6 +12,7 @@ import 'api/observer.dart';
 import 'api/order_info.dart';
 import 'api/relays.dart';
 import 'api/resolve.dart';
+import 'api/serbero.dart';
 import 'api/settings.dart';
 import 'api/solver.dart';
 import 'api/take.dart';
