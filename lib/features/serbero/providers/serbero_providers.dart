@@ -41,17 +41,24 @@ class SerberoMediationNotifier
     ref.onDispose(() => _generation++);
     ref.watch(activeNodeProvider);
     ref.watch(solverKeyProvider);
-    ref.watch(serberoNpubProvider);
+    // Before any await, so a report that arrives meanwhile is not missed.
     ref.listen(serberoUpdatesProvider, (_, next) {
       final disputeId = next.valueOrNull;
       if (disputeId == arg || disputeId == '') unawaited(_reload());
     });
+    // Read once the trusted key is known, so a mediation is never read
+    // before the trust it depends on, and the first read is not repeated.
+    await ref.watch(serberoNpubProvider.future);
     return _core.mediation(arg);
   }
 
   Future<void> _reload() async {
     final generation = ++_generation;
     try {
+      // After the build under way, if any: its older read must not land
+      // after this one.
+      await future.then((_) {}, onError: (_) {});
+      if (generation != _generation) return;
       final mediation = await _core.mediation(arg);
       if (generation == _generation) state = AsyncData(mediation);
     } catch (e) {

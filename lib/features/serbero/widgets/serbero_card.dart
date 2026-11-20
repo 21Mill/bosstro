@@ -21,8 +21,12 @@ class SerberoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final read = ref.watch(serberoMediationProvider(disputeId));
+    // Never the previous value while the node, the key or the trusted
+    // Serbero changes, nor after a failed read: it may be a report the
+    // solver no longer trusts.
     final mediation =
-        ref.watch(serberoMediationProvider(disputeId)).valueOrNull;
+        read.isReloading || read.hasError ? null : read.valueOrNull;
     if (mediation == null) return const SizedBox.shrink();
     final trusted = ref.watch(serberoNpubProvider).valueOrNull != null;
     final l10n = AppLocalizations.of(context);

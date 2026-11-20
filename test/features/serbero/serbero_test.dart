@@ -420,4 +420,55 @@ void main() {
     await _scrollTo(tester, find.text('Lo nuevo.'));
     expect(find.text('Lo nuevo.'), findsOneWidget);
   });
+
+  testWidgets('a first read that ends after a newer reload does not replace '
+      'it', (tester) async {
+    // Arrange: the first read is held.
+    final serbero = FakeSerberoCore();
+    final first = Completer<SerberoMediation?>();
+    serbero.holdNext = first;
+    serbero.mediations[_a] = _handedOff(
+      transcript: [serberoLine(SerberoSpeaker.seller, 'Lo nuevo.')],
+      parts: 1,
+      total: 1,
+    );
+    await _pumpDetail(tester, serbero: serbero);
+
+    // Act: a report arrives and is read; then the first read ends with an
+    // older mediation.
+    serbero.push(_a);
+    await tester.pump();
+    first.complete(_handedOff());
+    await tester.pumpAndSettle();
+    await _openMediation(tester);
+
+    // Assert
+    await _scrollTo(tester, find.text('Lo nuevo.'));
+    expect(find.text('Lo nuevo.'), findsOneWidget);
+  });
+
+  testWidgets('while the trusted Serbero changes, the card offers no report', (
+    tester,
+  ) async {
+    // Arrange
+    final serbero = FakeSerberoCore()..mediations[_a] = _handedOff();
+    await _pumpDetail(tester, serbero: serbero);
+    await _scrollInfoTo(tester, find.byType(SerberoCard));
+    expect(find.text('Leer la mediación de Serbero'), findsOneWidget);
+
+    // Act: the trust changes and the new read is held, then fails.
+    final held = Completer<SerberoMediation?>();
+    serbero.holdNext = held;
+    ProviderScope.containerOf(
+      tester.element(find.byType(SerberoCard)),
+    ).invalidate(serberoNpubProvider);
+    await tester.pump();
+    await tester.pump();
+
+    // Assert
+    expect(find.text('Leer la mediación de Serbero'), findsNothing);
+    held.completeError(Exception('storage'));
+    await tester.pumpAndSettle();
+    expect(find.text('Leer la mediación de Serbero'), findsNothing);
+  });
 }

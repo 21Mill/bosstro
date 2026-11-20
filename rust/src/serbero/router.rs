@@ -47,11 +47,18 @@ impl Target {
     }
 }
 
-/// The subscription id of `serbero` and `solver` (both hex), within NIP-01's
-/// 64 characters.
-fn subscription_id(serbero: &str, solver: &str) -> SubscriptionId {
+/// The subscription id of `node`, `serbero` and `solver` (all hex), within
+/// NIP-01's 64 characters. The node is part of it so a late notification of
+/// a previous node's subscription never matches the current one, even when
+/// both trust the same Serbero.
+fn subscription_id(node: &str, serbero: &str, solver: &str) -> SubscriptionId {
     let short = |s: &str| s.chars().take(16).collect::<String>();
-    SubscriptionId::new(format!("serbero-{}-{}", short(serbero), short(solver)))
+    SubscriptionId::new(format!(
+        "serbero-{}-{}-{}",
+        short(node),
+        short(serbero),
+        short(solver)
+    ))
 }
 
 fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
@@ -137,7 +144,11 @@ impl Router {
         let _guard = self.retarget_lock.lock().await;
         let next = match (node, keys, serbero) {
             (Some(node), Some(keys), Some(serbero)) => Some(Target {
-                sub: subscription_id(&serbero.to_hex(), &keys.public_key().to_hex()),
+                sub: subscription_id(
+                    &node.to_hex(),
+                    &serbero.to_hex(),
+                    &keys.public_key().to_hex(),
+                ),
                 node,
                 keys,
                 serbero,
@@ -391,5 +402,21 @@ mod tests {
                 .unwrap();
             assert!(rows.is_empty());
         }
+    }
+
+    /// Found by review: a late notification of a previous node's
+    /// subscription must not match the current one.
+    #[test]
+    fn each_node_has_its_own_subscription() {
+        let (a, b, solver, serbero) = (
+            Keys::generate().public_key().to_hex(),
+            Keys::generate().public_key().to_hex(),
+            Keys::generate().public_key().to_hex(),
+            Keys::generate().public_key().to_hex(),
+        );
+        let id = |node: &str| subscription_id(node, &serbero, &solver);
+        assert_ne!(id(&a), id(&b));
+        assert_eq!(id(&a), id(&a), "back on a node, its own subscription again");
+        assert!(id(&a).to_string().len() <= 64, "NIP-01");
     }
 }
