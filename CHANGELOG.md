@@ -4,6 +4,20 @@ All notable changes to Bosstro are documented here, newest first. This file is
 written by the release workflow (docs/RELEASING.md) — do not edit it by hand.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] - 2026-11-17
+
+### ✨ Features
+
+- look up the state of any order of the node, and one Disputes tab ([#52](https://github.com/MostroP2P/bosstro/pull/52)) by @Catrya
+
+### 🐛 Bug Fixes
+
+- stay logged in when the app is reopened after leaving it with Back ([#55](https://github.com/MostroP2P/bosstro/pull/55)) by @grunch
+
+### 👷 Build & CI
+
+- publish every release on Zapstore ([#50](https://github.com/MostroP2P/bosstro/pull/50)) by @grunch
+
 ## [0.1.1] - 2026-10-27
 
 ### 🐛 Bug Fixes
