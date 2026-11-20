@@ -17,3 +17,28 @@
 
 pub(crate) mod intake;
 pub(crate) mod parse;
+pub(crate) mod router;
+pub(crate) mod view;
+
+/// One dispute's Serbero reports to one solver key on one node (D6).
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct SerberoRef {
+    pub mostro_pubkey: String,
+    pub dispute_id: String,
+    pub solver_pubkey: String,
+}
+
+/// One stored Serbero message, as Serbero wrote it.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct SerberoRecord {
+    pub conversation: SerberoRef,
+    /// The outer kind 14 event id (hex).
+    pub event_id: String,
+    /// The Serbero key (hex) that signed it.
+    pub serbero_pubkey: String,
+    pub content: String,
+    /// The event's `created_at`, as Serbero set it.
+    pub created_at: i64,
+    /// This device's clock when it was read.
+    pub received_at: i64,
+}

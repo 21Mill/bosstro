@@ -6,7 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `npub`, `read_serbero`, `write_serbero`
+// These functions are ignored because they are not marked as `pub`: `npub`, `read_serbero`, `trusted_serbero`, `write_serbero`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// The Serbero pubkey trusted on `node`, as an npub to show, or `None` when
 /// none is set.
@@ -23,3 +24,168 @@ Future<String?> setSerberoPubkey({required String node, String? pubkey}) =>
       node: node,
       pubkey: pubkey,
     );
+
+/// What Serbero sent the loaded key about `dispute_id` on the active node, as
+/// stored. `None` without an active node, a loaded key or storage.
+Future<SerberoMediation?> serberoMediation({required String disputeId}) =>
+    RustLib.instance.api.crateApiSerberoSerberoMediation(disputeId: disputeId);
+
+/// Stream of the disputes whose Serbero reports changed on the active node.
+Future<SerberoUpdateStream> onSerberoUpdates() =>
+    RustLib.instance.api.crateApiSerberoOnSerberoUpdates();
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SerberoUpdateStream>>
+abstract class SerberoUpdateStream implements RustOpaqueInterface {
+  /// The next dispute id whose reports changed on the active node, `""`
+  /// when this reader fell behind (read again whatever is shown), or
+  /// `None` once the router is gone.
+  Future<String?> next();
+}
+
+/// One line of the conversation Serbero had with the parties: a message, or
+/// text that reads as none (kept, never dropped).
+class SerberoLine {
+  /// `hh:mm`, UTC, as Serbero wrote it; empty for text that is no message.
+  final String time;
+
+  /// Who wrote it; `None` for text that is no message.
+  final SerberoSpeaker? speaker;
+
+  /// As Serbero wrote it. Serbero forwards no files, only a
+  /// `[n attachments]` note at the end, which a party could also type.
+  final String text;
+
+  const SerberoLine({required this.time, this.speaker, required this.text});
+
+  @override
+  int get hashCode => time.hashCode ^ speaker.hashCode ^ text.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SerberoLine &&
+          runtimeType == other.runtimeType &&
+          time == other.time &&
+          speaker == other.speaker &&
+          text == other.text;
+}
+
+/// What Serbero sent this solver key about one dispute.
+class SerberoMediation {
+  final String disputeId;
+
+  /// The newest brief (a handoff or a guidance).
+  final SerberoNote? brief;
+
+  /// The newest transcript, its parts in order.
+  final List<SerberoLine> transcript;
+
+  /// How many parts of that transcript arrived, of how many.
+  final int transcriptParts;
+  final int transcriptTotal;
+
+  /// The messages after the handoff, oldest first.
+  final List<SerberoUpdateView> updates;
+
+  /// The final report, once the dispute was resolved.
+  final SerberoNote? finalReport;
+
+  const SerberoMediation({
+    required this.disputeId,
+    this.brief,
+    required this.transcript,
+    required this.transcriptParts,
+    required this.transcriptTotal,
+    required this.updates,
+    this.finalReport,
+  });
+
+  /// Whether Serbero sent anything about this dispute.
+  bool isEmpty() =>
+      RustLib.instance.api.crateApiSerberoSerberoMediationIsEmpty(that: this);
+
+  @override
+  int get hashCode =>
+      disputeId.hashCode ^
+      brief.hashCode ^
+      transcript.hashCode ^
+      transcriptParts.hashCode ^
+      transcriptTotal.hashCode ^
+      updates.hashCode ^
+      finalReport.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SerberoMediation &&
+          runtimeType == other.runtimeType &&
+          disputeId == other.disputeId &&
+          brief == other.brief &&
+          transcript == other.transcript &&
+          transcriptParts == other.transcriptParts &&
+          transcriptTotal == other.transcriptTotal &&
+          updates == other.updates &&
+          finalReport == other.finalReport;
+}
+
+/// A Serbero message shown as Serbero wrote it: the brief, an update, the
+/// final report.
+class SerberoNote {
+  /// The subject of its first line (`handed off: …`, `resolved: …`).
+  final String subject;
+
+  /// The text after the first line.
+  final String body;
+
+  /// When Serbero sent it (unix seconds).
+  final PlatformInt64 sentAt;
+
+  const SerberoNote({
+    required this.subject,
+    required this.body,
+    required this.sentAt,
+  });
+
+  @override
+  int get hashCode => subject.hashCode ^ body.hashCode ^ sentAt.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SerberoNote &&
+          runtimeType == other.runtimeType &&
+          subject == other.subject &&
+          body == other.body &&
+          sentAt == other.sentAt;
+}
+
+/// Who wrote one message of Serbero's transcript.
+enum SerberoSpeaker {
+  buyer,
+  seller,
+
+  /// Serbero, writing to the buyer.
+  serberoToBuyer,
+
+  /// Serbero, writing to the seller.
+  serberoToSeller,
+}
+
+/// The messages that arrived after the handoff, in one Serbero message.
+class SerberoUpdateView {
+  final PlatformInt64 sentAt;
+  final List<SerberoLine> lines;
+
+  const SerberoUpdateView({required this.sentAt, required this.lines});
+
+  @override
+  int get hashCode => sentAt.hashCode ^ lines.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SerberoUpdateView &&
+          runtimeType == other.runtimeType &&
+          sentAt == other.sentAt &&
+          lines == other.lines;
+}

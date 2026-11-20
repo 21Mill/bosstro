@@ -52,6 +52,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   get rust_arc_decrement_strong_count_RelayStatusStreamPtr =>
       wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRelayStatusStream;
 
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_SerberoUpdateStreamPtr =>
+      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
@@ -86,6 +90,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  SerberoUpdateStream
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    dynamic raw,
+  );
+
+  @protected
   AttachmentProgressStream
   dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAttachmentProgressStream(
     dynamic raw,
@@ -116,6 +126,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  SerberoUpdateStream
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    dynamic raw,
+  );
+
+  @protected
   AttachmentProgressStream
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAttachmentProgressStream(
     dynamic raw,
@@ -142,6 +158,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   RelayStatusStream
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRelayStatusStream(
+    dynamic raw,
+  );
+
+  @protected
+  SerberoUpdateStream
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
     dynamic raw,
   );
 
@@ -249,6 +271,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ResolvedAs dco_decode_box_autoadd_resolved_as(dynamic raw);
+
+  @protected
+  SerberoMediation dco_decode_box_autoadd_serbero_mediation(dynamic raw);
+
+  @protected
+  SerberoNote dco_decode_box_autoadd_serbero_note(dynamic raw);
+
+  @protected
+  SerberoSpeaker dco_decode_box_autoadd_serbero_speaker(dynamic raw);
 
   @protected
   SolverKeyInfo dco_decode_box_autoadd_solver_key_info(dynamic raw);
@@ -360,6 +391,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<RelayInfo> dco_decode_list_relay_info(dynamic raw);
+
+  @protected
+  List<SerberoLine> dco_decode_list_serbero_line(dynamic raw);
+
+  @protected
+  List<SerberoUpdateView> dco_decode_list_serbero_update_view(dynamic raw);
 
   @protected
   List<TakenDisputeSummary> dco_decode_list_taken_dispute_summary(dynamic raw);
@@ -481,6 +518,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ResolvedAs? dco_decode_opt_box_autoadd_resolved_as(dynamic raw);
 
   @protected
+  SerberoMediation? dco_decode_opt_box_autoadd_serbero_mediation(dynamic raw);
+
+  @protected
+  SerberoNote? dco_decode_opt_box_autoadd_serbero_note(dynamic raw);
+
+  @protected
+  SerberoSpeaker? dco_decode_opt_box_autoadd_serbero_speaker(dynamic raw);
+
+  @protected
   SolverKeyInfo? dco_decode_opt_box_autoadd_solver_key_info(dynamic raw);
 
   @protected
@@ -551,6 +597,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ResolvedAs dco_decode_resolved_as(dynamic raw);
+
+  @protected
+  SerberoLine dco_decode_serbero_line(dynamic raw);
+
+  @protected
+  SerberoMediation dco_decode_serbero_mediation(dynamic raw);
+
+  @protected
+  SerberoNote dco_decode_serbero_note(dynamic raw);
+
+  @protected
+  SerberoSpeaker dco_decode_serbero_speaker(dynamic raw);
+
+  @protected
+  SerberoUpdateView dco_decode_serbero_update_view(dynamic raw);
 
   @protected
   SolverKeyError dco_decode_solver_key_error(dynamic raw);
@@ -625,6 +686,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  SerberoUpdateStream
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   AttachmentProgressStream
   sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAttachmentProgressStream(
     SseDeserializer deserializer,
@@ -655,6 +722,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  SerberoUpdateStream
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   AttachmentProgressStream
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAttachmentProgressStream(
     SseDeserializer deserializer,
@@ -681,6 +754,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   RelayStatusStream
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRelayStatusStream(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  SerberoUpdateStream
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
     SseDeserializer deserializer,
   );
 
@@ -818,6 +897,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ResolvedAs sse_decode_box_autoadd_resolved_as(SseDeserializer deserializer);
 
   @protected
+  SerberoMediation sse_decode_box_autoadd_serbero_mediation(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  SerberoNote sse_decode_box_autoadd_serbero_note(SseDeserializer deserializer);
+
+  @protected
+  SerberoSpeaker sse_decode_box_autoadd_serbero_speaker(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   SolverKeyInfo sse_decode_box_autoadd_solver_key_info(
     SseDeserializer deserializer,
   );
@@ -945,6 +1037,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<RelayInfo> sse_decode_list_relay_info(SseDeserializer deserializer);
+
+  @protected
+  List<SerberoLine> sse_decode_list_serbero_line(SseDeserializer deserializer);
+
+  @protected
+  List<SerberoUpdateView> sse_decode_list_serbero_update_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<TakenDisputeSummary> sse_decode_list_taken_dispute_summary(
@@ -1106,6 +1206,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  SerberoMediation? sse_decode_opt_box_autoadd_serbero_mediation(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  SerberoNote? sse_decode_opt_box_autoadd_serbero_note(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  SerberoSpeaker? sse_decode_opt_box_autoadd_serbero_speaker(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   SolverKeyInfo? sse_decode_opt_box_autoadd_solver_key_info(
     SseDeserializer deserializer,
   );
@@ -1188,6 +1303,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ResolvedAs sse_decode_resolved_as(SseDeserializer deserializer);
+
+  @protected
+  SerberoLine sse_decode_serbero_line(SseDeserializer deserializer);
+
+  @protected
+  SerberoMediation sse_decode_serbero_mediation(SseDeserializer deserializer);
+
+  @protected
+  SerberoNote sse_decode_serbero_note(SseDeserializer deserializer);
+
+  @protected
+  SerberoSpeaker sse_decode_serbero_speaker(SseDeserializer deserializer);
+
+  @protected
+  SerberoUpdateView sse_decode_serbero_update_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   SolverKeyError sse_decode_solver_key_error(SseDeserializer deserializer);
@@ -1273,6 +1405,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    SerberoUpdateStream self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAttachmentProgressStream(
     AttachmentProgressStream self,
     SseSerializer serializer,
@@ -1308,6 +1447,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    SerberoUpdateStream self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAttachmentProgressStream(
     AttachmentProgressStream self,
     SseSerializer serializer,
@@ -1338,6 +1484,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRelayStatusStream(
     RelayStatusStream self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    SerberoUpdateStream self,
     SseSerializer serializer,
   );
 
@@ -1525,6 +1678,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_serbero_mediation(
+    SerberoMediation self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_serbero_note(
+    SerberoNote self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_serbero_speaker(
+    SerberoSpeaker self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_solver_key_info(
     SolverKeyInfo self,
     SseSerializer serializer,
@@ -1689,6 +1860,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_relay_info(
     List<RelayInfo> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_serbero_line(
+    List<SerberoLine> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_serbero_update_view(
+    List<SerberoUpdateView> self,
     SseSerializer serializer,
   );
 
@@ -1897,6 +2080,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_serbero_mediation(
+    SerberoMediation? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_serbero_note(
+    SerberoNote? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_serbero_speaker(
+    SerberoSpeaker? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_solver_key_info(
     SolverKeyInfo? self,
     SseSerializer serializer,
@@ -1997,6 +2198,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_resolved_as(ResolvedAs self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_serbero_line(SerberoLine self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_serbero_mediation(
+    SerberoMediation self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_serbero_note(SerberoNote self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_serbero_speaker(
+    SerberoSpeaker self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_serbero_update_view(
+    SerberoUpdateView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_solver_key_error(
@@ -2134,6 +2359,22 @@ class RustLibWire implements BaseWire {
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRelayStatusStream(
         ptr,
       );
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+        ptr,
+      );
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+        ptr,
+      );
 }
 
 @JS('wasm_bindgen')
@@ -2189,6 +2430,16 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void
   rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRelayStatusStream(
+    int ptr,
+  );
+
+  external void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
+    int ptr,
+  );
+
+  external void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerberoUpdateStream(
     int ptr,
   );
 }

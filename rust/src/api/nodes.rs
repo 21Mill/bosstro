@@ -485,6 +485,8 @@ pub async fn select_active_node(pubkey: String) -> Result<()> {
     crate::rt::spawn(crate::mostro::replies::follow());
     // And the chats: the previous node's close.
     crate::rt::spawn(crate::chat::router::follow());
+    // And Serbero's reports, from the Serbero trusted on the new node.
+    crate::rt::spawn(crate::serbero::router::follow());
     Ok(())
 }
 

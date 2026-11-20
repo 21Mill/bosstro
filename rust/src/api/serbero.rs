@@ -32,10 +32,15 @@ pub async fn set_serbero_pubkey(node: String, pubkey: Option<String>) -> Result<
     let Some(db) = crate::db::app_db::db() else {
         bail!("NotInitialized: storage is not ready");
     };
-    write_serbero(db, &node, pubkey.as_deref())
-        .await?
-        .map(|hex| npub(&hex))
-        .transpose()
+    let trusted = write_serbero(db, &node, pubkey.as_deref()).await?;
+    // Serbero's reports are followed from the new key, or no more.
+    crate::serbero::router::follow().await;
+    trusted.map(|hex| npub(&hex)).transpose()
+}
+
+/// The hex Serbero pubkey trusted on `node`, for the core's own readers.
+pub(crate) async fn trusted_serbero(db: &impl Storage, node: &str) -> Result<Option<String>> {
+    read_serbero(db, node).await
 }
 
 fn npub(hex: &str) -> Result<String> {
@@ -66,6 +71,135 @@ async fn write_serbero(
     }
     db.set_setting(&key, &hex).await?;
     Ok(Some(hex))
+}
+
+// ── Serbero's mediation, as the dispute screen shows it ──────────────────────
+
+/// Who wrote one message of Serbero's transcript.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SerberoSpeaker {
+    Buyer,
+    Seller,
+    /// Serbero, writing to the buyer.
+    SerberoToBuyer,
+    /// Serbero, writing to the seller.
+    SerberoToSeller,
+}
+
+/// One line of the conversation Serbero had with the parties: a message, or
+/// text that reads as none (kept, never dropped).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SerberoLine {
+    /// `hh:mm`, UTC, as Serbero wrote it; empty for text that is no message.
+    pub time: String,
+    /// Who wrote it; `None` for text that is no message.
+    pub speaker: Option<SerberoSpeaker>,
+    /// As Serbero wrote it. Serbero forwards no files, only a
+    /// `[n attachments]` note at the end, which a party could also type.
+    pub text: String,
+}
+
+/// A Serbero message shown as Serbero wrote it: the brief, an update, the
+/// final report.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SerberoNote {
+    /// The subject of its first line (`handed off: …`, `resolved: …`).
+    pub subject: String,
+    /// The text after the first line.
+    pub body: String,
+    /// When Serbero sent it (unix seconds).
+    pub sent_at: i64,
+}
+
+/// The messages that arrived after the handoff, in one Serbero message.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SerberoUpdateView {
+    pub sent_at: i64,
+    pub lines: Vec<SerberoLine>,
+}
+
+/// What Serbero sent this solver key about one dispute.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SerberoMediation {
+    pub dispute_id: String,
+    /// The newest brief (a handoff or a guidance).
+    pub brief: Option<SerberoNote>,
+    /// The newest transcript, its parts in order.
+    pub transcript: Vec<SerberoLine>,
+    /// How many parts of that transcript arrived, of how many.
+    pub transcript_parts: u32,
+    pub transcript_total: u32,
+    /// The messages after the handoff, oldest first.
+    pub updates: Vec<SerberoUpdateView>,
+    /// The final report, once the dispute was resolved.
+    pub final_report: Option<SerberoNote>,
+}
+
+impl SerberoMediation {
+    /// Whether Serbero sent anything about this dispute.
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn is_empty(&self) -> bool {
+        self.brief.is_none()
+            && self.transcript_total == 0
+            && self.updates.is_empty()
+            && self.final_report.is_none()
+    }
+}
+
+/// What Serbero sent the loaded key about `dispute_id` on the active node, as
+/// stored. `None` without an active node, a loaded key or storage.
+pub async fn serbero_mediation(dispute_id: String) -> Result<Option<SerberoMediation>> {
+    let Ok((node, keys)) = crate::chat::router::node_and_keys().await else {
+        return Ok(None);
+    };
+    let Some(db) = crate::db::app_db::db() else {
+        return Ok(None);
+    };
+    let records = db
+        .list_serbero_messages(&crate::serbero::SerberoRef {
+            mostro_pubkey: node,
+            dispute_id: dispute_id.clone(),
+            solver_pubkey: keys.public_key().to_hex(),
+        })
+        .await?;
+    Ok(Some(crate::serbero::view::assemble(&dispute_id, &records)))
+}
+
+/// Stream of the disputes whose Serbero reports changed on the active node.
+pub fn on_serbero_updates() -> SerberoUpdateStream {
+    SerberoUpdateStream {
+        rx: crate::serbero::router::subscribe_updates(),
+    }
+}
+
+/// Wrapper so flutter_rust_bridge can hand Dart a pull-based stream.
+pub struct SerberoUpdateStream {
+    rx: tokio::sync::broadcast::Receiver<crate::serbero::router::SerberoUpdate>,
+}
+
+impl SerberoUpdateStream {
+    /// The next dispute id whose reports changed on the active node, `""`
+    /// when this reader fell behind (read again whatever is shown), or
+    /// `None` once the router is gone.
+    pub async fn next(&mut self) -> Option<String> {
+        use tokio::sync::broadcast::error::RecvError;
+        loop {
+            match self.rx.recv().await {
+                Ok(update) => {
+                    if crate::config::active_mostro_pubkey().as_deref()
+                        == Some(update.mostro_pubkey.as_str())
+                    {
+                        return Some(update.dispute_id);
+                    }
+                }
+                Err(RecvError::Lagged(_)) => {
+                    self.rx = self.rx.resubscribe();
+                    return Some(String::new());
+                }
+                Err(RecvError::Closed) => return None,
+            }
+        }
+    }
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
