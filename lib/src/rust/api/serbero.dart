@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `npub`, `read_serbero`, `trusted_serbero`, `write_serbero`
+// These functions are ignored because they are not marked as `pub`: `mediation_for`, `npub`, `read_serbero`, `trusted_serbero`, `write_serbero`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// The Serbero pubkey trusted on `node`, as an npub to show, or `None` when
@@ -112,6 +112,10 @@ class SerberoMediation {
   final int transcriptParts;
   final int transcriptTotal;
 
+  /// When the newest part of that transcript was sent (unix seconds), so
+  /// a transcript whose brief never arrived still dates the mediation.
+  final PlatformInt64? transcriptSentAt;
+
   /// The messages after the handoff, oldest first.
   final List<SerberoUpdateView> updates;
 
@@ -124,6 +128,7 @@ class SerberoMediation {
     required this.transcript,
     required this.transcriptParts,
     required this.transcriptTotal,
+    this.transcriptSentAt,
     required this.updates,
     this.finalReport,
   });
@@ -135,6 +140,7 @@ class SerberoMediation {
       transcript.hashCode ^
       transcriptParts.hashCode ^
       transcriptTotal.hashCode ^
+      transcriptSentAt.hashCode ^
       updates.hashCode ^
       finalReport.hashCode;
 
@@ -148,6 +154,7 @@ class SerberoMediation {
           transcript == other.transcript &&
           transcriptParts == other.transcriptParts &&
           transcriptTotal == other.transcriptTotal &&
+          transcriptSentAt == other.transcriptSentAt &&
           updates == other.updates &&
           finalReport == other.finalReport;
 }

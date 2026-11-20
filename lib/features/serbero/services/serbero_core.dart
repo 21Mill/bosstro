@@ -54,6 +54,7 @@ extension SerberoMediationShown on SerberoMediation {
   int? get lastSentAt {
     final times = [
       if (brief case final note?) note.sentAt.toInt(),
+      if (transcriptSentAt case final at?) at.toInt(),
       for (final update in updates) update.sentAt.toInt(),
       if (finalReport case final note?) note.sentAt.toInt(),
     ];

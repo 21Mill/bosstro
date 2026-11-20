@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bosstro/features/settings/services/settings_core.dart';
 
 /// [SettingsCore] in Dart: the language kept in a field.
@@ -13,6 +15,9 @@ class FakeSettingsCore implements SettingsCore {
 
   /// Thrown by the next [setSerberoPubkey], once.
   Object? serberoError;
+
+  /// Holds the next [setSerberoPubkey] until the test completes it.
+  Completer<void>? holdSerberoWrite;
 
   /// Every language written, in order.
   final List<String?> writes = [];
@@ -31,6 +36,11 @@ class FakeSettingsCore implements SettingsCore {
 
   @override
   Future<String?> setSerberoPubkey(String node, String? pubkey) async {
+    final held = holdSerberoWrite;
+    if (held != null) {
+      holdSerberoWrite = null;
+      await held.future;
+    }
     final error = serberoError;
     if (error != null) {
       serberoError = null;

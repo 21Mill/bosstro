@@ -3639,16 +3639,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   SerberoMediation dco_decode_serbero_mediation(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return SerberoMediation(
       disputeId: dco_decode_String(arr[0]),
       brief: dco_decode_opt_box_autoadd_serbero_note(arr[1]),
       transcript: dco_decode_list_serbero_line(arr[2]),
       transcriptParts: dco_decode_u_32(arr[3]),
       transcriptTotal: dco_decode_u_32(arr[4]),
-      updates: dco_decode_list_serbero_update_view(arr[5]),
-      finalReport: dco_decode_opt_box_autoadd_serbero_note(arr[6]),
+      transcriptSentAt: dco_decode_opt_box_autoadd_i_64(arr[5]),
+      updates: dco_decode_list_serbero_update_view(arr[6]),
+      finalReport: dco_decode_opt_box_autoadd_serbero_note(arr[7]),
     );
   }
 
@@ -5687,6 +5688,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_transcript = sse_decode_list_serbero_line(deserializer);
     var var_transcriptParts = sse_decode_u_32(deserializer);
     var var_transcriptTotal = sse_decode_u_32(deserializer);
+    var var_transcriptSentAt = sse_decode_opt_box_autoadd_i_64(deserializer);
     var var_updates = sse_decode_list_serbero_update_view(deserializer);
     var var_finalReport = sse_decode_opt_box_autoadd_serbero_note(deserializer);
     return SerberoMediation(
@@ -5695,6 +5697,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       transcript: var_transcript,
       transcriptParts: var_transcriptParts,
       transcriptTotal: var_transcriptTotal,
+      transcriptSentAt: var_transcriptSentAt,
       updates: var_updates,
       finalReport: var_finalReport,
     );
@@ -7605,6 +7608,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_serbero_line(self.transcript, serializer);
     sse_encode_u_32(self.transcriptParts, serializer);
     sse_encode_u_32(self.transcriptTotal, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.transcriptSentAt, serializer);
     sse_encode_list_serbero_update_view(self.updates, serializer);
     sse_encode_opt_box_autoadd_serbero_note(self.finalReport, serializer);
   }

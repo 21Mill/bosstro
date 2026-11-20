@@ -153,6 +153,9 @@ pub struct SerberoMediation {
     /// How many parts of that transcript arrived, of how many.
     pub transcript_parts: u32,
     pub transcript_total: u32,
+    /// When the newest part of that transcript was sent (unix seconds), so
+    /// a transcript whose brief never arrived still dates the mediation.
+    pub transcript_sent_at: Option<i64>,
     /// The messages after the handoff, oldest first.
     pub updates: Vec<SerberoUpdateView>,
     /// The final report, once the dispute was resolved.
@@ -168,14 +171,34 @@ pub async fn serbero_mediation(dispute_id: String) -> Result<Option<SerberoMedia
     let Some(db) = crate::db::app_db::db() else {
         return Ok(None);
     };
-    let records = db
+    Ok(Some(
+        mediation_for(db, &node, &keys.public_key().to_hex(), &dispute_id).await?,
+    ))
+}
+
+/// What the Serbero trusted on `node` now sent `solver` about `dispute_id`.
+/// Reports of a key no longer trusted are not shown, and nothing is without
+/// a trusted key (D13).
+async fn mediation_for(
+    db: &impl Storage,
+    node: &str,
+    solver: &str,
+    dispute_id: &str,
+) -> Result<SerberoMediation> {
+    let Some(trusted) = read_serbero(db, node).await? else {
+        return Ok(crate::serbero::view::assemble(dispute_id, &[]));
+    };
+    let records: Vec<_> = db
         .list_serbero_messages(&crate::serbero::SerberoRef {
-            mostro_pubkey: node,
-            dispute_id: dispute_id.clone(),
-            solver_pubkey: keys.public_key().to_hex(),
+            mostro_pubkey: node.to_owned(),
+            dispute_id: dispute_id.to_owned(),
+            solver_pubkey: solver.to_owned(),
         })
-        .await?;
-    Ok(Some(crate::serbero::view::assemble(&dispute_id, &records)))
+        .await?
+        .into_iter()
+        .filter(|r| r.serbero_pubkey == trusted)
+        .collect();
+    Ok(crate::serbero::view::assemble(dispute_id, &records))
 }
 
 /// Stream of the disputes whose Serbero reports changed on the active node.
@@ -276,5 +299,47 @@ mod tests {
             assert!(error.to_string().starts_with(marker), "{input}: {error}");
         }
         assert_eq!(read_serbero(&db, &node).await.unwrap(), Some(serbero));
+    }
+
+    fn report(node: &str, solver: &str, serbero: &str, event: &str) -> crate::serbero::SerberoRecord {
+        crate::serbero::SerberoRecord {
+            conversation: crate::serbero::SerberoRef {
+                mostro_pubkey: node.into(),
+                dispute_id: DISPUTE.into(),
+                solver_pubkey: solver.into(),
+            },
+            event_id: event.into(),
+            serbero_pubkey: serbero.into(),
+            content: format!("Dispute {DISPUTE} · handed off: human_requested\nTopic: {event}"),
+            created_at: 10,
+            received_at: 11,
+        }
+    }
+
+    const DISPUTE: &str = "8a0c1e64-0d3b-4c39-9a3e-3a1f1f0f4b2c";
+
+    #[tokio::test]
+    async fn only_the_serbero_trusted_now_is_shown() {
+        let db = crate::db::sqlite::tests::store().await;
+        let node = Keys::generate().public_key().to_hex();
+        let solver = Keys::generate().public_key().to_hex();
+        let (old, new) = (Keys::generate().public_key().to_hex(), Keys::generate().public_key().to_hex());
+        db.insert_serbero_message(&report(&node, &solver, &old, "from-old")).await.unwrap();
+        let topic = |m: &SerberoMediation| m.brief.as_ref().map(|b| b.body.clone());
+
+        let none = mediation_for(&db, &node, &solver, DISPUTE).await.unwrap();
+        assert_eq!(topic(&none), None, "nothing without a trusted key");
+
+        write_serbero(&db, &node, Some(&old)).await.unwrap();
+        let shown = mediation_for(&db, &node, &solver, DISPUTE).await.unwrap();
+        assert_eq!(topic(&shown).as_deref(), Some("Topic: from-old"));
+
+        write_serbero(&db, &node, Some(&new)).await.unwrap();
+        let replaced = mediation_for(&db, &node, &solver, DISPUTE).await.unwrap();
+        assert_eq!(topic(&replaced), None, "a key no longer trusted is not shown");
+
+        db.insert_serbero_message(&report(&node, &solver, &new, "from-new")).await.unwrap();
+        let current = mediation_for(&db, &node, &solver, DISPUTE).await.unwrap();
+        assert_eq!(topic(&current).as_deref(), Some("Topic: from-new"));
     }
 }

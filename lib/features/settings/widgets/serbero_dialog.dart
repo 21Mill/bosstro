@@ -55,11 +55,14 @@ class _SerberoDialogState extends ConsumerState<_SerberoDialog> {
       _busy = true;
       _error = null;
     });
+    // The container outlives this dialog: a save that ends after it was
+    // dismissed still refreshes what Settings shows.
+    final container = ProviderScope.containerOf(context, listen: false);
     try {
-      await ref
+      await container
           .read(settingsCoreProvider)
           .setSerberoPubkey(widget.node, pubkey);
-      ref.invalidate(serberoNpubProvider);
+      container.invalidate(serberoNpubProvider);
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {

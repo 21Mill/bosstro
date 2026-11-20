@@ -45,7 +45,7 @@ class SerberoCard extends ConsumerWidget {
         14 - actionPadding,
         14,
         14,
-        last != null ? 6 : 14,
+        mediation.isBlank ? 14 : 6,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +87,7 @@ class SerberoCard extends ConsumerWidget {
               ],
             ),
           ),
-          if (last != null) ...[
+          if (!mediation.isBlank) ...[
             const SizedBox(height: 4),
             LabeledIconAction(
               icon: Icons.article_outlined,

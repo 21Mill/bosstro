@@ -80,7 +80,9 @@ impl Router {
     /// only the kind 14 events of the current subscription, in order; a
     /// second task opens and stores them (as `mostro::replies`).
     fn spawn_reader(self: &Arc<Self>) {
-        let (tx, mut rx) = mpsc::unbounded_channel::<Box<Event>>();
+        // Each event travels with the target it was received under, so one
+        // queued before a retarget is never stored under the next target.
+        let (tx, mut rx) = mpsc::unbounded_channel::<(Box<Event>, Target)>();
         let mut notifications = self.client.notifications();
         let router = self.clone();
         crate::rt::spawn(async move {
@@ -95,29 +97,33 @@ impl Router {
                 else {
                     continue;
                 };
-                if event.kind != Kind::PrivateDirectMessage
-                    || router.current_sub().as_ref() != Some(subscription_id.as_ref())
-                {
+                if event.kind != Kind::PrivateDirectMessage {
                     continue;
                 }
-                if tx.send(Box::new(event.into_owned())).is_err() {
+                let Some(target) = router
+                    .current_target()
+                    .filter(|t| t.sub == *subscription_id)
+                else {
+                    continue;
+                };
+                if tx.send((Box::new(event.into_owned()), target)).is_err() {
                     break;
                 }
             }
         });
         let router = self.clone();
         crate::rt::spawn(async move {
-            while let Some(event) = rx.recv().await {
+            while let Some((event, target)) = rx.recv().await {
                 let Some(db) = crate::db::app_db::db() else {
                     continue;
                 };
-                router.handle(db, &event).await;
+                router.handle_for(db, &event, target).await;
             }
         });
     }
 
-    fn current_sub(&self) -> Option<SubscriptionId> {
-        lock(&self.target).as_ref().map(|t| t.sub.clone())
+    fn current_target(&self) -> Option<Target> {
+        lock(&self.target).clone()
     }
 
     /// Follow `serbero`'s reports to `keys` on `node`, or nothing. Following
@@ -170,8 +176,24 @@ impl Router {
 
     /// One kind 14 of the current subscription: kept when it is a report of
     /// the trusted Serbero to the loaded key. Returns the update it made.
+    #[cfg(test)]
     pub(crate) async fn handle(&self, db: &impl Storage, event: &Event) -> Option<SerberoUpdate> {
-        let target = lock(&self.target).clone()?;
+        let target = self.current_target()?;
+        self.handle_for(db, event, target).await
+    }
+
+    /// [`Self::handle`] for an event received while `target` was followed:
+    /// dropped when the router follows another target by now.
+    async fn handle_for(
+        &self,
+        db: &impl Storage,
+        event: &Event,
+        target: Target,
+    ) -> Option<SerberoUpdate> {
+        let current = || lock(&self.target).as_ref().is_some_and(|t| t.same_as(&target));
+        if !current() {
+            return None;
+        }
         let accepted = accept(&target.keys, &target.serbero, event).await?;
         let record = SerberoRecord {
             conversation: SerberoRef {
@@ -189,7 +211,7 @@ impl Router {
             received_at: crate::rt::unix_now(),
         };
         // A retarget while it was opened: the report is not this target's.
-        if !lock(&self.target).as_ref().is_some_and(|t| t.same_as(&target)) {
+        if !current() {
             return None;
         }
         match db.insert_serbero_message(&record).await {
@@ -242,6 +264,11 @@ pub(crate) async fn follow() {
 }
 
 async fn follow_with(router: &Router) {
+    // One follow at a time, from reading the state to installing it: an
+    // older call that read the previous node must not install it after a
+    // newer one. `handle` never takes this lock.
+    static FOLLOWING: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
+    let _following = FOLLOWING.lock().await;
     let keys = crate::solver_slot::SOLVER_SLOT.keys().await;
     let node = crate::config::active_mostro_pubkey();
     let serbero = match (&node, crate::db::app_db::db()) {
@@ -327,5 +354,42 @@ mod tests {
         let router = router_for(&node, &solver, &serbero).await;
         let event = serbero_dm(&other, &solver.public_key(), &transcript_text());
         assert_eq!(router.handle(&db, &event).await, None);
+    }
+
+    /// Found by review: a report queued under one target must not be stored
+    /// under the next one (two nodes can share a Serbero and a solver key,
+    /// so the subscription id alone does not tell them apart).
+    #[tokio::test]
+    async fn a_report_received_for_a_previous_target_is_not_kept() {
+        let db = crate::db::sqlite::tests::store().await;
+        let (node_a, node_b, solver, serbero) = (
+            Keys::generate(),
+            Keys::generate(),
+            Keys::generate(),
+            Keys::generate(),
+        );
+        let router = router_for(&node_a, &solver, &serbero).await;
+        let received_under = router.current_target().unwrap();
+        router
+            .retarget(
+                Some(node_b.public_key()),
+                Some(solver.clone()),
+                Some(serbero.public_key()),
+            )
+            .await;
+        let event = serbero_dm(&serbero, &solver.public_key(), &transcript_text());
+
+        assert_eq!(router.handle_for(&db, &event, received_under).await, None);
+        for node in [&node_a, &node_b] {
+            let rows = db
+                .list_serbero_messages(&SerberoRef {
+                    mostro_pubkey: node.public_key().to_hex(),
+                    dispute_id: DISPUTE.into(),
+                    solver_pubkey: solver.public_key().to_hex(),
+                })
+                .await
+                .unwrap();
+            assert!(rows.is_empty());
+        }
     }
 }

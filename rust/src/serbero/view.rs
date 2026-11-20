@@ -34,13 +34,14 @@ pub(crate) fn assemble(dispute_id: &str, records: &[SerberoRecord]) -> SerberoMe
     };
     let newest = |kind: ReportKind| reports.iter().rev().find(|(_, rep)| rep.kind == kind).map(note);
 
-    let (transcript, transcript_parts, transcript_total) = transcript(&reports);
+    let (transcript, transcript_parts, transcript_total, transcript_sent_at) = transcript(&reports);
     SerberoMediation {
         dispute_id: dispute_id.to_owned(),
         brief: newest(ReportKind::Brief),
         transcript,
         transcript_parts,
         transcript_total,
+        transcript_sent_at,
         updates: reports
             .iter()
             .filter(|(_, rep)| rep.kind == ReportKind::Update)
@@ -54,8 +55,10 @@ pub(crate) fn assemble(dispute_id: &str, records: &[SerberoRecord]) -> SerberoMe
 }
 
 /// The newest transcript: its parts in order (the newest copy of each), how
-/// many arrived and of how many.
-fn transcript(reports: &[(&SerberoRecord, super::parse::Report)]) -> (Vec<SerberoLine>, u32, u32) {
+/// many arrived and of how many, and when its newest part was sent.
+fn transcript(
+    reports: &[(&SerberoRecord, super::parse::Report)],
+) -> (Vec<SerberoLine>, u32, u32, Option<i64>) {
     let parts: Vec<(i64, u32, u32, &str)> = reports
         .iter()
         .filter_map(|(r, rep)| match rep.kind {
@@ -64,7 +67,7 @@ fn transcript(reports: &[(&SerberoRecord, super::parse::Report)]) -> (Vec<Serber
         })
         .collect();
     let Some(&(sent_at, _, total, _)) = parts.last() else {
-        return (Vec::new(), 0, 0);
+        return (Vec::new(), 0, 0, None);
     };
     let mut chosen: Vec<Option<(i64, &str)>> = vec![None; total as usize];
     for &(at, part, n, body) in &parts {
@@ -79,7 +82,7 @@ fn transcript(reports: &[(&SerberoRecord, super::parse::Report)]) -> (Vec<Serber
         .flatten()
         .flat_map(|(at, body)| lines(body, at))
         .collect();
-    (shown, arrived, total)
+    (shown, arrived, total, Some(sent_at))
 }
 
 /// A subject's headline and what follows its colon.
@@ -362,5 +365,17 @@ mod tests {
             assemble(ID, &records).transcript[0].at,
             Some(day + 22 * 3600 + 25 * 60)
         );
+    }
+
+    #[test]
+    fn a_transcript_whose_brief_never_arrived_still_dates_the_mediation() {
+        let records = [
+            part("e1", 10, 1, 2, "[10:01] buyer: uno"),
+            part("e2", 12, 2, 2, "[10:02] seller: dos"),
+        ];
+        let mediation = assemble(ID, &records);
+        assert!(mediation.brief.is_none());
+        assert_eq!(mediation.transcript_sent_at, Some(12));
+        assert_eq!(assemble(ID, &[]).transcript_sent_at, None);
     }
 }

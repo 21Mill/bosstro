@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bosstro/core/app_routes.dart';
@@ -8,6 +11,7 @@ import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/serbero/screens/serbero_screen.dart';
 import 'package:bosstro/features/serbero/services/serbero_core.dart';
 import 'package:bosstro/features/serbero/widgets/serbero_card.dart';
+import 'package:bosstro/features/settings/providers/serbero_provider.dart';
 
 import '../../support/screen_harness.dart';
 
@@ -349,5 +353,71 @@ void main() {
     await _scrollTo(tester, find.text('Ya pagué.'));
     expect(find.text('99:99'), findsNothing, reason: 'not the UTC stamp');
     expect(find.text(chatTimeLabel(at, DateTime.now(), 'es')), findsOneWidget);
+  });
+
+  testWidgets('a transcript whose brief never arrived can still be read', (
+    tester,
+  ) async {
+    final serbero =
+        FakeSerberoCore()
+          ..mediations[_a] = SerberoMediation(
+            disputeId: _a,
+            transcript: [serberoLine(SerberoSpeaker.buyer, 'Ya pagué.')],
+            transcriptParts: 1,
+            transcriptTotal: 1,
+            transcriptSentAt: _sent,
+            updates: const [],
+          );
+    await _pumpDetail(tester, serbero: serbero);
+    await _openMediation(tester);
+    await _scrollTo(tester, find.text('Ya pagué.'));
+    expect(find.text('Ya pagué.'), findsOneWidget);
+  });
+
+  testWidgets('the mediation is read again when the trusted Serbero changes', (
+    tester,
+  ) async {
+    final serbero = FakeSerberoCore()..mediations[_a] = _handedOff();
+    await _pumpDetail(tester, serbero: serbero);
+    await _scrollInfoTo(tester, find.byType(SerberoCard));
+    final before = serbero.reads;
+
+    ProviderScope.containerOf(
+      tester.element(find.byType(SerberoCard)),
+    ).invalidate(serberoNpubProvider);
+    await tester.pumpAndSettle();
+
+    expect(serbero.reads, greaterThan(before));
+  });
+
+  testWidgets('a reload that ends after a newer read does not replace it', (
+    tester,
+  ) async {
+    // Arrange: a report update starts a reload that is held.
+    final serbero = FakeSerberoCore()..mediations[_a] = _handedOff();
+    await _pumpDetail(tester, serbero: serbero);
+    final old = Completer<SerberoMediation?>();
+    serbero.holdNext = old;
+    serbero.push(_a);
+    await tester.pump();
+
+    // Act: a newer read (the trusted key changed), then the held reload
+    // ends with what it read before.
+    serbero.mediations[_a] = _handedOff(
+      transcript: [serberoLine(SerberoSpeaker.seller, 'Lo nuevo.')],
+      parts: 1,
+      total: 1,
+    );
+    ProviderScope.containerOf(
+      tester.element(find.byType(SerberoCard)),
+    ).invalidate(serberoNpubProvider);
+    await tester.pumpAndSettle();
+    old.complete(_handedOff());
+    await tester.pumpAndSettle();
+    await _openMediation(tester);
+
+    // Assert
+    await _scrollTo(tester, find.text('Lo nuevo.'));
+    expect(find.text('Lo nuevo.'), findsOneWidget);
   });
 }

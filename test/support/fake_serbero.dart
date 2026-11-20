@@ -13,11 +13,24 @@ class FakeSerberoCore implements SerberoCore {
 
   final _updates = StreamController<String>.broadcast();
 
+  /// How many times the stored mediation was read.
+  int reads = 0;
+
+  /// Holds the next read until the test completes it, then answers with
+  /// what the completer is completed with.
+  Completer<SerberoMediation?>? holdNext;
+
   /// Announce that [disputeId]'s reports changed.
   void push(String disputeId) => _updates.add(disputeId);
 
   @override
   Future<SerberoMediation?> mediation(String disputeId) async {
+    reads++;
+    final held = holdNext;
+    if (held != null) {
+      holdNext = null;
+      return held.future;
+    }
     if (!active) return null;
     return mediations[disputeId] ?? blankMediation(disputeId);
   }

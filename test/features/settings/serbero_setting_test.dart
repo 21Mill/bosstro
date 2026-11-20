@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -96,5 +98,30 @@ void main() {
     // Assert
     expect(core.serbero, isEmpty);
     expect(find.text('Not set'), findsOneWidget);
+  });
+
+  testWidgets('a save that ends after the dialog closed still refreshes', (
+    tester,
+  ) async {
+    // Arrange
+    final core = await _settings(tester);
+    final write = Completer<void>();
+    core.holdSerberoWrite = write;
+    await tester.tap(find.text('Serbero'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), _npub);
+    await tester.tap(find.text('Save'));
+    await tester.pump();
+
+    // Act: dismissed while the write is pending, then the write ends.
+    await tester.tapAt(const Offset(5, 5));
+    await tester.pumpAndSettle();
+    expect(find.text('Trust Serbero'), findsNothing, reason: 'dismissed');
+    write.complete();
+    await tester.pumpAndSettle();
+
+    // Assert
+    expect(core.serbero, {mostroNodePubkey: _npub});
+    expect(find.text('Not set'), findsNothing, reason: 'the row refreshed');
   });
 }

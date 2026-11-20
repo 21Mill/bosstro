@@ -4304,6 +4304,7 @@ impl SseDecode for crate::api::serbero::SerberoMediation {
         let mut var_transcript = <Vec<crate::api::serbero::SerberoLine>>::sse_decode(deserializer);
         let mut var_transcriptParts = <u32>::sse_decode(deserializer);
         let mut var_transcriptTotal = <u32>::sse_decode(deserializer);
+        let mut var_transcriptSentAt = <Option<i64>>::sse_decode(deserializer);
         let mut var_updates =
             <Vec<crate::api::serbero::SerberoUpdateView>>::sse_decode(deserializer);
         let mut var_finalReport =
@@ -4314,6 +4315,7 @@ impl SseDecode for crate::api::serbero::SerberoMediation {
             transcript: var_transcript,
             transcript_parts: var_transcriptParts,
             transcript_total: var_transcriptTotal,
+            transcript_sent_at: var_transcriptSentAt,
             updates: var_updates,
             final_report: var_finalReport,
         };
@@ -6238,6 +6240,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::serbero::SerberoMediation {
             self.transcript.into_into_dart().into_dart(),
             self.transcript_parts.into_into_dart().into_dart(),
             self.transcript_total.into_into_dart().into_dart(),
+            self.transcript_sent_at.into_into_dart().into_dart(),
             self.updates.into_into_dart().into_dart(),
             self.final_report.into_into_dart().into_dart(),
         ]
@@ -8113,6 +8116,7 @@ impl SseEncode for crate::api::serbero::SerberoMediation {
         <Vec<crate::api::serbero::SerberoLine>>::sse_encode(self.transcript, serializer);
         <u32>::sse_encode(self.transcript_parts, serializer);
         <u32>::sse_encode(self.transcript_total, serializer);
+        <Option<i64>>::sse_encode(self.transcript_sent_at, serializer);
         <Vec<crate::api::serbero::SerberoUpdateView>>::sse_encode(self.updates, serializer);
         <Option<crate::api::serbero::SerberoNote>>::sse_encode(self.final_report, serializer);
     }
