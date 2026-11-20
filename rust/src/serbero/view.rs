@@ -5,7 +5,7 @@
 use super::parse::{parse_lines, parse_report, Entry, ReportKind, Speaker};
 use super::SerberoRecord;
 use crate::api::serbero::{
-    SerberoLine, SerberoMediation, SerberoNote, SerberoSpeaker, SerberoUpdateView,
+    SerberoHeadline, SerberoLine, SerberoMediation, SerberoNote, SerberoSpeaker, SerberoUpdateView,
 };
 
 /// How far apart the parts of one transcript may have been sent: Serbero
@@ -22,10 +22,15 @@ pub(crate) fn assemble(dispute_id: &str, records: &[SerberoRecord]) -> SerberoMe
     // how storage returned the rows.
     reports.sort_by(|(a, _), (b, _)| (a.created_at, &a.event_id).cmp(&(b.created_at, &b.event_id)));
 
-    let note = |(r, report): &(&SerberoRecord, super::parse::Report)| SerberoNote {
-        subject: report.subject.clone(),
-        body: report.body.clone(),
-        sent_at: r.created_at,
+    let note = |(r, report): &(&SerberoRecord, super::parse::Report)| {
+        let (headline, detail) = headline(&report.subject);
+        SerberoNote {
+            subject: report.subject.clone(),
+            headline,
+            detail,
+            body: body_shown(&report.body),
+            sent_at: r.created_at,
+        }
     };
     let newest = |kind: ReportKind| reports.iter().rev().find(|(_, rep)| rep.kind == kind).map(note);
 
@@ -41,7 +46,7 @@ pub(crate) fn assemble(dispute_id: &str, records: &[SerberoRecord]) -> SerberoMe
             .filter(|(_, rep)| rep.kind == ReportKind::Update)
             .map(|(r, rep)| SerberoUpdateView {
                 sent_at: r.created_at,
-                lines: lines(&rep.body),
+                lines: lines(&rep.body, r.created_at),
             })
             .collect(),
         final_report: newest(ReportKind::Final),
@@ -61,23 +66,74 @@ fn transcript(reports: &[(&SerberoRecord, super::parse::Report)]) -> (Vec<Serber
     let Some(&(sent_at, _, total, _)) = parts.last() else {
         return (Vec::new(), 0, 0);
     };
-    let mut chosen: Vec<Option<&str>> = vec![None; total as usize];
+    let mut chosen: Vec<Option<(i64, &str)>> = vec![None; total as usize];
     for &(at, part, n, body) in &parts {
         if n == total && at >= sent_at - PARTS_WINDOW_SECS {
             // Oldest first, so a later copy of a part replaces an earlier one.
-            chosen[(part - 1) as usize] = Some(body);
+            chosen[(part - 1) as usize] = Some((at, body));
         }
     }
     let arrived = chosen.iter().filter(|p| p.is_some()).count() as u32;
-    let shown = chosen.into_iter().flatten().flat_map(lines).collect();
+    let shown = chosen
+        .into_iter()
+        .flatten()
+        .flat_map(|(at, body)| lines(body, at))
+        .collect();
     (shown, arrived, total)
 }
 
-fn lines(body: &str) -> Vec<SerberoLine> {
+/// A subject's headline and what follows its colon.
+fn headline(subject: &str) -> (SerberoHeadline, String) {
+    for (prefix, headline) in [
+        ("handed off: ", SerberoHeadline::HandedOff),
+        ("guidance sent: ", SerberoHeadline::GuidanceSent),
+        ("resolved: ", SerberoHeadline::Resolved),
+    ] {
+        if let Some(detail) = subject.strip_prefix(prefix) {
+            return (headline, detail.trim().to_owned());
+        }
+    }
+    (SerberoHeadline::Other, String::new())
+}
+
+/// A brief's text without its closing pointer to the transcript.
+fn body_shown(body: &str) -> String {
+    let trimmed = body.trim_end();
+    match trimmed.rsplit_once('\n') {
+        Some((head, last))
+            if last.starts_with("Transcript (") && last.ends_with("follows in the next message.") =>
+        {
+            head.trim_end().to_owned()
+        }
+        _ => body.to_owned(),
+    }
+}
+
+/// When a line stamped `hh:mm` (UTC) was written, given that the Serbero
+/// message carrying it was sent at `sent_at`: that day, or the day before
+/// when that time is later than the message.
+fn written_at(time: &str, sent_at: i64) -> Option<i64> {
+    let (h, m) = time.split_once(':')?;
+    if h.len() != 2 || m.len() != 2 {
+        return None;
+    }
+    let (h, m) = (h.parse::<i64>().ok()?, m.parse::<i64>().ok()?);
+    if !(0..24).contains(&h) || !(0..60).contains(&m) {
+        return None;
+    }
+    let day = sent_at - sent_at.rem_euclid(86_400);
+    let at = day + h * 3600 + m * 60;
+    // The line's minute may be the message's own: only a later minute is
+    // the day before.
+    Some(if at > sent_at { at - 86_400 } else { at })
+}
+
+fn lines(body: &str, sent_at: i64) -> Vec<SerberoLine> {
     parse_lines(body)
         .into_iter()
         .map(|entry| match entry {
             Entry::Line(line) => SerberoLine {
+                at: written_at(&line.time, sent_at),
                 time: line.time,
                 speaker: Some(match line.speaker {
                     Speaker::Buyer => SerberoSpeaker::Buyer,
@@ -88,6 +144,7 @@ fn lines(body: &str) -> Vec<SerberoLine> {
                 text: line.text,
             },
             Entry::Text(text) => SerberoLine {
+                at: None,
                 time: String::new(),
                 speaker: None,
                 text,
@@ -120,10 +177,17 @@ mod tests {
 
     fn line(time: &str, speaker: SerberoSpeaker, text: &str) -> SerberoLine {
         SerberoLine {
+            at: None,
             time: time.into(),
             speaker: Some(speaker),
             text: text.into(),
         }
+    }
+
+    /// The lines without when they were written, which the tests below on
+    /// timing check on their own.
+    fn untimed(lines: Vec<SerberoLine>) -> Vec<SerberoLine> {
+        lines.into_iter().map(|l| SerberoLine { at: None, ..l }).collect()
     }
 
     fn is_empty(m: &SerberoMediation) -> bool {
@@ -154,7 +218,7 @@ mod tests {
         ];
         let mediation = assemble(ID, &records);
         assert_eq!(
-            mediation.transcript,
+            untimed(mediation.transcript),
             vec![
                 line("10:01", SerberoSpeaker::Buyer, "uno"),
                 line("10:02", SerberoSpeaker::SerberoToBuyer, "dos"),
@@ -188,7 +252,7 @@ mod tests {
         ];
         let mediation = assemble(ID, &records);
         assert_eq!(
-            mediation.transcript,
+            untimed(mediation.transcript),
             vec![line("10:05", SerberoSpeaker::Seller, "nuevo")]
         );
         assert_eq!((mediation.transcript_parts, mediation.transcript_total), (1, 1));
@@ -208,12 +272,19 @@ mod tests {
             mediation.brief,
             Some(SerberoNote {
                 subject: "guidance sent: b".into(),
+                headline: SerberoHeadline::GuidanceSent,
+                detail: "b".into(),
                 body: "Topic: new".into(),
                 sent_at: 30,
             })
         );
+        let updates: Vec<SerberoUpdateView> = mediation
+            .updates
+            .into_iter()
+            .map(|u| SerberoUpdateView { lines: untimed(u.lines), ..u })
+            .collect();
         assert_eq!(
-            mediation.updates,
+            updates,
             vec![
                 SerberoUpdateView {
                     sent_at: 35,
@@ -239,5 +310,57 @@ mod tests {
             record("y", 10, "garbage"),
         ];
         assert!(is_empty(&assemble(ID, &records)));
+    }
+
+    #[test]
+    fn a_headline_names_what_follows_its_colon() {
+        for (subject, kind, detail) in [
+            ("handed off: human_requested", SerberoHeadline::HandedOff, "human_requested"),
+            ("guidance sent: payment_arrived", SerberoHeadline::GuidanceSent, "payment_arrived"),
+            ("resolved: seller-refunded", SerberoHeadline::Resolved, "seller-refunded"),
+            ("something new: x", SerberoHeadline::Other, ""),
+        ] {
+            assert_eq!(headline(subject), (kind, detail.to_string()), "{subject}");
+        }
+    }
+
+    #[test]
+    fn the_brief_loses_its_pointer_to_the_transcript_and_nothing_else() {
+        let body = "Topic: x\n\nSignals: y\n\nTranscript (8 messages) follows in the next message.";
+        assert_eq!(body_shown(body), "Topic: x\n\nSignals: y");
+        // A brief that changed its closing line keeps it.
+        assert_eq!(body_shown("Topic: x\nTranscript below."), "Topic: x\nTranscript below.");
+        let records = [record(
+            "b",
+            10,
+            &format!("Dispute {ID} · handed off: human_requested\n{body}"),
+        )];
+        let brief = assemble(ID, &records).brief.unwrap();
+        assert_eq!(brief.body, "Topic: x\n\nSignals: y");
+        assert_eq!(brief.headline, SerberoHeadline::HandedOff);
+        assert_eq!(brief.detail, "human_requested");
+    }
+
+    #[test]
+    fn a_line_is_dated_by_the_message_that_carried_it() {
+        // 2026-11-20 22:26:47 UTC.
+        let sent: i64 = 1_795_213_607;
+        let day = sent - sent.rem_euclid(86_400);
+        assert_eq!(written_at("22:25", sent), Some(day + 22 * 3600 + 25 * 60));
+        // Later than the message: written the day before (a dispute that
+        // crossed midnight UTC).
+        assert_eq!(written_at("23:50", sent), Some(day - 86_400 + 23 * 3600 + 50 * 60));
+        for bad in ["", "24:00", "12:60", "1:05", "ab:cd"] {
+            assert_eq!(written_at(bad, sent), None, "{bad}");
+        }
+        let records = [record(
+            "t",
+            sent,
+            &format!("Dispute {ID} · transcript (1 messages, times UTC)\n[22:25] seller: no"),
+        )];
+        assert_eq!(
+            assemble(ID, &records).transcript[0].at,
+            Some(day + 22 * 3600 + 25 * 60)
+        );
     }
 }

@@ -107,13 +107,13 @@ FakeSerberoCore _serbero() =>
     FakeSerberoCore()
       ..mediations[_a] = SerberoMediation(
         disputeId: _a,
-        brief: const SerberoNote(
-          subject: 'handed off: conflicting_claims',
-          body: 'Topic: payment_not_confirmed (0.91) · rounds: 2',
+        brief: serberoNote(
+          'handed off: self_resolution_stalled',
+          'Topic: payment_not_confirmed (0.91) · rounds: 2',
           sentAt: _opened,
         ),
         transcript: [
-          serberoLine(SerberoSpeaker.buyer, 'Ya pagué'),
+          serberoLine(SerberoSpeaker.buyer, 'Ya pagué', at: _opened - 86400),
           serberoLine(SerberoSpeaker.serberoToSeller, '¿Lo recibiste?'),
           serberoLine(null, 'text that reads as no message'),
         ],
@@ -125,9 +125,9 @@ FakeSerberoCore _serbero() =>
             lines: [serberoLine(SerberoSpeaker.seller, 'Ya llegó')],
           ),
         ],
-        finalReport: const SerberoNote(
-          subject: 'resolved: settled',
-          body: 'outcome: released',
+        finalReport: serberoNote(
+          'resolved: cooperatively-canceled',
+          'outcome: released',
           sentAt: _opened + 1200,
         ),
       );

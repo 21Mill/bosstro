@@ -3528,11 +3528,107 @@ abstract class AppLocalizations {
   /// **'No mediation yet'**
   String get serberoEmptyTitle;
 
-  /// Note under the conversation title: message times are UTC
+  /// Brief headline: Serbero handed the dispute off; reason is one of the serberoReason* strings
   ///
   /// In en, this message translates to:
-  /// **'Times in UTC, as Serbero wrote them.'**
-  String get serberoTimesUtc;
+  /// **'Handed off: {reason}'**
+  String serberoHandedOff(String reason);
+
+  /// Brief headline: Serbero guided the parties; path is one of the serberoPath* strings
+  ///
+  /// In en, this message translates to:
+  /// **'Guidance sent: {path}'**
+  String serberoGuidanceSent(String path);
+
+  /// Final report headline; status is the dispute status in words
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved: {status}'**
+  String serberoResolved(String status);
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'the parties did not settle it themselves in time'**
+  String get serberoReasonSelfResolutionStalled;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'the facts are gathered'**
+  String get serberoReasonFactsGathered;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'the parties\' accounts contradict each other'**
+  String get serberoReasonConflictingClaims;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'signs of fraud'**
+  String get serberoReasonFraudSignal;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'a party asked for a person'**
+  String get serberoReasonHumanRequested;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'outside what Serbero mediates'**
+  String get serberoReasonOutsideScope;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'a party stopped answering'**
+  String get serberoReasonUnresponsive;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'too many rounds of questions'**
+  String get serberoReasonRoundLimit;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'a fact stayed unclear'**
+  String get serberoReasonUncertain;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'the automatic reading failed'**
+  String get serberoReasonJudgeUnavailable;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'a party sent too many messages'**
+  String get serberoReasonFlood;
+
+  /// Why Serbero handed a dispute off (Serbero's handoff reason), shown after the colon of serberoHandedOff
+  ///
+  /// In en, this message translates to:
+  /// **'the mediation could not start'**
+  String get serberoReasonOpeningFailed;
+
+  /// What Serbero guided the parties to do, shown after the colon of serberoGuidanceSent
+  ///
+  /// In en, this message translates to:
+  /// **'the payment arrived'**
+  String get serberoPathPaymentArrived;
+
+  /// What Serbero guided the parties to do, shown after the colon of serberoGuidanceSent
+  ///
+  /// In en, this message translates to:
+  /// **'the payment was not sent'**
+  String get serberoPathPaymentNotSent;
 }
 
 class _AppLocalizationsDelegate

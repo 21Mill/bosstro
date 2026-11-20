@@ -2039,6 +2039,66 @@ class AppLocalizationsDe extends AppLocalizations {
   String get serberoEmptyTitle => 'Noch keine Vermittlung';
 
   @override
-  String get serberoTimesUtc =>
-      'Zeiten in UTC, wie Serbero sie geschrieben hat.';
+  String serberoHandedOff(String reason) {
+    return 'Übergeben: $reason';
+  }
+
+  @override
+  String serberoGuidanceSent(String path) {
+    return 'Hinweise gesendet: $path';
+  }
+
+  @override
+  String serberoResolved(String status) {
+    return 'Gelöst: $status';
+  }
+
+  @override
+  String get serberoReasonSelfResolutionStalled =>
+      'die Parteien haben es nicht rechtzeitig selbst geklärt';
+
+  @override
+  String get serberoReasonFactsGathered => 'die Fakten sind gesammelt';
+
+  @override
+  String get serberoReasonConflictingClaims =>
+      'die Aussagen der Parteien widersprechen sich';
+
+  @override
+  String get serberoReasonFraudSignal => 'Anzeichen von Betrug';
+
+  @override
+  String get serberoReasonHumanRequested =>
+      'eine Partei hat nach einer Person gefragt';
+
+  @override
+  String get serberoReasonOutsideScope =>
+      'außerhalb dessen, was Serbero vermittelt';
+
+  @override
+  String get serberoReasonUnresponsive => 'eine Partei antwortet nicht mehr';
+
+  @override
+  String get serberoReasonRoundLimit => 'zu viele Fragerunden';
+
+  @override
+  String get serberoReasonUncertain => 'ein Sachverhalt blieb unklar';
+
+  @override
+  String get serberoReasonJudgeUnavailable =>
+      'die automatische Auswertung ist fehlgeschlagen';
+
+  @override
+  String get serberoReasonFlood =>
+      'eine Partei hat zu viele Nachrichten gesendet';
+
+  @override
+  String get serberoReasonOpeningFailed =>
+      'die Vermittlung konnte nicht starten';
+
+  @override
+  String get serberoPathPaymentArrived => 'die Zahlung ist angekommen';
+
+  @override
+  String get serberoPathPaymentNotSent => 'die Zahlung wurde nicht gesendet';
 }

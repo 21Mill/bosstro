@@ -3,6 +3,7 @@ import 'package:bosstro/src/rust/api/serbero.dart' show SerberoMediation;
 
 export 'package:bosstro/src/rust/api/serbero.dart'
     show
+        SerberoHeadline,
         SerberoLine,
         SerberoMediation,
         SerberoNote,

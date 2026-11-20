@@ -4265,15 +4265,31 @@ impl SseDecode for crate::api::resolve::ResolvedAs {
     }
 }
 
+impl SseDecode for crate::api::serbero::SerberoHeadline {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::serbero::SerberoHeadline::HandedOff,
+            1 => crate::api::serbero::SerberoHeadline::GuidanceSent,
+            2 => crate::api::serbero::SerberoHeadline::Resolved,
+            3 => crate::api::serbero::SerberoHeadline::Other,
+            _ => unreachable!("Invalid variant for SerberoHeadline: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::api::serbero::SerberoLine {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_time = <String>::sse_decode(deserializer);
+        let mut var_at = <Option<i64>>::sse_decode(deserializer);
         let mut var_speaker =
             <Option<crate::api::serbero::SerberoSpeaker>>::sse_decode(deserializer);
         let mut var_text = <String>::sse_decode(deserializer);
         return crate::api::serbero::SerberoLine {
             time: var_time,
+            at: var_at,
             speaker: var_speaker,
             text: var_text,
         };
@@ -4308,10 +4324,14 @@ impl SseDecode for crate::api::serbero::SerberoNote {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_subject = <String>::sse_decode(deserializer);
+        let mut var_headline = <crate::api::serbero::SerberoHeadline>::sse_decode(deserializer);
+        let mut var_detail = <String>::sse_decode(deserializer);
         let mut var_body = <String>::sse_decode(deserializer);
         let mut var_sentAt = <i64>::sse_decode(deserializer);
         return crate::api::serbero::SerberoNote {
             subject: var_subject,
+            headline: var_headline,
+            detail: var_detail,
             body: var_body,
             sent_at: var_sentAt,
         };
@@ -6164,10 +6184,34 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::resolve::ResolvedAs>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::serbero::SerberoHeadline {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::HandedOff => 0.into_dart(),
+            Self::GuidanceSent => 1.into_dart(),
+            Self::Resolved => 2.into_dart(),
+            Self::Other => 3.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::serbero::SerberoHeadline
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::serbero::SerberoHeadline>
+    for crate::api::serbero::SerberoHeadline
+{
+    fn into_into_dart(self) -> crate::api::serbero::SerberoHeadline {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::serbero::SerberoLine {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.time.into_into_dart().into_dart(),
+            self.at.into_into_dart().into_dart(),
             self.speaker.into_into_dart().into_dart(),
             self.text.into_into_dart().into_dart(),
         ]
@@ -6216,6 +6260,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::serbero::SerberoNote {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.subject.into_into_dart().into_dart(),
+            self.headline.into_into_dart().into_dart(),
+            self.detail.into_into_dart().into_dart(),
             self.body.into_into_dart().into_dart(),
             self.sent_at.into_into_dart().into_dart(),
         ]
@@ -8031,10 +8077,29 @@ impl SseEncode for crate::api::resolve::ResolvedAs {
     }
 }
 
+impl SseEncode for crate::api::serbero::SerberoHeadline {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::serbero::SerberoHeadline::HandedOff => 0,
+                crate::api::serbero::SerberoHeadline::GuidanceSent => 1,
+                crate::api::serbero::SerberoHeadline::Resolved => 2,
+                crate::api::serbero::SerberoHeadline::Other => 3,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::api::serbero::SerberoLine {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.time, serializer);
+        <Option<i64>>::sse_encode(self.at, serializer);
         <Option<crate::api::serbero::SerberoSpeaker>>::sse_encode(self.speaker, serializer);
         <String>::sse_encode(self.text, serializer);
     }
@@ -8057,6 +8122,8 @@ impl SseEncode for crate::api::serbero::SerberoNote {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.subject, serializer);
+        <crate::api::serbero::SerberoHeadline>::sse_encode(self.headline, serializer);
+        <String>::sse_encode(self.detail, serializer);
         <String>::sse_encode(self.body, serializer);
         <i64>::sse_encode(self.sent_at, serializer);
     }

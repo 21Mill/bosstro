@@ -3616,15 +3616,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SerberoHeadline dco_decode_serbero_headline(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return SerberoHeadline.values[raw as int];
+  }
+
+  @protected
   SerberoLine dco_decode_serbero_line(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return SerberoLine(
       time: dco_decode_String(arr[0]),
-      speaker: dco_decode_opt_box_autoadd_serbero_speaker(arr[1]),
-      text: dco_decode_String(arr[2]),
+      at: dco_decode_opt_box_autoadd_i_64(arr[1]),
+      speaker: dco_decode_opt_box_autoadd_serbero_speaker(arr[2]),
+      text: dco_decode_String(arr[3]),
     );
   }
 
@@ -3649,12 +3656,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   SerberoNote dco_decode_serbero_note(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return SerberoNote(
       subject: dco_decode_String(arr[0]),
-      body: dco_decode_String(arr[1]),
-      sentAt: dco_decode_i_64(arr[2]),
+      headline: dco_decode_serbero_headline(arr[1]),
+      detail: dco_decode_String(arr[2]),
+      body: dco_decode_String(arr[3]),
+      sentAt: dco_decode_i_64(arr[4]),
     );
   }
 
@@ -5649,12 +5658,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SerberoHeadline sse_decode_serbero_headline(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return SerberoHeadline.values[inner];
+  }
+
+  @protected
   SerberoLine sse_decode_serbero_line(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_time = sse_decode_String(deserializer);
+    var var_at = sse_decode_opt_box_autoadd_i_64(deserializer);
     var var_speaker = sse_decode_opt_box_autoadd_serbero_speaker(deserializer);
     var var_text = sse_decode_String(deserializer);
-    return SerberoLine(time: var_time, speaker: var_speaker, text: var_text);
+    return SerberoLine(
+      time: var_time,
+      at: var_at,
+      speaker: var_speaker,
+      text: var_text,
+    );
   }
 
   @protected
@@ -5682,10 +5704,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   SerberoNote sse_decode_serbero_note(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_subject = sse_decode_String(deserializer);
+    var var_headline = sse_decode_serbero_headline(deserializer);
+    var var_detail = sse_decode_String(deserializer);
     var var_body = sse_decode_String(deserializer);
     var var_sentAt = sse_decode_i_64(deserializer);
     return SerberoNote(
       subject: var_subject,
+      headline: var_headline,
+      detail: var_detail,
       body: var_body,
       sentAt: var_sentAt,
     );
@@ -7551,9 +7577,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_serbero_headline(
+    SerberoHeadline self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
   void sse_encode_serbero_line(SerberoLine self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.time, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.at, serializer);
     sse_encode_opt_box_autoadd_serbero_speaker(self.speaker, serializer);
     sse_encode_String(self.text, serializer);
   }
@@ -7577,6 +7613,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_serbero_note(SerberoNote self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.subject, serializer);
+    sse_encode_serbero_headline(self.headline, serializer);
+    sse_encode_String(self.detail, serializer);
     sse_encode_String(self.body, serializer);
     sse_encode_i_64(self.sentAt, serializer);
   }

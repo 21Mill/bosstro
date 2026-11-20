@@ -570,5 +570,21 @@
   "serberoSenderToBuyer": "Serbero → comprador",
   "serberoSenderToSeller": "Serbero → vendedor",
   "serberoEmptyTitle": "Aún no hay mediación",
-  "serberoTimesUtc": "Horas en UTC, como las escribió Serbero."
+  "serberoHandedOff": "Cedida: {reason}",
+  "serberoGuidanceSent": "Orientación enviada: {path}",
+  "serberoResolved": "Resuelta: {status}",
+  "serberoReasonSelfResolutionStalled": "las partes no lo resolvieron a tiempo por su cuenta",
+  "serberoReasonFactsGathered": "los hechos están reunidos",
+  "serberoReasonConflictingClaims": "las versiones de las partes se contradicen",
+  "serberoReasonFraudSignal": "señales de fraude",
+  "serberoReasonHumanRequested": "una parte pidió hablar con una persona",
+  "serberoReasonOutsideScope": "fuera de lo que media Serbero",
+  "serberoReasonUnresponsive": "una parte dejó de responder",
+  "serberoReasonRoundLimit": "demasiadas rondas de preguntas",
+  "serberoReasonUncertain": "un dato siguió sin estar claro",
+  "serberoReasonJudgeUnavailable": "falló la lectura automática",
+  "serberoReasonFlood": "una parte envió demasiados mensajes",
+  "serberoReasonOpeningFailed": "no se pudo iniciar la mediación",
+  "serberoPathPaymentArrived": "el pago llegó",
+  "serberoPathPaymentNotSent": "el pago no se envió"
 }

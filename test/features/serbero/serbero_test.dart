@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/features/chat/services/chat_core.dart';
+import 'package:bosstro/features/chat/widgets/chat_bubble.dart';
 import 'package:bosstro/features/nodes/models/node_display.dart';
 import 'package:bosstro/features/serbero/screens/serbero_screen.dart';
 import 'package:bosstro/features/serbero/services/serbero_core.dart';
@@ -15,7 +16,7 @@ const _sent = 1700000000;
 const _npub = 'npub1serbero';
 
 SerberoNote _note(String subject, String body, {int sentAt = _sent}) =>
-    SerberoNote(subject: subject, body: body, sentAt: sentAt);
+    serberoNote(subject, body, sentAt: sentAt);
 
 /// A handoff as Serbero sends it: the brief and a transcript in two parts,
 /// one of them received.
@@ -279,5 +280,74 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('the handoff reason and the outcome read in words', (
+    tester,
+  ) async {
+    final serbero =
+        FakeSerberoCore()
+          ..mediations[_a] = SerberoMediation(
+            disputeId: _a,
+            brief: _note('handed off: human_requested', 'Topic: x'),
+            transcript: const [],
+            transcriptParts: 0,
+            transcriptTotal: 0,
+            updates: const [],
+            finalReport: _note('resolved: settled', 'mediation: yes'),
+          );
+    await _pumpDetail(tester, serbero: serbero);
+    await _openMediation(tester);
+    expect(
+      find.textContaining('Cedida: una parte pidió hablar con una persona'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('human_requested'), findsNothing);
+    await _scrollTo(tester, find.text('mediation: yes'));
+    expect(find.textContaining('Resuelta: '), findsOneWidget);
+    expect(find.textContaining('resolved: settled'), findsNothing);
+  });
+
+  testWidgets('a reason this app does not know is shown as Serbero wrote it', (
+    tester,
+  ) async {
+    final serbero =
+        FakeSerberoCore()
+          ..mediations[_a] = SerberoMediation(
+            disputeId: _a,
+            brief: _note('handed off: new_reason', 'Topic: x'),
+            transcript: const [],
+            transcriptParts: 0,
+            transcriptTotal: 0,
+            updates: const [],
+          );
+    await _pumpDetail(tester, serbero: serbero);
+    await _openMediation(tester);
+    expect(find.textContaining('Cedida: new_reason'), findsOneWidget);
+  });
+
+  testWidgets('a message shows when it was written in local time', (
+    tester,
+  ) async {
+    const at = _sent - 120;
+    final serbero =
+        FakeSerberoCore()
+          ..mediations[_a] = _handedOff(
+            transcript: [
+              serberoLine(
+                SerberoSpeaker.buyer,
+                'Ya pagué.',
+                time: '99:99',
+                at: at,
+              ),
+            ],
+            parts: 1,
+            total: 1,
+          );
+    await _pumpDetail(tester, serbero: serbero);
+    await _openMediation(tester);
+    await _scrollTo(tester, find.text('Ya pagué.'));
+    expect(find.text('99:99'), findsNothing, reason: 'not the UTC stamp');
+    expect(find.text(chatTimeLabel(at, DateTime.now(), 'es')), findsOneWidget);
   });
 }

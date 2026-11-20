@@ -38,8 +38,28 @@ SerberoLine serberoLine(
   SerberoSpeaker? speaker,
   String text, {
   String time = '14:10',
+  int? at,
 }) => SerberoLine(
   time: speaker == null ? '' : time,
+  at: at,
   speaker: speaker,
   text: text,
 );
+
+/// A brief or a final report as the core hands it over: [subject] split into
+/// its headline and what follows the colon, as `rust/src/serbero/view.rs`.
+SerberoNote serberoNote(String subject, String body, {required int sentAt}) {
+  final (headline, detail) = switch (subject.split(': ')) {
+    ['handed off', final d] => (SerberoHeadline.handedOff, d),
+    ['guidance sent', final d] => (SerberoHeadline.guidanceSent, d),
+    ['resolved', final d] => (SerberoHeadline.resolved, d),
+    _ => (SerberoHeadline.other, ''),
+  };
+  return SerberoNote(
+    subject: subject,
+    headline: headline,
+    detail: detail,
+    body: body,
+    sentAt: sentAt,
+  );
+}

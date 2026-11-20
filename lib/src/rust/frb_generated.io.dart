@@ -597,6 +597,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ResolvedAs dco_decode_resolved_as(dynamic raw);
 
   @protected
+  SerberoHeadline dco_decode_serbero_headline(dynamic raw);
+
+  @protected
   SerberoLine dco_decode_serbero_line(dynamic raw);
 
   @protected
@@ -1301,6 +1304,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ResolvedAs sse_decode_resolved_as(SseDeserializer deserializer);
+
+  @protected
+  SerberoHeadline sse_decode_serbero_headline(SseDeserializer deserializer);
 
   @protected
   SerberoLine sse_decode_serbero_line(SseDeserializer deserializer);
@@ -2196,6 +2202,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_resolved_as(ResolvedAs self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_serbero_headline(
+    SerberoHeadline self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_serbero_line(SerberoLine self, SseSerializer serializer);

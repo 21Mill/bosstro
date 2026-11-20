@@ -92,11 +92,29 @@ pub enum SerberoSpeaker {
 pub struct SerberoLine {
     /// `hh:mm`, UTC, as Serbero wrote it; empty for text that is no message.
     pub time: String,
+    /// When it was written (unix seconds), from that `hh:mm` and the day of
+    /// the Serbero message that carried it; `None` for text that is no
+    /// message.
+    pub at: Option<i64>,
     /// Who wrote it; `None` for text that is no message.
     pub speaker: Option<SerberoSpeaker>,
     /// As Serbero wrote it. Serbero forwards no files, only a
     /// `[n attachments]` note at the end, which a party could also type.
     pub text: String,
+}
+
+/// What a brief or a final report says in its first line, for Dart to put in
+/// words (Rust does not translate).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SerberoHeadline {
+    /// `handed off: <reason>` (Serbero's handoff reasons).
+    HandedOff,
+    /// `guidance sent: <path>`.
+    GuidanceSent,
+    /// `resolved: <dispute status>`.
+    Resolved,
+    /// Anything else: show the subject as it came.
+    Other,
 }
 
 /// A Serbero message shown as Serbero wrote it: the brief, an update, the
@@ -105,7 +123,13 @@ pub struct SerberoLine {
 pub struct SerberoNote {
     /// The subject of its first line (`handed off: …`, `resolved: …`).
     pub subject: String,
-    /// The text after the first line.
+    pub headline: SerberoHeadline,
+    /// What follows the headline's colon: a handoff reason, a guidance path
+    /// or a dispute status, as Serbero names it (`human_requested`).
+    pub detail: String,
+    /// The text after the first line. A brief's closing line, "Transcript
+    /// (N messages) follows in the next message.", is left out: the screen
+    /// shows the transcript under it.
     pub body: String,
     /// When Serbero sent it (unix seconds).
     pub sent_at: i64,

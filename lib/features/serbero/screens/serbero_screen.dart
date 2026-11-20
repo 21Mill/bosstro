@@ -1,12 +1,16 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bosstro/core/app_theme.dart';
 import 'package:bosstro/core/disputes_palette.dart';
+import 'package:bosstro/features/chat/widgets/chat_bubble.dart';
+import 'package:bosstro/features/disputes/widgets/pending_dispute_row.dart';
 import 'package:bosstro/features/serbero/providers/serbero_providers.dart';
 import 'package:bosstro/features/serbero/services/serbero_core.dart';
 import 'package:bosstro/features/settings/providers/serbero_provider.dart';
 import 'package:bosstro/l10n/app_localizations.dart';
+import 'package:bosstro/src/rust/api/disputes.dart' show DisputeStatus;
 import 'package:bosstro/shared/utils/date_time_format.dart';
 import 'package:bosstro/shared/widgets/list_empty_state.dart';
 import 'package:bosstro/shared/widgets/list_skeleton.dart';
@@ -95,7 +99,6 @@ class _Mediation extends StatelessWidget {
           _NoteCard(title: l10n.serberoBriefTitle, note: brief),
         if (mediation.transcript.isNotEmpty) ...[
           _Heading(l10n.serberoTranscriptTitle),
-          Text(l10n.serberoTimesUtc, style: small),
           if (missing)
             Text(
               l10n.serberoTranscriptParts(
@@ -171,7 +174,8 @@ class _NoteCard extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              '${note.subject} · ${formatDateTime(note.sentAt.toInt(), locale)}',
+              '${serberoHeadlineText(AppLocalizations.of(context), note)} · '
+              '${formatDateTime(note.sentAt.toInt(), locale)}',
               style: TextStyle(fontSize: 12, color: pal.textTertiary),
             ),
             const SizedBox(height: 10),
@@ -282,7 +286,14 @@ class _LineBubble extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          line.time,
+                          switch (line.at) {
+                            final at? => chatTimeLabel(
+                              at.toInt(),
+                              clock.now(),
+                              Localizations.localeOf(context).toString(),
+                            ),
+                            null => line.time,
+                          },
                           style: TextStyle(fontSize: 11, color: pal.bubbleMeta),
                         ),
                       ],
@@ -295,3 +306,50 @@ class _LineBubble extends StatelessWidget {
     );
   }
 }
+
+/// A brief's or a final report's first line in words: why Serbero handed the
+/// dispute off, what it guided the parties to, how the dispute ended. A code
+/// this app does not know yet is shown as Serbero wrote it.
+String serberoHeadlineText(AppLocalizations l10n, SerberoNote note) {
+  final detail = note.detail;
+  return switch (note.headline) {
+    SerberoHeadline.handedOff => l10n.serberoHandedOff(switch (detail) {
+      'self_resolution_stalled' => l10n.serberoReasonSelfResolutionStalled,
+      'facts_gathered' => l10n.serberoReasonFactsGathered,
+      'conflicting_claims' => l10n.serberoReasonConflictingClaims,
+      'fraud_signal' => l10n.serberoReasonFraudSignal,
+      'human_requested' => l10n.serberoReasonHumanRequested,
+      'outside_scope' => l10n.serberoReasonOutsideScope,
+      'unresponsive' => l10n.serberoReasonUnresponsive,
+      'round_limit' => l10n.serberoReasonRoundLimit,
+      'uncertain' => l10n.serberoReasonUncertain,
+      'judge_unavailable' => l10n.serberoReasonJudgeUnavailable,
+      'flood' => l10n.serberoReasonFlood,
+      'opening_failed' => l10n.serberoReasonOpeningFailed,
+      _ => detail,
+    }),
+    SerberoHeadline.guidanceSent => l10n.serberoGuidanceSent(switch (detail) {
+      'payment_arrived' => l10n.serberoPathPaymentArrived,
+      'payment_not_sent' => l10n.serberoPathPaymentNotSent,
+      _ => detail,
+    }),
+    SerberoHeadline.resolved => l10n.serberoResolved(switch (_statusOf(
+      detail,
+    )) {
+      final status? => disputeStatusLabel(l10n, status),
+      null => detail,
+    }),
+    SerberoHeadline.other => note.subject,
+  };
+}
+
+/// A dispute status as Mostro names it (kind 38386 `s` tag).
+DisputeStatus? _statusOf(String wire) => switch (wire) {
+  'initiated' => DisputeStatus.initiated,
+  'in-progress' => DisputeStatus.inProgress,
+  'seller-refunded' => DisputeStatus.sellerRefunded,
+  'settled' => DisputeStatus.settled,
+  'released' => DisputeStatus.released,
+  'cooperatively-canceled' => DisputeStatus.cooperativelyCanceled,
+  _ => null,
+};

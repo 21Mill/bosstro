@@ -2027,5 +2027,61 @@ class AppLocalizationsNl extends AppLocalizations {
   String get serberoEmptyTitle => 'Nog geen bemiddeling';
 
   @override
-  String get serberoTimesUtc => 'Tijden in UTC, zoals Serbero ze schreef.';
+  String serberoHandedOff(String reason) {
+    return 'Overgedragen: $reason';
+  }
+
+  @override
+  String serberoGuidanceSent(String path) {
+    return 'Begeleiding gestuurd: $path';
+  }
+
+  @override
+  String serberoResolved(String status) {
+    return 'Opgelost: $status';
+  }
+
+  @override
+  String get serberoReasonSelfResolutionStalled =>
+      'de partijen losten het niet op tijd zelf op';
+
+  @override
+  String get serberoReasonFactsGathered => 'de feiten zijn verzameld';
+
+  @override
+  String get serberoReasonConflictingClaims =>
+      'de verklaringen van de partijen spreken elkaar tegen';
+
+  @override
+  String get serberoReasonFraudSignal => 'signalen van fraude';
+
+  @override
+  String get serberoReasonHumanRequested => 'een partij vroeg om een persoon';
+
+  @override
+  String get serberoReasonOutsideScope => 'buiten wat Serbero bemiddelt';
+
+  @override
+  String get serberoReasonUnresponsive => 'een partij reageert niet meer';
+
+  @override
+  String get serberoReasonRoundLimit => 'te veel vraagrondes';
+
+  @override
+  String get serberoReasonUncertain => 'een feit bleef onduidelijk';
+
+  @override
+  String get serberoReasonJudgeUnavailable => 'de automatische lezing mislukte';
+
+  @override
+  String get serberoReasonFlood => 'een partij stuurde te veel berichten';
+
+  @override
+  String get serberoReasonOpeningFailed => 'de bemiddeling kon niet starten';
+
+  @override
+  String get serberoPathPaymentArrived => 'de betaling is aangekomen';
+
+  @override
+  String get serberoPathPaymentNotSent => 'de betaling is niet verstuurd';
 }

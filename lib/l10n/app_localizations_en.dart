@@ -2010,5 +2010,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serberoEmptyTitle => 'No mediation yet';
 
   @override
-  String get serberoTimesUtc => 'Times in UTC, as Serbero wrote them.';
+  String serberoHandedOff(String reason) {
+    return 'Handed off: $reason';
+  }
+
+  @override
+  String serberoGuidanceSent(String path) {
+    return 'Guidance sent: $path';
+  }
+
+  @override
+  String serberoResolved(String status) {
+    return 'Resolved: $status';
+  }
+
+  @override
+  String get serberoReasonSelfResolutionStalled =>
+      'the parties did not settle it themselves in time';
+
+  @override
+  String get serberoReasonFactsGathered => 'the facts are gathered';
+
+  @override
+  String get serberoReasonConflictingClaims =>
+      'the parties\' accounts contradict each other';
+
+  @override
+  String get serberoReasonFraudSignal => 'signs of fraud';
+
+  @override
+  String get serberoReasonHumanRequested => 'a party asked for a person';
+
+  @override
+  String get serberoReasonOutsideScope => 'outside what Serbero mediates';
+
+  @override
+  String get serberoReasonUnresponsive => 'a party stopped answering';
+
+  @override
+  String get serberoReasonRoundLimit => 'too many rounds of questions';
+
+  @override
+  String get serberoReasonUncertain => 'a fact stayed unclear';
+
+  @override
+  String get serberoReasonJudgeUnavailable => 'the automatic reading failed';
+
+  @override
+  String get serberoReasonFlood => 'a party sent too many messages';
+
+  @override
+  String get serberoReasonOpeningFailed => 'the mediation could not start';
+
+  @override
+  String get serberoPathPaymentArrived => 'the payment arrived';
+
+  @override
+  String get serberoPathPaymentNotSent => 'the payment was not sent';
 }

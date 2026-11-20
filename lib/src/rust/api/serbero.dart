@@ -7,7 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `npub`, `read_serbero`, `trusted_serbero`, `write_serbero`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// The Serbero pubkey trusted on `node`, as an npub to show, or `None` when
 /// none is set.
@@ -42,11 +42,32 @@ abstract class SerberoUpdateStream implements RustOpaqueInterface {
   Future<String?> next();
 }
 
+/// What a brief or a final report says in its first line, for Dart to put in
+/// words (Rust does not translate).
+enum SerberoHeadline {
+  /// `handed off: <reason>` (Serbero's handoff reasons).
+  handedOff,
+
+  /// `guidance sent: <path>`.
+  guidanceSent,
+
+  /// `resolved: <dispute status>`.
+  resolved,
+
+  /// Anything else: show the subject as it came.
+  other,
+}
+
 /// One line of the conversation Serbero had with the parties: a message, or
 /// text that reads as none (kept, never dropped).
 class SerberoLine {
   /// `hh:mm`, UTC, as Serbero wrote it; empty for text that is no message.
   final String time;
+
+  /// When it was written (unix seconds), from that `hh:mm` and the day of
+  /// the Serbero message that carried it; `None` for text that is no
+  /// message.
+  final PlatformInt64? at;
 
   /// Who wrote it; `None` for text that is no message.
   final SerberoSpeaker? speaker;
@@ -55,10 +76,16 @@ class SerberoLine {
   /// `[n attachments]` note at the end, which a party could also type.
   final String text;
 
-  const SerberoLine({required this.time, this.speaker, required this.text});
+  const SerberoLine({
+    required this.time,
+    this.at,
+    this.speaker,
+    required this.text,
+  });
 
   @override
-  int get hashCode => time.hashCode ^ speaker.hashCode ^ text.hashCode;
+  int get hashCode =>
+      time.hashCode ^ at.hashCode ^ speaker.hashCode ^ text.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -66,6 +93,7 @@ class SerberoLine {
       other is SerberoLine &&
           runtimeType == other.runtimeType &&
           time == other.time &&
+          at == other.at &&
           speaker == other.speaker &&
           text == other.text;
 }
@@ -129,8 +157,15 @@ class SerberoMediation {
 class SerberoNote {
   /// The subject of its first line (`handed off: …`, `resolved: …`).
   final String subject;
+  final SerberoHeadline headline;
 
-  /// The text after the first line.
+  /// What follows the headline's colon: a handoff reason, a guidance path
+  /// or a dispute status, as Serbero names it (`human_requested`).
+  final String detail;
+
+  /// The text after the first line. A brief's closing line, "Transcript
+  /// (N messages) follows in the next message.", is left out: the screen
+  /// shows the transcript under it.
   final String body;
 
   /// When Serbero sent it (unix seconds).
@@ -138,12 +173,19 @@ class SerberoNote {
 
   const SerberoNote({
     required this.subject,
+    required this.headline,
+    required this.detail,
     required this.body,
     required this.sentAt,
   });
 
   @override
-  int get hashCode => subject.hashCode ^ body.hashCode ^ sentAt.hashCode;
+  int get hashCode =>
+      subject.hashCode ^
+      headline.hashCode ^
+      detail.hashCode ^
+      body.hashCode ^
+      sentAt.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -151,6 +193,8 @@ class SerberoNote {
       other is SerberoNote &&
           runtimeType == other.runtimeType &&
           subject == other.subject &&
+          headline == other.headline &&
+          detail == other.detail &&
           body == other.body &&
           sentAt == other.sentAt;
 }

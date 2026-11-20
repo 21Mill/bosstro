@@ -2021,5 +2021,63 @@ class AppLocalizationsPt extends AppLocalizations {
   String get serberoEmptyTitle => 'Ainda sem mediação';
 
   @override
-  String get serberoTimesUtc => 'Horários em UTC, como o Serbero os escreveu.';
+  String serberoHandedOff(String reason) {
+    return 'Repassada: $reason';
+  }
+
+  @override
+  String serberoGuidanceSent(String path) {
+    return 'Orientação enviada: $path';
+  }
+
+  @override
+  String serberoResolved(String status) {
+    return 'Resolvida: $status';
+  }
+
+  @override
+  String get serberoReasonSelfResolutionStalled =>
+      'as partes não resolveram sozinhas a tempo';
+
+  @override
+  String get serberoReasonFactsGathered => 'os fatos foram reunidos';
+
+  @override
+  String get serberoReasonConflictingClaims =>
+      'as versões das partes se contradizem';
+
+  @override
+  String get serberoReasonFraudSignal => 'sinais de fraude';
+
+  @override
+  String get serberoReasonHumanRequested =>
+      'uma parte pediu para falar com uma pessoa';
+
+  @override
+  String get serberoReasonOutsideScope => 'fora do que o Serbero media';
+
+  @override
+  String get serberoReasonUnresponsive => 'uma parte parou de responder';
+
+  @override
+  String get serberoReasonRoundLimit => 'rodadas de perguntas demais';
+
+  @override
+  String get serberoReasonUncertain => 'um fato continuou incerto';
+
+  @override
+  String get serberoReasonJudgeUnavailable => 'a leitura automática falhou';
+
+  @override
+  String get serberoReasonFlood => 'uma parte enviou mensagens demais';
+
+  @override
+  String get serberoReasonOpeningFailed =>
+      'não foi possível iniciar a mediação';
+
+  @override
+  String get serberoPathPaymentArrived => 'o pagamento chegou';
+
+  @override
+  String get serberoPathPaymentNotSent => 'o pagamento não foi enviado';
 }
