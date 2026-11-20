@@ -2479,5 +2479,74 @@
   "serberoErrorIsNode": "That is the node's own key, not Serbero's.",
   "@serberoErrorIsNode": {
     "description": "Error under the field when the pasted key is the node's own key"
+  },
+  "serberoCardTitle": "Serbero's mediation",
+  "@serberoCardTitle": {
+    "description": "Title of the Info pane card and the screen with Serbero's mediation of the dispute"
+  },
+  "serberoCardNotTrusted": "Set Serbero's key in Settings to read its mediation reports.",
+  "@serberoCardNotTrusted": {
+    "description": "Card line when no Serbero key is trusted on the node"
+  },
+  "serberoCardEmpty": "Nothing from Serbero about this dispute. Its report arrives when Serbero hands the dispute off, if your key is one of its solvers.",
+  "@serberoCardEmpty": {
+    "description": "Card line and empty-screen body when Serbero sent nothing about this dispute"
+  },
+  "serberoCardReceived": "Last report {time}",
+  "@serberoCardReceived": {
+    "description": "Card line: when Serbero's last report arrived",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "serberoReadAction": "Read Serbero's mediation",
+  "@serberoReadAction": {
+    "description": "Card action: opens Serbero's mediation"
+  },
+  "serberoBriefTitle": "Brief",
+  "@serberoBriefTitle": {
+    "description": "Section title: Serbero's summary at handoff"
+  },
+  "serberoTranscriptTitle": "Conversation",
+  "@serberoTranscriptTitle": {
+    "description": "Section title: the conversation Serbero had with the parties"
+  },
+  "serberoTranscriptParts": "{arrived} of {total} parts received",
+  "@serberoTranscriptParts": {
+    "description": "Under the conversation title when parts are missing",
+    "placeholders": {
+      "arrived": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "serberoUpdatesTitle": "After the handoff",
+  "@serberoUpdatesTitle": {
+    "description": "Section title: party messages after the handoff"
+  },
+  "serberoFinalTitle": "Final report",
+  "@serberoFinalTitle": {
+    "description": "Section title: Serbero's final report"
+  },
+  "serberoSenderToBuyer": "Serbero → buyer",
+  "@serberoSenderToBuyer": {
+    "description": "Sender label of a message Serbero wrote to the buyer"
+  },
+  "serberoSenderToSeller": "Serbero → seller",
+  "@serberoSenderToSeller": {
+    "description": "Sender label of a message Serbero wrote to the seller"
+  },
+  "serberoEmptyTitle": "No mediation yet",
+  "@serberoEmptyTitle": {
+    "description": "Empty-screen title when Serbero sent nothing about this dispute"
+  },
+  "serberoTimesUtc": "Times in UTC, as Serbero wrote them.",
+  "@serberoTimesUtc": {
+    "description": "Note under the conversation title: message times are UTC"
   }
 }

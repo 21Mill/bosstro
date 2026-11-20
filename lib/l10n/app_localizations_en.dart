@@ -1963,4 +1963,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get serberoErrorIsNode =>
       'That is the node\'s own key, not Serbero\'s.';
+
+  @override
+  String get serberoCardTitle => 'Serbero\'s mediation';
+
+  @override
+  String get serberoCardNotTrusted =>
+      'Set Serbero\'s key in Settings to read its mediation reports.';
+
+  @override
+  String get serberoCardEmpty =>
+      'Nothing from Serbero about this dispute. Its report arrives when Serbero hands the dispute off, if your key is one of its solvers.';
+
+  @override
+  String serberoCardReceived(String time) {
+    return 'Last report $time';
+  }
+
+  @override
+  String get serberoReadAction => 'Read Serbero\'s mediation';
+
+  @override
+  String get serberoBriefTitle => 'Brief';
+
+  @override
+  String get serberoTranscriptTitle => 'Conversation';
+
+  @override
+  String serberoTranscriptParts(int arrived, int total) {
+    return '$arrived of $total parts received';
+  }
+
+  @override
+  String get serberoUpdatesTitle => 'After the handoff';
+
+  @override
+  String get serberoFinalTitle => 'Final report';
+
+  @override
+  String get serberoSenderToBuyer => 'Serbero → buyer';
+
+  @override
+  String get serberoSenderToSeller => 'Serbero → seller';
+
+  @override
+  String get serberoEmptyTitle => 'No mediation yet';
+
+  @override
+  String get serberoTimesUtc => 'Times in UTC, as Serbero wrote them.';
 }

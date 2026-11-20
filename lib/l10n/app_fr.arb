@@ -556,5 +556,19 @@
   "serberoPubkeyLabel": "Clé publique de Serbero",
   "serberoSave": "Enregistrer",
   "serberoRemove": "Ne plus faire confiance",
-  "serberoErrorIsNode": "C'est la clé du nœud lui-même, pas celle de Serbero."
+  "serberoErrorIsNode": "C'est la clé du nœud lui-même, pas celle de Serbero.",
+  "serberoCardTitle": "Médiation de Serbero",
+  "serberoCardNotTrusted": "Définissez la clé de Serbero dans les Réglages pour lire ses rapports de médiation.",
+  "serberoCardEmpty": "Serbero n'a rien envoyé sur ce litige. Son rapport arrive quand Serbero transmet le litige, si votre clé fait partie de ses solvers.",
+  "serberoCardReceived": "Dernier rapport {time}",
+  "serberoReadAction": "Lire la médiation de Serbero",
+  "serberoBriefTitle": "Résumé",
+  "serberoTranscriptTitle": "Conversation",
+  "serberoTranscriptParts": "{arrived} sur {total} parties reçues",
+  "serberoUpdatesTitle": "Après la transmission",
+  "serberoFinalTitle": "Rapport final",
+  "serberoSenderToBuyer": "Serbero → acheteur",
+  "serberoSenderToSeller": "Serbero → vendeur",
+  "serberoEmptyTitle": "Pas encore de médiation",
+  "serberoTimesUtc": "Heures en UTC, telles que Serbero les a écrites."
 }

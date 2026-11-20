@@ -4,8 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bosstro/core/app_routes.dart';
 import 'package:bosstro/features/nodes/models/node_display.dart';
 
-import '../../support/fake_nodes.dart';
-import '../../support/fake_settings.dart';
 import '../../support/screen_harness.dart';
 
 const _npub =
@@ -37,9 +35,7 @@ void main() {
     expect(find.text('Not set'), findsOneWidget);
   });
 
-  testWidgets('there is no Serbero row without an active node', (
-    tester,
-  ) async {
+  testWidgets('there is no Serbero row without an active node', (tester) async {
     await _settings(tester, nodes: FakeNodesCore());
     expect(find.text('Serbero'), findsNothing);
   });
@@ -63,9 +59,7 @@ void main() {
     expect(find.text('Not set'), findsNothing);
   });
 
-  testWidgets("the node's own key is refused under the field", (
-    tester,
-  ) async {
+  testWidgets("the node's own key is refused under the field", (tester) async {
     // Arrange
     final core = await _settings(tester);
     core.serberoError = Exception('SerberoIsNode: the node');

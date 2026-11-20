@@ -1974,4 +1974,53 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get serberoErrorIsNode =>
       'C\'est la clé du nœud lui-même, pas celle de Serbero.';
+
+  @override
+  String get serberoCardTitle => 'Médiation de Serbero';
+
+  @override
+  String get serberoCardNotTrusted =>
+      'Définissez la clé de Serbero dans les Réglages pour lire ses rapports de médiation.';
+
+  @override
+  String get serberoCardEmpty =>
+      'Serbero n\'a rien envoyé sur ce litige. Son rapport arrive quand Serbero transmet le litige, si votre clé fait partie de ses solvers.';
+
+  @override
+  String serberoCardReceived(String time) {
+    return 'Dernier rapport $time';
+  }
+
+  @override
+  String get serberoReadAction => 'Lire la médiation de Serbero';
+
+  @override
+  String get serberoBriefTitle => 'Résumé';
+
+  @override
+  String get serberoTranscriptTitle => 'Conversation';
+
+  @override
+  String serberoTranscriptParts(int arrived, int total) {
+    return '$arrived sur $total parties reçues';
+  }
+
+  @override
+  String get serberoUpdatesTitle => 'Après la transmission';
+
+  @override
+  String get serberoFinalTitle => 'Rapport final';
+
+  @override
+  String get serberoSenderToBuyer => 'Serbero → acheteur';
+
+  @override
+  String get serberoSenderToSeller => 'Serbero → vendeur';
+
+  @override
+  String get serberoEmptyTitle => 'Pas encore de médiation';
+
+  @override
+  String get serberoTimesUtc =>
+      'Heures en UTC, telles que Serbero les a écrites.';
 }

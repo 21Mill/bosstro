@@ -556,5 +556,19 @@
   "serberoPubkeyLabel": "Publieke sleutel van Serbero",
   "serberoSave": "Opslaan",
   "serberoRemove": "Niet meer vertrouwen",
-  "serberoErrorIsNode": "Dat is de sleutel van de node zelf, niet die van Serbero."
+  "serberoErrorIsNode": "Dat is de sleutel van de node zelf, niet die van Serbero.",
+  "serberoCardTitle": "Bemiddeling van Serbero",
+  "serberoCardNotTrusted": "Stel de sleutel van Serbero in bij Instellingen om zijn bemiddelingsrapporten te lezen.",
+  "serberoCardEmpty": "Serbero heeft niets over dit geschil gestuurd. Het rapport komt wanneer Serbero het geschil overdraagt, als jouw sleutel een van zijn solvers is.",
+  "serberoCardReceived": "Laatste rapport {time}",
+  "serberoReadAction": "Bemiddeling van Serbero lezen",
+  "serberoBriefTitle": "Samenvatting",
+  "serberoTranscriptTitle": "Gesprek",
+  "serberoTranscriptParts": "{arrived} van {total} delen ontvangen",
+  "serberoUpdatesTitle": "Na de overdracht",
+  "serberoFinalTitle": "Eindrapport",
+  "serberoSenderToBuyer": "Serbero → koper",
+  "serberoSenderToSeller": "Serbero → verkoper",
+  "serberoEmptyTitle": "Nog geen bemiddeling",
+  "serberoTimesUtc": "Tijden in UTC, zoals Serbero ze schreef."
 }

@@ -556,5 +556,19 @@
   "serberoPubkeyLabel": "Öffentlicher Schlüssel von Serbero",
   "serberoSave": "Speichern",
   "serberoRemove": "Nicht mehr vertrauen",
-  "serberoErrorIsNode": "Das ist der Schlüssel des Knotens selbst, nicht der von Serbero."
+  "serberoErrorIsNode": "Das ist der Schlüssel des Knotens selbst, nicht der von Serbero.",
+  "serberoCardTitle": "Serberos Vermittlung",
+  "serberoCardNotTrusted": "Lege Serberos Schlüssel in den Einstellungen fest, um seine Vermittlungsberichte zu lesen.",
+  "serberoCardEmpty": "Serbero hat zu diesem Streitfall nichts gesendet. Sein Bericht kommt, wenn Serbero den Streitfall übergibt, sofern dein Schlüssel zu seinen Solvern gehört.",
+  "serberoCardReceived": "Letzter Bericht {time}",
+  "serberoReadAction": "Serberos Vermittlung lesen",
+  "serberoBriefTitle": "Zusammenfassung",
+  "serberoTranscriptTitle": "Unterhaltung",
+  "serberoTranscriptParts": "{arrived} von {total} Teilen empfangen",
+  "serberoUpdatesTitle": "Nach der Übergabe",
+  "serberoFinalTitle": "Abschlussbericht",
+  "serberoSenderToBuyer": "Serbero → Käufer",
+  "serberoSenderToSeller": "Serbero → Verkäufer",
+  "serberoEmptyTitle": "Noch keine Vermittlung",
+  "serberoTimesUtc": "Zeiten in UTC, wie Serbero sie geschrieben hat."
 }

@@ -1992,4 +1992,53 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get serberoErrorIsNode =>
       'Das ist der Schlüssel des Knotens selbst, nicht der von Serbero.';
+
+  @override
+  String get serberoCardTitle => 'Serberos Vermittlung';
+
+  @override
+  String get serberoCardNotTrusted =>
+      'Lege Serberos Schlüssel in den Einstellungen fest, um seine Vermittlungsberichte zu lesen.';
+
+  @override
+  String get serberoCardEmpty =>
+      'Serbero hat zu diesem Streitfall nichts gesendet. Sein Bericht kommt, wenn Serbero den Streitfall übergibt, sofern dein Schlüssel zu seinen Solvern gehört.';
+
+  @override
+  String serberoCardReceived(String time) {
+    return 'Letzter Bericht $time';
+  }
+
+  @override
+  String get serberoReadAction => 'Serberos Vermittlung lesen';
+
+  @override
+  String get serberoBriefTitle => 'Zusammenfassung';
+
+  @override
+  String get serberoTranscriptTitle => 'Unterhaltung';
+
+  @override
+  String serberoTranscriptParts(int arrived, int total) {
+    return '$arrived von $total Teilen empfangen';
+  }
+
+  @override
+  String get serberoUpdatesTitle => 'Nach der Übergabe';
+
+  @override
+  String get serberoFinalTitle => 'Abschlussbericht';
+
+  @override
+  String get serberoSenderToBuyer => 'Serbero → Käufer';
+
+  @override
+  String get serberoSenderToSeller => 'Serbero → Verkäufer';
+
+  @override
+  String get serberoEmptyTitle => 'Noch keine Vermittlung';
+
+  @override
+  String get serberoTimesUtc =>
+      'Zeiten in UTC, wie Serbero sie geschrieben hat.';
 }

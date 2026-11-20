@@ -3449,6 +3449,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That is the node\'s own key, not Serbero\'s.'**
   String get serberoErrorIsNode;
+
+  /// Title of the Info pane card and the screen with Serbero's mediation of the dispute
+  ///
+  /// In en, this message translates to:
+  /// **'Serbero\'s mediation'**
+  String get serberoCardTitle;
+
+  /// Card line when no Serbero key is trusted on the node
+  ///
+  /// In en, this message translates to:
+  /// **'Set Serbero\'s key in Settings to read its mediation reports.'**
+  String get serberoCardNotTrusted;
+
+  /// Card line and empty-screen body when Serbero sent nothing about this dispute
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing from Serbero about this dispute. Its report arrives when Serbero hands the dispute off, if your key is one of its solvers.'**
+  String get serberoCardEmpty;
+
+  /// Card line: when Serbero's last report arrived
+  ///
+  /// In en, this message translates to:
+  /// **'Last report {time}'**
+  String serberoCardReceived(String time);
+
+  /// Card action: opens Serbero's mediation
+  ///
+  /// In en, this message translates to:
+  /// **'Read Serbero\'s mediation'**
+  String get serberoReadAction;
+
+  /// Section title: Serbero's summary at handoff
+  ///
+  /// In en, this message translates to:
+  /// **'Brief'**
+  String get serberoBriefTitle;
+
+  /// Section title: the conversation Serbero had with the parties
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation'**
+  String get serberoTranscriptTitle;
+
+  /// Under the conversation title when parts are missing
+  ///
+  /// In en, this message translates to:
+  /// **'{arrived} of {total} parts received'**
+  String serberoTranscriptParts(int arrived, int total);
+
+  /// Section title: party messages after the handoff
+  ///
+  /// In en, this message translates to:
+  /// **'After the handoff'**
+  String get serberoUpdatesTitle;
+
+  /// Section title: Serbero's final report
+  ///
+  /// In en, this message translates to:
+  /// **'Final report'**
+  String get serberoFinalTitle;
+
+  /// Sender label of a message Serbero wrote to the buyer
+  ///
+  /// In en, this message translates to:
+  /// **'Serbero → buyer'**
+  String get serberoSenderToBuyer;
+
+  /// Sender label of a message Serbero wrote to the seller
+  ///
+  /// In en, this message translates to:
+  /// **'Serbero → seller'**
+  String get serberoSenderToSeller;
+
+  /// Empty-screen title when Serbero sent nothing about this dispute
+  ///
+  /// In en, this message translates to:
+  /// **'No mediation yet'**
+  String get serberoEmptyTitle;
+
+  /// Note under the conversation title: message times are UTC
+  ///
+  /// In en, this message translates to:
+  /// **'Times in UTC, as Serbero wrote them.'**
+  String get serberoTimesUtc;
 }
 
 class _AppLocalizationsDelegate

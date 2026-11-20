@@ -1980,4 +1980,52 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get serberoErrorIsNode =>
       'Dat is de sleutel van de node zelf, niet die van Serbero.';
+
+  @override
+  String get serberoCardTitle => 'Bemiddeling van Serbero';
+
+  @override
+  String get serberoCardNotTrusted =>
+      'Stel de sleutel van Serbero in bij Instellingen om zijn bemiddelingsrapporten te lezen.';
+
+  @override
+  String get serberoCardEmpty =>
+      'Serbero heeft niets over dit geschil gestuurd. Het rapport komt wanneer Serbero het geschil overdraagt, als jouw sleutel een van zijn solvers is.';
+
+  @override
+  String serberoCardReceived(String time) {
+    return 'Laatste rapport $time';
+  }
+
+  @override
+  String get serberoReadAction => 'Bemiddeling van Serbero lezen';
+
+  @override
+  String get serberoBriefTitle => 'Samenvatting';
+
+  @override
+  String get serberoTranscriptTitle => 'Gesprek';
+
+  @override
+  String serberoTranscriptParts(int arrived, int total) {
+    return '$arrived van $total delen ontvangen';
+  }
+
+  @override
+  String get serberoUpdatesTitle => 'Na de overdracht';
+
+  @override
+  String get serberoFinalTitle => 'Eindrapport';
+
+  @override
+  String get serberoSenderToBuyer => 'Serbero → koper';
+
+  @override
+  String get serberoSenderToSeller => 'Serbero → verkoper';
+
+  @override
+  String get serberoEmptyTitle => 'Nog geen bemiddeling';
+
+  @override
+  String get serberoTimesUtc => 'Tijden in UTC, zoals Serbero ze schreef.';
 }
