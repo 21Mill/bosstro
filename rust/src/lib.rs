@@ -21,4 +21,6 @@ mod mostro;
 mod node_pictures;
 mod nostr;
 mod rt;
+#[allow(dead_code)] // Wired to the relays and storage in the next commit.
+mod serbero;
 mod solver_slot;
