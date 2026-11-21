@@ -107,10 +107,7 @@ impl Router {
                 if event.kind != Kind::PrivateDirectMessage {
                     continue;
                 }
-                let Some(target) = router
-                    .current_target()
-                    .filter(|t| t.sub == *subscription_id)
-                else {
+                let Some(target) = router.target_for(&subscription_id) else {
                     continue;
                 };
                 if tx.send((Box::new(event.into_owned()), target)).is_err() {
@@ -127,6 +124,12 @@ impl Router {
                 router.handle_for(db, &event, target).await;
             }
         });
+    }
+
+    /// The target a notification of `sub` belongs to: the current one if it
+    /// is that subscription's, none otherwise.
+    fn target_for(&self, sub: &SubscriptionId) -> Option<Target> {
+        self.current_target().filter(|t| t.sub == *sub)
     }
 
     fn current_target(&self) -> Option<Target> {
@@ -418,5 +421,46 @@ mod tests {
         assert_ne!(id(&a), id(&b));
         assert_eq!(id(&a), id(&a), "back on a node, its own subscription again");
         assert!(id(&a).to_string().len() <= 64, "NIP-01");
+    }
+
+    /// Found by review: notifications read late, after the node changed,
+    /// through the reader's own matching (A → B, then back to A).
+    #[tokio::test]
+    async fn a_late_notification_is_kept_only_under_the_node_it_was_for() {
+        let db = crate::db::sqlite::tests::store().await;
+        let (node_a, node_b, solver, serbero) = (
+            Keys::generate(),
+            Keys::generate(),
+            Keys::generate(),
+            Keys::generate(),
+        );
+        let router = router_for(&node_a, &solver, &serbero).await;
+        let sub_a = router.current_target().unwrap().sub;
+        let retarget = |node: &Keys| {
+            let node = node.public_key();
+            let (router, solver, serbero) = (router.clone(), solver.clone(), serbero.public_key());
+            async move { router.retarget(Some(node), Some(solver), Some(serbero)).await }
+        };
+        let rows = |node: &Keys| {
+            let reports = SerberoRef {
+                mostro_pubkey: node.public_key().to_hex(),
+                dispute_id: DISPUTE.into(),
+                solver_pubkey: solver.public_key().to_hex(),
+            };
+            let db = &db;
+            async move { db.list_serbero_messages(&reports).await.unwrap().len() }
+        };
+        let event = serbero_dm(&serbero, &solver.public_key(), &transcript_text());
+
+        // A → B: A's notification, read now, matches no target.
+        retarget(&node_b).await;
+        assert!(router.target_for(&sub_a).is_none());
+        assert_eq!((rows(&node_a).await, rows(&node_b).await), (0, 0));
+
+        // B → A: the same late notification is A's again, and kept under A.
+        retarget(&node_a).await;
+        let target = router.target_for(&sub_a).expect("A's own subscription");
+        assert!(router.handle_for(&db, &event, target).await.is_some());
+        assert_eq!((rows(&node_a).await, rows(&node_b).await), (1, 0));
     }
 }
