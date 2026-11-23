@@ -2,6 +2,13 @@
 
 Run by hand on Linux, never in CI, and never against a real node.
 
+Every run needs `BOSSTRO_TEST_PUSH_SERVER` in its environment (`startApp`,
+which every run that writes to a party goes through, refuses to start
+without it): the app asks the public push server to wake a
+party it wrote to, and a test's trade keys must not reach it. `off` sends no
+wake; `http://127.0.0.1:<port>` (or `localhost`) sends them to a server of
+your own. Only a debug build reads it (`rust/src/push.rs`).
+
 `take_against_local_mostrod_test.dart` drives the phase 4 screens (not a
 solver, a take from Pending, a Recover) through the real Rust core, against a
 local relay and a local mostrod with at least one `initiated` dispute and one
@@ -9,6 +16,7 @@ local relay and a local mostrod with at least one `initiated` dispute and one
 and keeps the key in memory: the developer's data and keyring are untouched.
 
 ```bash
+BOSSTRO_TEST_PUSH_SERVER=off \
 flutter test integration_test/take_against_local_mostrod_test.dart -d linux \
   --dart-define=E2E_RELAY=ws://localhost:7000 \
   --dart-define=E2E_NODE=<node hex> \
@@ -27,6 +35,7 @@ relay. The solver key must be a solver there (`users.is_solver = 1`).
 
 ```bash
 (cd rust && cargo build --example chat_party)
+BOSSTRO_TEST_PUSH_SERVER=off \
 flutter test integration_test/chat_against_local_mostrod_test.dart -d linux \
   --dart-define=E2E_RELAY=ws://localhost:7000 \
   --dart-define=E2E_NODE=<node hex> \
@@ -66,6 +75,7 @@ is gone on arrival.
 (cd rust && cargo build --example chat_party --example blossom_server)
 rust/target/debug/examples/blossom_server 7001 &
 BOSSTRO_TEST_BLOSSOM_SERVER=http://127.0.0.1:7001 \
+BOSSTRO_TEST_PUSH_SERVER=off \
 flutter test integration_test/attachments_against_local_mostrod_test.dart -d linux \
   --dart-define=E2E_RELAY=ws://localhost:7000 \
   --dart-define=E2E_NODE=<node hex> \
@@ -94,6 +104,7 @@ only `bank-statement.pdf`), with one dispute:
 (cd rust && cargo build --example chat_party --example blossom_server)
 rust/target/debug/examples/blossom_server 7001 &
 BOSSTRO_TEST_BLOSSOM_SERVER=http://127.0.0.1:7001 \
+BOSSTRO_TEST_PUSH_SERVER=off \
 flutter test integration_test/observer_against_local_mostrod_test.dart -d linux \
   --dart-define=E2E_RELAY=ws://localhost:7000 \
   --dart-define=E2E_NODE=<node hex> \
@@ -163,6 +174,7 @@ per process):
 
 ```bash
 # A Read solver takes dispute 2 and asks to pay its buyer: refused, said so.
+BOSSTRO_TEST_PUSH_SERVER=off \
 flutter test integration_test/resolve_against_local_mostrod_test.dart -d linux \
   --dart-define=E2E_RELAY=ws://localhost:<port> \
   --dart-define=E2E_NODE=<node hex> \
@@ -172,6 +184,7 @@ flutter test integration_test/resolve_against_local_mostrod_test.dart -d linux \
 
 # A Read-Write solver pays dispute 1's buyer, takes dispute 3, takes dispute 2
 # over from the Read solver (Recover a dispute) and refunds its seller.
+BOSSTRO_TEST_PUSH_SERVER=off \
 flutter test integration_test/resolve_against_local_mostrod_test.dart -d linux \
   --dart-define=E2E_RELAY=ws://localhost:<port> \
   --dart-define=E2E_NODE=<node hex> \

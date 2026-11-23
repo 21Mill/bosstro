@@ -1712,7 +1712,8 @@ pub(crate) mod tests {
     }
 
     /// A message a relay took rings the party it was written to, by its
-    /// trade key, and only that party.
+    /// trade key, and only that party. (That a burst is one wake is
+    /// `push`'s to test: a wake that was held back cannot be seen from here.)
     #[tokio::test]
     async fn a_message_a_relay_took_wakes_its_party() {
         let b = bench().await;
@@ -1728,20 +1729,14 @@ pub(crate) mod tests {
         })
         .await;
 
-        // At once: the seller was just woken, the buyer was not.
-        b.router
-            .send(DISPUTE_A, ChatParty::Seller, "and another thing")
-            .await
-            .unwrap();
         b.router
             .send(DISPUTE_A, ChatParty::Buyer, "hello")
             .await
             .unwrap();
         eventually("the buyer is woken", || async {
-            lock(&b.router.in_flight).is_empty() && b.woken().contains(&buyer)
+            b.woken() == [seller.clone(), buyer.clone()]
         })
         .await;
-        assert_eq!(b.woken(), [seller, buyer], "a burst is one wake per party");
     }
 
     /// The wake is not part of the send: a push server that refuses it

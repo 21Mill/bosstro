@@ -294,7 +294,9 @@ python3 tool/launcher_icon/build_sources.py && dart run flutter_launcher_icons  
   for it, as in `app`. **Trade-off:** the push server sees the solver's IP address next to a
   disputing party's trade pubkey; it gets no solver key, no dispute id and no content, answers
   `202` whether or not the party registered, and the pubkey is never logged. The server is a
-  constant (`https://mostro-push-server.fly.dev`); tests talk to a local one. On the web build
+  constant (`https://mostro-push-server.fly.dev`); the Rust tests talk to a local one, and a
+  debug build may be pointed at a loopback server or told to wake nobody
+  (`BOSSTRO_TEST_PUSH_SERVER`, which the end-to-end tests require); a release build never reads it. On the web build
   the server's CORS refuses the request, which is logged like any other undelivered wake. This
   is only the solver → party direction: push notifications *to* the solver are not implemented.
 - **Observed chat** (`rust/src/chat/observer.rs`, phase 5c): the buyer ↔ seller chat of a dispute

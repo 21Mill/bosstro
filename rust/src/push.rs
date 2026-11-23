@@ -23,6 +23,9 @@
 //! On the web build the request is the browser's `fetch`, which the server
 //! refuses for an origin it does not list (CORS): the wake fails and is
 //! logged like any other.
+//!
+//! A debug build reads [`TEST_SERVER_ENV`], for the end-to-end tests: a
+//! loopback server in place of the real one, or no wake at all.
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -33,6 +36,37 @@ use crate::rt::time::Duration;
 
 /// The instance MostroP2P/app registers its devices with.
 const SERVER_URL: &str = "https://mostro-push-server.fly.dev";
+
+/// **Debug builds only:** where the wakes of the end-to-end tests
+/// (`integration_test/`) go, in place of [`SERVER_URL`]: a loopback server
+/// (`http://127.0.0.1:<port>` or `http://localhost:<port>`), or, with any
+/// other value (`off`), nowhere. Release builds never read it.
+#[cfg(debug_assertions)]
+pub const TEST_SERVER_ENV: &str = "BOSSTRO_TEST_PUSH_SERVER";
+
+/// The server a value of [`TEST_SERVER_ENV`] names: a loopback one, or none.
+/// A value that is not one turns the wake off rather than falling back to
+/// the real server, so a typo cannot send a test's keys there.
+#[cfg(debug_assertions)]
+fn test_server_of(value: &str) -> Option<String> {
+    let value = value.trim().trim_end_matches('/');
+    (value.starts_with("http://127.0.0.1:") || value.starts_with("http://localhost:"))
+        .then(|| value.to_string())
+}
+
+/// The override, when this is a debug build and it is set: `Some(None)` is
+/// "no wake".
+#[cfg(debug_assertions)]
+fn test_server() -> Option<Option<String>> {
+    std::env::var(TEST_SERVER_ENV)
+        .ok()
+        .map(|value| test_server_of(&value))
+}
+
+#[cfg(not(debug_assertions))]
+fn test_server() -> Option<Option<String>> {
+    None
+}
 
 /// At most one wake per party per this many seconds (MostroP2P/app's and
 /// Mostrix's value), far under the server's own limit per pubkey.
@@ -54,6 +88,8 @@ enum Wake {
     Debounced,
     /// The server refused it or could not be reached.
     NotDelivered,
+    /// This waker asks no server (a debug build's [`TEST_SERVER_ENV`]).
+    Off,
 }
 
 /// Whether a party last woken at `last` may be woken at `now` (Unix
@@ -65,21 +101,30 @@ fn notify_allowed(last: Option<i64>, now: i64) -> bool {
 /// Wakes parties through one push server, remembering when each was last
 /// woken.
 pub(crate) struct Waker {
-    server: String,
+    /// The server's base URL; `None` wakes nobody.
+    server: Option<String>,
     /// Trade pubkey (hex) → the Unix time of its last wake.
     last: Mutex<HashMap<String, i64>>,
 }
 
 impl Waker {
-    /// The one the app uses.
+    /// The one the app uses: the real server, unless a debug build was
+    /// pointed elsewhere ([`TEST_SERVER_ENV`]).
     pub(crate) fn production() -> Arc<Self> {
-        Self::to(SERVER_URL)
+        match test_server() {
+            Some(server) => Self::new(server),
+            None => Self::to(SERVER_URL),
+        }
     }
 
     /// One that asks the server at `server` (a base URL).
     pub(crate) fn to(server: &str) -> Arc<Self> {
+        Self::new(Some(server.trim_end_matches('/').to_string()))
+    }
+
+    fn new(server: Option<String>) -> Arc<Self> {
         Arc::new(Self {
-            server: server.trim_end_matches('/').to_string(),
+            server,
             last: Mutex::new(HashMap::new()),
         })
     }
@@ -94,6 +139,9 @@ impl Waker {
     }
 
     async fn notify(&self, trade_pubkey: &str, now: i64) -> Wake {
+        let Some(server) = &self.server else {
+            return Wake::Off;
+        };
         {
             let Ok(mut last) = self.last.lock() else {
                 return Wake::NotDelivered;
@@ -106,7 +154,7 @@ impl Waker {
             last.insert(trade_pubkey.to_string(), now);
             last.retain(|_, at| now - *at < FORGET_AFTER_SECS);
         }
-        match self.post(trade_pubkey).await {
+        match post(server, trade_pubkey).await {
             Ok(()) => Wake::Sent,
             Err(e) => {
                 log::info!("[push] party wake not delivered: {e}");
@@ -114,24 +162,24 @@ impl Waker {
             }
         }
     }
+}
 
-    async fn post(&self, trade_pubkey: &str) -> anyhow::Result<()> {
-        let body = serde_json::json!({ "trade_pubkey": trade_pubkey }).to_string();
-        // Per request: the wasm builder has no timeout.
-        let response = http_client()?
-            .post(format!("{}/api/notify", self.server))
-            .header(reqwest::header::CONTENT_TYPE, "application/json")
-            .body(body)
-            .timeout(NOTIFY_TIMEOUT)
-            .send()
-            .await
-            // The URL an error names is the server's, never the pubkey.
-            .map_err(|e| anyhow::anyhow!("request failed: {e}"))?;
-        if !response.status().is_success() {
-            anyhow::bail!("server returned {}", response.status());
-        }
-        Ok(())
+async fn post(server: &str, trade_pubkey: &str) -> anyhow::Result<()> {
+    let body = serde_json::json!({ "trade_pubkey": trade_pubkey }).to_string();
+    // Per request: the wasm builder has no timeout.
+    let response = http_client()?
+        .post(format!("{server}/api/notify"))
+        .header(reqwest::header::CONTENT_TYPE, "application/json")
+        .body(body)
+        .timeout(NOTIFY_TIMEOUT)
+        .send()
+        .await
+        // The URL an error names is the server's, never the pubkey.
+        .map_err(|e| anyhow::anyhow!("request failed: {e}"))?;
+    if !response.status().is_success() {
+        anyhow::bail!("server returned {}", response.status());
     }
+    Ok(())
 }
 
 /// Natively no redirect is followed: the body goes to the server named here
@@ -326,6 +374,31 @@ pub(crate) mod tests {
         let wake = Waker::to(&base).notify(&party(), NOW).await;
 
         assert_eq!(wake, Wake::NotDelivered);
+    }
+
+    #[cfg(debug_assertions)]
+    #[test]
+    fn the_test_override_names_a_loopback_server_or_none() {
+        for (value, server) in [
+            ("http://127.0.0.1:7002", Some("http://127.0.0.1:7002")),
+            ("http://localhost:7002/", Some("http://localhost:7002")),
+            ("off", None),
+            ("", None),
+            ("https://mostro-push-server.fly.dev", None),
+            ("http://127.0.0.1.example.com:80", None),
+            ("http://localhost.example.com", None),
+        ] {
+            assert_eq!(test_server_of(value).as_deref(), server, "{value:?}");
+        }
+    }
+
+    #[tokio::test]
+    async fn a_waker_turned_off_asks_no_server() {
+        let waker = Waker::new(None);
+        let party = party();
+
+        assert_eq!(waker.notify(&party, NOW).await, Wake::Off);
+        assert!(waker.last.lock().unwrap().is_empty());
     }
 
     #[tokio::test]

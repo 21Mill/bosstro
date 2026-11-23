@@ -47,6 +47,15 @@ Future<void> startApp(
 }) async {
   tester.platformDispatcher.localesTestValue = [const Locale('en')];
 
+  // The core wakes a party through the public push server unless a debug
+  // build is told otherwise (`rust/src/push.rs`): no run may reach it.
+  expect(
+    Platform.environment['BOSSTRO_TEST_PUSH_SERVER'],
+    isNotNull,
+    reason: 'set BOSSTRO_TEST_PUSH_SERVER=off (or a loopback server), '
+        'so the test parties\' keys never reach the real push server',
+  );
+
   await RustLib.init();
   final dir = await Directory.systemTemp.createTemp('bosstro_e2e_');
   await rust.initDb(path: '${dir.path}/bosstro.db');
