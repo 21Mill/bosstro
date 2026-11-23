@@ -47,7 +47,9 @@ feature. A long feature is split into pull requests that each build, pass the te
 reviewed on their own.
 
 A pull request's **title** is its line in the release notes and in `CHANGELOG.md`: write it for
-the solver who reads the release, not for the reviewer.
+the solver who reads the release, not for the reviewer. Entries are grouped by the title's
+conventional-commit type (`tool/release_notes.dart`, [docs/RELEASING.md](docs/RELEASING.md)),
+so the title needs its prefix.
 
 ## Before you write code
 
@@ -73,8 +75,8 @@ description, why it is safe:
 - **The solver key**: how it is stored, crosses the bridge, is held in Rust, is shown and is
   copied ("Key handling" in AGENTS.md).
 - **What is sent to a relay or a server**: event kinds, tags, message formats, the chat
-  envelope, attachments and the push wake. State the impact on what reads them: the daemon,
-  `app`, Mostrix and relays.
+  envelope, attachments and, once notifications land, the push wake. State the impact on what
+  reads them: the daemon, `app`, Mostrix and relays.
 - **What is stored or logged**: the database is not encrypted, so a change that stores or logs
   something new says what it is and why it may be kept. A message's content, a key and a
   party's trade pubkey are never logged.
@@ -127,9 +129,11 @@ end-to-end runs. A change to resolution is tried with real regtest sats, as desc
 - A test should be able to fail. An assertion that passes whether or not the behaviour works
   (for example, one that races with a background task) proves nothing: assert what the test
   can observe, and test the rest where it can be observed.
-- Tests never reach a public service: use a local server, as the existing benches do.
+- Tests never reach a public service: use a local server, as the existing tests do (a local
+  relay, a local Blossom server).
 - Every new screen has a widget test at 2× text, 320 dp, in Spanish, with no overflow, and
-  joins `test/l10n/all_locales_fit_test.dart`.
+  joins `test/l10n/all_locales_fit_test.dart`, which lays it out in every locale: the longest
+  translation differs per string.
 
 ### Visible changes
 
@@ -150,11 +154,15 @@ explain any of it when a reviewer asks; "the tool wrote it" is not an answer.
 CI runs these on every pull request. Run them locally first:
 
 ```bash
-cd rust && cargo test && cargo clippy -- -D warnings
+(cd rust && cargo test && cargo clippy -- -D warnings)
 flutter analyze && flutter test
 dart tool/design_check.dart
 ./scripts/check-generated.sh
 ```
+
+Use the toolchain CI uses, listed under [Building](README.md#building) in the README (Flutter,
+the Rust that `rust-toolchain.toml` pins, the bridge codegen): the generated code depends on
+it, so another version makes the last check fail on files you did not touch.
 
 Do not reformat files you are not changing: it hides the change among unrelated lines.
 
