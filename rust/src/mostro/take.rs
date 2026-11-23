@@ -5,7 +5,7 @@
 //! `CantDo(InvalidPubkey)` (`admin_take_dispute.rs`, `pubkey_event_can_solve`)
 //! whether the key is no solver, or a solver who may not take that dispute
 //! over. The 38386 does not say who holds a dispute, so the marker follows
-//! the dispute's public status (CLAUDE.md → "Am I a solver on this node?"):
+//! the dispute's public status (AGENTS.md → "Am I a solver on this node?"):
 //!
 //! | Status | Answer | Marker | Node |
 //! |---|---|---|---|

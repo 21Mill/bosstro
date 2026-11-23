@@ -5,7 +5,7 @@
 //! with `AdminTookDispute` (and the order data, `SolverDisputeInfo`) or a
 //! `CantDo` (`crate::mostro`). The answer also tells whether this key is a
 //! solver on that node at all: mostrod has no read-only query for it
-//! (CLAUDE.md → "Am I a solver on this node?").
+//! (AGENTS.md → "Am I a solver on this node?").
 //!
 //! Rust does not translate: every outcome and refusal is a marker, and Dart
 //! words it.
