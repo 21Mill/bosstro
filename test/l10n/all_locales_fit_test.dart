@@ -156,6 +156,7 @@ Future<void> _pump(
         chat: _chat(),
         observer: _observer(),
         serbero: _serbero(),
+        settings: FakeSettingsCore(serbero: {mostroNodePubkey: 'npub1serbero'}),
         orders: orders,
         nodes: FakeNodesCore(active: mostroNodePubkey, info: sampleInfo()),
       ),

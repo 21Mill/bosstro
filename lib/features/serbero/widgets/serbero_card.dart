@@ -13,7 +13,8 @@ import 'package:bosstro/shared/widgets/order_data_card.dart';
 
 /// The Info segment's way into Serbero's mediation of the dispute (D13):
 /// when its last report arrived and "Read Serbero's mediation", or why
-/// there is nothing to read.
+/// there is nothing to read. Shown only while a Serbero is trusted on the
+/// node.
 class SerberoCard extends ConsumerWidget {
   const SerberoCard({super.key, required this.disputeId});
 
@@ -27,8 +28,10 @@ class SerberoCard extends ConsumerWidget {
     // solver no longer trusts.
     final mediation =
         read.isReloading || read.hasError ? null : read.valueOrNull;
-    if (mediation == null) return const SizedBox.shrink();
+    // No card on a node whose solver trusts no Serbero: most run none, and
+    // the setting itself lives in Settings.
     final trusted = ref.watch(serberoNpubProvider).valueOrNull != null;
+    if (mediation == null || !trusted) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
     final pal = ShellPalette.of(context);
     final locale = Localizations.localeOf(context).toString();
@@ -37,9 +40,7 @@ class SerberoCard extends ConsumerWidget {
     final line =
         last != null
             ? l10n.serberoCardReceived(formatDateTime(last, locale))
-            : trusted
-            ? l10n.serberoCardEmpty
-            : l10n.serberoCardNotTrusted;
+            : l10n.serberoCardEmpty;
 
     // The action's own 10-dp padding lines its icon up with the title's, as
     // ObserverCard.

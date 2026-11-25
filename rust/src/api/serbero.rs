@@ -52,7 +52,13 @@ async fn read_serbero(db: &impl Storage, node: &str) -> Result<Option<String>> {
     Ok(db
         .get_setting(&settings_keys::serbero_pubkey(node))
         .await?
-        .and_then(|stored| parse_node_pubkey(&stored).ok()))
+        .and_then(|stored| match parse_node_pubkey(&stored) {
+            Ok(hex) => Some(hex),
+            Err(e) => {
+                log::warn!("[serbero] the stored Serbero key does not parse; none is trusted: {e}");
+                None
+            }
+        }))
 }
 
 async fn write_serbero(

@@ -243,22 +243,17 @@ void main() {
     expect(find.text('Leer la mediación de Serbero'), findsNothing);
   });
 
-  testWidgets('without a trusted Serbero the card points to Settings', (
+  testWidgets('no card while no Serbero is trusted on the node', (
     tester,
   ) async {
     await _pumpDetail(
       tester,
-      serbero: FakeSerberoCore(),
+      serbero: FakeSerberoCore()..mediations[_a] = _handedOff(),
       settings: FakeSettingsCore(),
     );
     await _scrollInfoTo(tester, find.byType(SerberoCard));
-    expect(
-      find.text(
-        'Configura la clave de Serbero en Ajustes para leer sus informes de '
-        'mediación.',
-      ),
-      findsOneWidget,
-    );
+    expect(find.text('Mediación de Serbero'), findsNothing);
+    expect(find.text('Leer la mediación de Serbero'), findsNothing);
   });
 
   testWidgets('no card when the dispute is not this key\'s', (tester) async {

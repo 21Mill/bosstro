@@ -179,7 +179,8 @@ class _NoteCard extends StatelessWidget {
               style: TextStyle(fontSize: 12, color: pal.textTertiary),
             ),
             const SizedBox(height: 10),
-            SelectableText(
+            // Plain text, as the parties' words everywhere else in the app.
+            Text(
               note.body.trim(),
               style: TextStyle(fontSize: 13, height: 1.45, color: pal.textBody),
             ),
