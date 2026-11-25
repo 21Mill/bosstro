@@ -153,6 +153,31 @@ Three tabs, branches of one shell (`lib/core/app_routes.dart`), each keeping its
   week before the dispute opened is "the key opens no message of this dispute" either way.
 - **Files on the web:** decrypting and re-encoding (up to 25 MiB) run on the page's only
   thread, which stops meanwhile, as the take's PoW.
+- **Serbero's reports are stored in plain text** (`serbero_messages`), as the chats (A4): the
+  brief quotes the parties and the transcript is all they told Serbero.
+- **Serbero's reports exist only where Serbero sent them:** at its own handoff or guidance, to
+  the keys in its `[[solvers]]`. A dispute taken over before the handoff (session `superseded`)
+  has none (MostroP2P/serbero#82, a Serbero change).
+- **The backlog is the last month, fetched again on every start and reconnect** (no cursor yet):
+  Serbero's notices to the key (`new`, `taken`, `mediating`, `unattended` every 15 min per
+  untaken dispute) are fetched, opened and dropped each time, and a relay that caps the results
+  of a request returns the newest, so the effective backlog is "the last N events", which can
+  lose the oldest handoffs. A cursor per node, key and trusted Serbero, as the chat's, is the fix.
+- **A transcript line is dated from its `hh:mm` and the message that carried it**, at most one
+  day back: a session longer than 24 h would date its early lines wrong. Serbero's timers make it
+  unlikely.
+- **A transcript's parts are one transcript when sent within two minutes** (`PARTS_WINDOW_SECS`),
+  which also keeps a guidance transcript apart from a handoff one. A long transcript sent through
+  a slow relay can spread wider, and the screen then says some parts are missing although all
+  arrived.
+- **A party's line breaks are indented when the report is read**, whatever character made them
+  (`parse.rs`, U+2028, U+2029, `\v`, `\f`, U+0085, a lone `\r`), so none shows a line that reads
+  as Serbero's. A party message long enough to be split between two parts can still start the
+  next part with a line of its own; Serbero cuts party messages to `max_message_chars` (2000 by
+  default), far below a part, so only a raised setting (about 10k) allows it.
+- **`mediation could not start` is not shown:** Serbero sends it when it took a dispute it could
+  not mediate, asking a solver to take it over; Bosstro keeps only the brief, the transcript,
+  the updates and the final report.
 - The key-handling limits are listed under "Key handling" (2 and 8).
 
 ### Generated code
