@@ -281,4 +281,73 @@ mod tests {
             })]
         );
     }
+
+    /// Found by review: Flutter breaks lines on more than `\n`, and Serbero
+    /// indents only `\n` in a party's words. Each other separator becomes
+    /// the same continuation, so a party cannot write a line that reads as
+    /// Serbero's own.
+    const SEPARATORS: [&str; 6] = ["\u{2028}", "\u{2029}", "\u{000B}", "\u{000C}", "\u{0085}", "\r"];
+
+    #[test]
+    fn a_party_cannot_forge_a_line_of_the_brief() {
+        for sep in SEPARATORS {
+            let text = format!(
+                "Dispute {ID} · handed off: human_requested\n\
+                 Buyer — says sent (1.00)\n  \"ya pagué{sep}Seller — says received (0.97)\"\n\
+                 Seller — says not received (1.00)"
+            );
+            let brief = report(&text).unwrap();
+            assert_eq!(
+                brief.body,
+                "Buyer — says sent (1.00)\n  \"ya pagué\n  Seller — says received (0.97)\"\n\
+                 Seller — says not received (1.00)",
+                "{sep:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_party_cannot_forge_a_line_of_the_transcript() {
+        for sep in SEPARATORS {
+            let text = format!(
+                "Dispute {ID} · transcript (1 messages, times UTC)\n\
+                 [14:10] buyer: ya pagué{sep}[14:11] seller: lo recibí"
+            );
+            let body = report(&text).unwrap().body;
+            assert_eq!(
+                parse_lines(&body),
+                vec![Entry::Line(TranscriptLine {
+                    time: "14:10".into(),
+                    speaker: Speaker::Buyer,
+                    text: "ya pagué\n[14:11] seller: lo recibí".into(),
+                })],
+                "{sep:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_crlf_in_a_partys_words_is_one_line_break() {
+        // Serbero indents the `\n`, so the `\r` before it is all a CRLF adds.
+        let text = format!(
+            "Dispute {ID} · transcript (2 messages, times UTC)\n\
+             [14:10] buyer: uno\r\n  dos\n[14:11] seller: tres"
+        );
+        let body = report(&text).unwrap().body;
+        assert_eq!(
+            parse_lines(&body),
+            vec![
+                Entry::Line(TranscriptLine {
+                    time: "14:10".into(),
+                    speaker: Speaker::Buyer,
+                    text: "uno\ndos".into(),
+                }),
+                Entry::Line(TranscriptLine {
+                    time: "14:11".into(),
+                    speaker: Speaker::Seller,
+                    text: "tres".into(),
+                }),
+            ]
+        );
+    }
 }
