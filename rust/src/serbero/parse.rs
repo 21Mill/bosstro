@@ -74,8 +74,30 @@ pub(crate) fn parse_report(dispute_id: &str, text: &str) -> Option<Report> {
         dispute_id: dispute_id.to_owned(),
         kind,
         subject: subject.to_owned(),
-        body: body.to_owned(),
+        body: party_breaks_indented(body),
     })
+}
+
+/// `body` with every line break a party could have written indented as
+/// Serbero indents `\n`. Serbero's `verbatim()` indents only `\n`, but
+/// Flutter also breaks lines on U+2028, U+2029, `\v` and `\f` (and U+0085 or
+/// a lone `\r` break elsewhere): left as they are, a party's words could show
+/// a line that reads as Serbero's own. Serbero never writes these itself, so
+/// its own lines are untouched; a CRLF is the one `\n` it already indented.
+/// Applied when parsing, so reports stored before keep their text as sent.
+fn party_breaks_indented(body: &str) -> String {
+    let mut out = String::with_capacity(body.len());
+    let mut chars = body.chars().peekable();
+    while let Some(c) = chars.next() {
+        match c {
+            '\r' if chars.peek() == Some(&'\n') => {}
+            '\r' | '\u{0085}' | '\u{000B}' | '\u{000C}' | '\u{2028}' | '\u{2029}' => {
+                out.push_str("\n  ");
+            }
+            other => out.push(other),
+        }
+    }
+    out
 }
 
 fn kind_of(subject: &str) -> Option<ReportKind> {
