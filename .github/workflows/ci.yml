@@ -18,7 +18,7 @@ env:
   # FRB_VERSION is the same as MostroP2P/app and is checked against pubspec.yaml
   # and rust/Cargo.toml by scripts/frb-generate.sh. Flutter is ahead of
   # MostroP2P/app (3.41.9) on purpose; keep it equal to the local Flutter
-  # (CLAUDE.md).
+  # (README.md → "Requirements").
   FLUTTER_VERSION: "3.47.7"
   FRB_VERSION: "2.11.1"
   CARGO_EXPAND_VERSION: "1.0.123"
@@ -307,6 +307,13 @@ jobs:
       # shows up at runtime, as a blank page.
       - name: Build Rust core to wasm (shared memory)
         run: ./scripts/build-web.sh
+
+      # The IndexedDB storage (the web's Storage backend) against a real
+      # browser. The runner's own Chrome and its matching chromedriver
+      # (CHROMEWEBDRIVER, set by the runner image, so read from the shell),
+      # so no download and no version mismatch.
+      - name: Test web storage (IndexedDB, headless Chrome)
+        run: CHROMEDRIVER="$CHROMEWEBDRIVER/chromedriver" ./scripts/test-web-storage.sh
 
       # --pwa-strategy=none: Flutter's service worker would take the same scope
       # as coi-serviceworker.min.js and evict the isolation shim (as in

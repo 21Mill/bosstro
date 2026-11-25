@@ -139,6 +139,11 @@ See [AGENTS.md](AGENTS.md) for the architecture, the decisions behind it, the co
 generated code is handled, and [.specify/DESIGN_SYSTEM.md](.specify/DESIGN_SYSTEM.md) for the
 design guide every UI change is reviewed against.
 
+## Contributing
+
+Contributions are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) explains the workflow and what makes
+a pull request quick to review and safe to merge.
+
 ## License
 
 [AGPL-3.0-or-later](LICENSE). Parts of this code are copied from Mostro v2, which is AGPL.
